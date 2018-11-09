@@ -5,8 +5,8 @@ db/
 chartdata
 civet.conf
 old/
-out/
+build/
 logs/
-hub
 timers.txt
-libcivetweb.a
+lib/
+bin/

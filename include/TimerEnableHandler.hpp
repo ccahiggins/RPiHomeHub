@@ -1,8 +1,8 @@
-#ifndef ENABLETIMERHANDLER_HPP
-#define ENABLETIMERHANDLER_HPP
+#ifndef TIMERENABLEHANDLER_HPP
+#define TIMERENABLEHANDLER_HPP
 
-#include <iostream>     // std::cout, std::ios
-#include <sstream>      // std::ostringstream
+#include <iostream>
+#include <sstream>
 
 #include "CivetServer.h"
 #include "ReadHtml.hpp"
@@ -11,11 +11,11 @@
 
 #include <string>
 
-class EnableTimerHandler : public CivetHandler {
+class TimerEnableHandler : public CivetHandler {
 	
 public:
  
-	EnableTimerHandler(Timer* timer_);
+	TimerEnableHandler(Timer* timer_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	

@@ -16,35 +16,34 @@ BIN=bin/
 LIB=lib/
 OUT=build/
 SRC=src/
-CXXFLAGS_TEST =  -Wall -lpthread -ldl -lrt
-CXXFLAGS = -Ofast -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon-vfpv4 -mtune=cortex-a7 -Wall -lpthread -ldl -lrt -Iinclude
+CXXFLAGS_OLD =  -Wall -lpthread -ldl -lrt
+CXXFLAGS = -Ofast -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon-vfpv4 -mtune=cortex-a7 -Wall  -lpthread -ldl -lrt -Iinclude
 all: hub
 
-#hub:$(OUT)HubNew.o $(OUT)TempsensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimersHandler.o $(OUT)AddTimerHandler.o $(OUT)DisableTimerHandler.o $(OUT)EnableTimerHandler.o $(OUT)ChartHandler.o $(OUT)DeleteTimerHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o
-#	$(CC) -o hub $(OUT)HubNew.o $(OUT)RadioController.o $(OUT)TempsensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)Boiler.o $(OUT)ReadHtml.o $(OUT)Timer.o $(OUT)TimersHandler.o $(OUT)AddTimerHandler.o $(OUT)DisableTimerHandler.o $(OUT)EnableTimerHandler.o $(OUT)ChartHandler.o $(OUT)DeleteTimerHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o $(CXXFLAGS) $(CIVET) -lsqlite3 -lrf24-bcm  $(RF24NETWORK) libcivetweb.a
+#hub:$(OUT)HubNew.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o
+#	$(CC) -o hub $(OUT)HubNew.o $(OUT)RadioController.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)Boiler.o $(OUT)ReadHtml.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o $(CXXFLAGS) $(CIVET) -lsqlite3 -lrf24-bcm  $(RF24NETWORK) libcivetweb.a
 	
 	
-#hub: $(OUT)HubNew.o $(OUT)TempsensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimersHandler.o $(OUT)AddTimerHandler.o $(OUT)DisableTimerHandler.o $(OUT)EnableTimerHandler.o $(OUT)ChartHandlerTest.o $(OUT)DeleteTimerHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o $(OUT)ChartCreator.o
-#	$(CC) -o hub $(OUT)HubNew.o $(OUT)RadioController.o $(OUT)TempsensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)Boiler.o $(OUT)ReadHtml.o $(OUT)Timer.o $(OUT)TimersHandler.o $(OUT)AddTimerHandler.o $(OUT)DisableTimerHandler.o $(OUT)EnableTimerHandler.o $(OUT)ChartHandlerTest.o $(OUT)DeleteTimerHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o $(OUT)ChartCreator.o $(CXXFLAGS) $(CIVET) -lsqlite3 -lrf24-bcm  $(RF24NETWORK) libcivetweb.a
+#hub: $(OUT)HubNew.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandlerTest.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o $(OUT)ChartCreator.o
+#	$(CC) -o hub $(OUT)HubNew.o $(OUT)RadioController.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)Boiler.o $(OUT)ReadHtml.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandlerTest.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o $(OUT)ChartCreator.o $(CXXFLAGS) $(CIVET) -lsqlite3 -lrf24-bcm  $(RF24NETWORK) libcivetweb.a
 	
-hub: $(OUT)HubNew.o $(OUT)TempsensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimersHandler.o $(OUT)AddTimerHandler.o $(OUT)DisableTimerHandler.o $(OUT)EnableTimerHandler.o $(OUT)DeleteTimerHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)ChartHandler.o $(OUT)JsonBoilerHandler.o $(OUT)JsonBoilerStatusHandler.o
-	$(CC) -o $(BIN)hub $(OUT)HubNew.o $(OUT)RadioController.o $(OUT)TempsensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)Boiler.o $(OUT)ReadHtml.o $(OUT)Timer.o $(OUT)TimersHandler.o $(OUT)AddTimerHandler.o $(OUT)DisableTimerHandler.o $(OUT)EnableTimerHandler.o $(OUT)DeleteTimerHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)ChartHandler.o $(OUT)JsonBoilerHandler.o $(OUT)JsonBoilerStatusHandler.o $(CXXFLAGS) $(CIVET) -lsqlite3 -lrf24-bcm  $(RF24NETWORK) $(LIB)libcivetweb.a
+hub: $(OUT)Hub.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)JsonBoilerHandler.o $(OUT)JsonBoilerStatusHandler.o
+	$(CC) -o $(BIN)hub $(OUT)Hub.o $(OUT)RadioController.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)Boiler.o $(OUT)ReadHtml.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)JsonBoilerHandler.o $(OUT)JsonBoilerStatusHandler.o $(CXXFLAGS) $(CIVET) -lsqlite3 -lrf24-bcm  $(RF24NETWORK) $(LIB)libcivetweb.a
 
-#hub: $(OUT)HubNew.o $(OUT)TempsensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimersHandler.o $(OUT)AddTimerHandler.o $(OUT)DisableTimerHandler.o $(OUT)EnableTimerHandler.o $(OUT)ChartHandlerTest.o $(OUT)ChartHandler2.o $(OUT)DeleteTimerHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o $(OUT)ChartCreator.o $(OUT)ChartCreatorJson.o
-#	$(CC) -o hub $(OUT)HubNew.o $(OUT)RadioController.o $(OUT)TempsensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)Boiler.o $(OUT)ReadHtml.o $(OUT)Timer.o $(OUT)TimersHandler.o $(OUT)AddTimerHandler.o $(OUT)DisableTimerHandler.o $(OUT)EnableTimerHandler.o $(OUT)ChartHandlerTest.o $(OUT)ChartHandler2.o $(OUT)DeleteTimerHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)ChartCreatorJson.o $(CXXFLAGS) $(CIVET) -lsqlite3 -lrf24-bcm  $(RF24NETWORK) libcivetweb.a
+#hub: $(OUT)HubNew.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandlerTest.o $(OUT)ChartHandler2.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)JsonHubHandler.o $(OUT)JsonBoilerHandler.o $(OUT)ChartCreator.o $(OUT)ChartCreatorJson.o
+#	$(CC) -o hub $(OUT)HubNew.o $(OUT)RadioController.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)Boiler.o $(OUT)ReadHtml.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandlerTest.o $(OUT)ChartHandler2.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)ChartCreatorJson.o $(CXXFLAGS) $(CIVET) -lsqlite3 -lrf24-bcm  $(RF24NETWORK) libcivetweb.a
 	
 	
 	
-$(OUT)HubNew.o: $(SRC)HubNew.cpp
-	$(CC) -c $(SRC)HubNew.cpp -o $(OUT)HubNew.o $(CXXFLAGS) $(CIVET) $(JSON) $(BOOST) $(RF24NETWORK)
+$(OUT)Hub.o: $(SRC)Hub.cpp
+	$(CC) -c $(SRC)Hub.cpp -o $(OUT)Hub.o $(CXXFLAGS) $(CIVET) $(JSON) $(BOOST) $(RF24NETWORK)
 
-$(OUT)TempsensorController.o: $(SRC)TempsensorController.cpp
-	$(CC) -c $(SRC)TempsensorController.cpp -o $(OUT)TempsensorController.o $(CXXFLAGS)
+$(OUT)TempSensorController.o: $(SRC)TempSensorController.cpp
+	$(CC) -c $(SRC)TempSensorController.cpp -o $(OUT)TempSensorController.o $(CXXFLAGS)
 
 $(OUT)HubHandler.o: $(SRC)HubHandler.cpp
 	$(CC) -c $(SRC)HubHandler.cpp -o $(OUT)HubHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
 	
-
 $(OUT)BoilerHandler.o: $(SRC)BoilerHandler.cpp
 	$(CC) -c $(SRC)BoilerHandler.cpp -o $(OUT)BoilerHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
 
@@ -60,27 +59,20 @@ $(OUT)RadioController.o: $(SRC)RadioController.cpp
 $(OUT)Timer.o: $(SRC)Timer.cpp
 	$(CC) -c $(SRC)Timer.cpp -o $(OUT)Timer.o $(CXXFLAGS)
 
-$(OUT)TimersHandler.o: $(SRC)TimersHandler.cpp
-	$(CC) -c $(SRC)TimersHandler.cpp -o $(OUT)TimersHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
+$(OUT)TimerHandler.o: $(SRC)TimerHandler.cpp
+	$(CC) -c $(SRC)TimerHandler.cpp -o $(OUT)TimerHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
 
-$(OUT)AddTimerHandler.o: $(SRC)AddTimerHandler.cpp
-	$(CC) -c $(SRC)AddTimerHandler.cpp -o $(OUT)AddTimerHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
+$(OUT)TimerAddHandler.o: $(SRC)TimerAddHandler.cpp
+	$(CC) -c $(SRC)TimerAddHandler.cpp -o $(OUT)TimerAddHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
 
-$(OUT)DisableTimerHandler.o: $(SRC)DisableTimerHandler.cpp
-	$(CC) -c $(SRC)DisableTimerHandler.cpp -o $(OUT)DisableTimerHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
+$(OUT)TimerDisableHandler.o: $(SRC)TimerDisableHandler.cpp
+	$(CC) -c $(SRC)TimerDisableHandler.cpp -o $(OUT)TimerDisableHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
 
-$(OUT)EnableTimerHandler.o: $(SRC)EnableTimerHandler.cpp
-	$(CC) -c $(SRC)EnableTimerHandler.cpp -o $(OUT)EnableTimerHandler.o $(CXXFLAGS) $(CIVET) $(BOOST) $(BOOST)
+$(OUT)TimerEnableHandler.o: $(SRC)TimerEnableHandler.cpp
+	$(CC) -c $(SRC)TimerEnableHandler.cpp -o $(OUT)TimerEnableHandler.o $(CXXFLAGS) $(CIVET) $(BOOST) $(BOOST)
 
-#$(OUT)ChartHandler.o: ChartHandler.cpp
-	#$(CC) -c ChartHandler.cpp -o $(OUT)ChartHandler.o $(CXXFLAGS) $(CIVET) 
-	#$(BOOST)
-
-$(OUT)ChartHandler2.o: $(SRC)ChartHandler2.cpp
-	$(CC) -c $(SRC)ChartHandler2.cpp -o $(OUT)ChartHandler2.o $(CXXFLAGS) $(CIVET)	
-	
-$(OUT)ChartHandlerTest.o: $(SRC)ChartHandlerTest.cpp
-	$(CC) -c $(SRC)ChartHandlerTest.cpp -o $(OUT)ChartHandlerTest.o $(CXXFLAGS) $(CIVET)
+$(OUT)ChartHandler.o: $(SRC)ChartHandler.cpp
+	$(CC) -c $(SRC)ChartHandler.cpp -o $(OUT)ChartHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
 	
 $(OUT)ChartHandlerTest2.o: $(SRC)ChartHandlerTest2.cpp
 	$(CC) -c $(SRC)ChartHandlerTest2.cpp -o $(OUT)ChartHandlerTest2.o $(CXXFLAGS) $(CIVET)
@@ -91,8 +83,8 @@ $(OUT)ChartCreator.o: $(SRC)ChartCreator.cpp
 $(OUT)ChartCreatorJson.o: $(SRC)ChartCreatorJson.cpp
 	$(CC) -c $(SRC)ChartCreatorJson.cpp -o $(OUT)ChartCreatorJson.o $(CXXFLAGS) $(CIVET)	
 	
-$(OUT)DeleteTimerHandler.o: $(SRC)DeleteTimerHandler.cpp
-	$(CC) -c $(SRC)DeleteTimerHandler.cpp -o $(OUT)DeleteTimerHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
+$(OUT)TimerDeleteHandler.o: $(SRC)TimerDeleteHandler.cpp
+	$(CC) -c $(SRC)TimerDeleteHandler.cpp -o $(OUT)TimerDeleteHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)
 
 $(OUT)VoltageHandler.o: $(SRC)VoltageHandler.cpp
 	$(CC) -c $(SRC)VoltageHandler.cpp -o $(OUT)VoltageHandler.o $(CXXFLAGS) $(CIVET) $(BOOST)

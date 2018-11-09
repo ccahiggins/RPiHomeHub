@@ -5,7 +5,7 @@
 	</head>
     <body>
 		<div  class = "enjoy-css">Boiler controller</div>
-		<form method="post" action="addtimer">
+		<form method="post" action="/timer/add">
 			<div class="heading"><label class="starttime" for="starttime">Select a time:<input type="time" name="starttime" value="06:30"></div>
 			<div class="heading"><label class="description" for="duration"> Duration</label>
 			<input type="number" name="duration" min="10" max="240" step="10" value="30" required="true">
@@ -25,6 +25,6 @@
 
 			<div class="heading"><input type="submit"></div>
 		</form>
-		<div class="hhh"><a href="timer">Back to Timer</a></div>
+		<div class="hhh"><a href="/timer">Back to Timer</a></div>
 	</body>
 </html>

@@ -10,10 +10,10 @@
 #include "RadioController.hpp"
 #include <sqlite3.h>
 
-class TempsensorController {
+class TempSensorController {
 
 public:
-	TempsensorController(RadioController* radio_);
+	TempSensorController(RadioController* radio_);
 
 	std::vector<int> lowBattery();
 	void checkSensors();

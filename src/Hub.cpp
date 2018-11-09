@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include "RadioController.hpp"
-#include "TempsensorController.hpp"
+#include "TempSensorController.hpp"
 #include "Boiler.hpp"
 #include "Timer.hpp"
 
@@ -19,26 +19,26 @@
 #define BOILER_JSON_URI "/jsonboiler"
 #define BOILER_JSON_STATUS_URI "/json/boiler/status"
 //#define TIMERS_JSON_URI "/jsontimers"
-#define ADDTIMER_URI "/addtimer"
-#define DELETETIMER_URI "/deletetimer"
 #define TIMER_URI "/timer"
-#define ENABLETIMER_URI "/enabletimer"
-#define DISABLETIMER_URI "/disabletimer"
+#define TIMER_ADD_URI "/timer/add"
+#define TIMER_DELETE_URI "/timer/delete"
+#define TIMER_ENABLE_URI "/timer/enable"
+#define TIMER_DISABLE_URI "/timer/disable"
 //#define POST_URI "/post"
 #define VOLTAGE_URI "/voltage"
 #define ADDTIMER_URI "/addtimer"
 //#define LIGHTSON_URI "/lightson"
 //#define LIGHTSOFF_URI "/lightsoff"
 
-#include "AddTimerHandler.hpp"
-#include "EnableTimerHandler.hpp"
-#include "DisableTimerHandler.hpp"
-#include "TimersHandler.hpp"
+#include "TimerHandler.hpp"
+#include "TimerDeleteHandler.hpp"
+#include "TimerAddHandler.hpp"
+#include "TimerEnableHandler.hpp"
+#include "TimerDisableHandler.hpp"
 #include "HubHandler.hpp"
 #include "BoilerHandler.hpp"
 #include "ChartHandler.hpp"
 //#include "ChartHandlerTest.hpp"
-#include "DeleteTimerHandler.hpp"
 #include "VoltageHandler.hpp"
 #include "JsonBoilerHandler.hpp"
 #include "JsonBoilerStatusHandler.hpp"
@@ -47,7 +47,7 @@
 
 RadioController radioControl;
 Boiler boilr(&radioControl);
-TempsensorController tempsensControl(&radioControl);
+TempSensorController tempSensControl(&radioControl);
 Timer timer;
 
 int8_t volatile keepRunning = 1;
@@ -105,14 +105,14 @@ int main(int argc, char** argv)  {
 	atexit(exiting);
 	timer.loadTimers();
 	CivetServer server(options);
-	server.addHandler(HUB_URI, new HubHandler(&boilr, &tempsensControl));
+	server.addHandler(HUB_URI, new HubHandler(&boilr, &tempSensControl));
 	//server.addHandler(HUB_URI, new HubHandler(&boilr));
 	server.addHandler(BOILER_URI, new BoilerHandler(&boilr));
-	server.addHandler(TIMER_URI, new TimersHandler(&timer));
-	server.addHandler(ADDTIMER_URI, new AddTimerHandler(&timer));
-	server.addHandler(ENABLETIMER_URI, new EnableTimerHandler(&timer));
-	server.addHandler(DISABLETIMER_URI, new DisableTimerHandler(&timer));
-	server.addHandler(DELETETIMER_URI, new DeleteTimerHandler(&timer));
+	server.addHandler(TIMER_URI, new TimerHandler(&timer));
+	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(&timer));
+	server.addHandler(TIMER_ENABLE_URI, new TimerEnableHandler(&timer));
+	server.addHandler(TIMER_DISABLE_URI, new TimerDisableHandler(&timer));
+	server.addHandler(TIMER_DELETE_URI, new TimerDeleteHandler(&timer));
 	server.addHandler(CHART_URI, new ChartHandler());
 	server.addHandler(VOLTAGE_URI, new VoltageHandler());
 	server.addHandler(BOILER_JSON_URI, new JsonBoilerHandler(&boilr));
@@ -121,7 +121,7 @@ int main(int argc, char** argv)  {
 
 	while(keepRunning) {
 		checkTimer();
-		tempsensControl.checkSensors();
+		tempSensControl.checkSensors();
 		usleep(200000);
 	}
 	cout << "Ckosibg" << endl;

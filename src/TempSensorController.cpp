@@ -1,6 +1,6 @@
-#include "TempsensorController.hpp"
+#include "TempSensorController.hpp"
 
-TempsensorController::TempsensorController(RadioController* radio_) {
+TempSensorController::TempSensorController(RadioController* radio_) {
 	std::cout << "TC" << std::endl;
 	radio = radio_;
 }
@@ -14,7 +14,7 @@ sqlite3 *db = NULL;
 const char *dbPath = "db/sqlTemplog.db";
 sqlite3_stmt *stmt = NULL;
 
-void TempsensorController::checkSensors() {
+void TempSensorController::checkSensors() {
 	using namespace std;
 	
 	RadioController::payload_temp payload = radio->getTempPayload();
@@ -29,7 +29,7 @@ void TempsensorController::checkSensors() {
 	}
 }
 
-void TempsensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t voltage) {
+void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t voltage) {
 	
 	using namespace std;
 
@@ -75,7 +75,7 @@ void TempsensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 	cout << " " << rc << " " << flush;
 }
 
-std::vector<int> TempsensorController::lowBattery() {
+std::vector<int> TempSensorController::lowBattery() {
 	float low = 3.2;
 	std::vector<int> lowBatts;
 	
@@ -95,7 +95,7 @@ std::vector<int> TempsensorController::lowBattery() {
 	return lowBatts;
 }
 
-void TempsensorController::printSensorData(uint16_t deviceNum, float temp, uint16_t voltage) {
+void TempSensorController::printSensorData(uint16_t deviceNum, float temp, uint16_t voltage) {
 	using namespace std;
 	
 	stringstream s; 
@@ -127,7 +127,7 @@ void TempsensorController::printSensorData(uint16_t deviceNum, float temp, uint1
 	}
 }
 
-void TempsensorController::printCurrentTime() {
+void TempSensorController::printCurrentTime() {
 	using namespace std;
 	time_t t = time(0);   // get time now
 	struct tm * now = localtime( & t );

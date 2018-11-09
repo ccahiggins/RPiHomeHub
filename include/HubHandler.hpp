@@ -6,7 +6,7 @@
 
 #include "CivetServer.h"
 #include "Boiler.hpp"
-#include "TempsensorController.hpp"
+#include "TempSensorController.hpp"
 #include "ReadHtml.hpp"
 #include "boost/format.hpp"
 
@@ -19,14 +19,14 @@ class HubHandler : public CivetHandler
 	
 public:
  
-	HubHandler(Boiler* boiler_, TempsensorController* tempSens_);
+	HubHandler(Boiler* boiler_, TempSensorController* tempSens_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	
 private:
 
 	Boiler* boiler;
-	TempsensorController* tempSens;
+	TempSensorController* tempSens;
 };
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef TIMERSHANDLER_HPP
-#define TIMERSHANDLER_HPP
+#ifndef TIMERHANDLER_HPP
+#define TIMERHANDLER_HPP
 
 #include "CivetServer.h"
 #include "Timer.hpp"
@@ -8,12 +8,12 @@
 #include <string>
 #include "boost/format.hpp"
 
-class TimersHandler : public CivetHandler
+class TimerHandler : public CivetHandler
 {
 	
 public:
  
-	TimersHandler(Timer* timer_);
+	TimerHandler(Timer* timer_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	

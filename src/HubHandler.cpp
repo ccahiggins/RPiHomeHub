@@ -1,6 +1,6 @@
 #include "HubHandler.hpp"
 
-HubHandler::HubHandler(Boiler* boiler_, TempsensorController* tempSens_){
+HubHandler::HubHandler(Boiler* boiler_, TempSensorController* tempSens_){
 	boiler = boiler_;
 	tempSens = tempSens_;
 }

@@ -1,10 +1,10 @@
-#include "EnableTimerHandler.hpp"
+#include "TimerEnableHandler.hpp"
 
-EnableTimerHandler::EnableTimerHandler(Timer* timer_) {
+TimerEnableHandler::TimerEnableHandler(Timer* timer_) {
 	timer = timer_;
 }
 
-bool EnableTimerHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
+bool TimerEnableHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	using namespace std;
 	using boost::format;
 	using boost::io::group;
@@ -21,7 +21,7 @@ bool EnableTimerHandler::handleGet(CivetServer *server, struct mg_connection *co
 		}
 	}
 
-	string html = str( format(ReadHtml::readHtml("html/EnableTimerHandler/get.html")) % content);
+	string html = str( format(ReadHtml::readHtml("html/TimerEnableHandler/get.html")) % content);
 	mg_printf(conn, html.c_str());
 
 	return true;

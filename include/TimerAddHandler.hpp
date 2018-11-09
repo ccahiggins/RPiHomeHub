@@ -1,5 +1,5 @@
-#ifndef DeleteTimerHandler_HPP
-#define DeleteTimerHandler_HPP
+#ifndef TIMERADDHANDLER_HPP
+#define TIMERADDHANDLER_HPP
 
 #include <iostream>     // std::cout, std::ios
 #include <sstream>      // std::ostringstream
@@ -11,17 +11,21 @@
 
 #include <string>
 
-class DeleteTimerHandler : public CivetHandler {
+
+class TimerAddHandler : public CivetHandler
+{
 	
 public:
  
-	DeleteTimerHandler(Timer* timer_);
+	TimerAddHandler(Timer* timer_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
+	bool handlePost(CivetServer *server, struct mg_connection *conn);
 	
 private:
+	const int BOILER_ITEM_WATER = 0;
 	Timer* timer;
-
+	std::string addTimer(int hour, int minute, int duration, int boilerItem, bool onetime);
 };
 
 #endif

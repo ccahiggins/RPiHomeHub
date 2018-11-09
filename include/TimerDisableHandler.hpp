@@ -1,5 +1,5 @@
-#ifndef DISABLETIMERHANDLER_HPP
-#define DISABLETIMERHANDLER_HPP
+#ifndef TIMERDISABLEHANDLER_HPP
+#define TIMERDISABLEHANDLER_HPP
 
 #include <iostream>
 #include <sstream>
@@ -11,11 +11,11 @@
 
 #include <string>
 
-class DisableTimerHandler : public CivetHandler {
+class TimerDisableHandler : public CivetHandler {
 	
 public:
  
-	DisableTimerHandler(Timer* timer_);
+	TimerDisableHandler(Timer* timer_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	

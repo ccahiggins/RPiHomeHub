@@ -1,10 +1,10 @@
-#include "DeleteTimerHandler.hpp"
+#include "TimerDeleteHandler.hpp"
 
-DeleteTimerHandler::DeleteTimerHandler(Timer* timer_) {
+TimerDeleteHandler::TimerDeleteHandler(Timer* timer_) {
 	timer = timer_;
 }
 
-bool DeleteTimerHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
+bool TimerDeleteHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	using namespace std;
 	using boost::format;
 	using boost::io::group;
@@ -26,7 +26,7 @@ bool DeleteTimerHandler::handleGet(CivetServer *server, struct mg_connection *co
 		}
 	}
 	
-	string html = str( format(ReadHtml::readHtml("html/DeleteTimerHandler/get.html")) % content);
+	string html = str( format(ReadHtml::readHtml("html/TimerDeleteHandler/get.html")) % content);
 	mg_printf(conn, html.c_str());
 	
 	return true;

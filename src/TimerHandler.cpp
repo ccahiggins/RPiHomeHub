@@ -1,17 +1,17 @@
-#include "TimersHandler.hpp"
+#include "TimerHandler.hpp"
 
-TimersHandler::TimersHandler(Timer* timer_) {
+TimerHandler::TimerHandler(Timer* timer_) {
 	timer = timer_;
 }
 
-bool TimersHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
+bool TimerHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	using namespace std;
 	using boost::format;
 	using boost::io::group;
 	
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	
-	//html.append(readHtml.readHtml("html/TimersHandler/head.html"));
+	//html.append(readHtml.readHtml("html/TimerHandler/head.html"));
 		
 	string content = "";
 	
@@ -33,13 +33,13 @@ bool TimersHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 			endis = "enable";
 			enDis = "Enable";
 		}
-		string line = ReadHtml::readHtml("html/TimersHandler/enableDisable.html");
+		string line = ReadHtml::readHtml("html/TimerHandler/enableDisable.html");
 
 		string s = str( format(line) % whichone % timers[x].startHour % timers[x].startMinute% timers[x].duration % enDis % timers[x].id % endis % timers[x].id );
 		content.append(s);
 	}
 	
-	string html = ReadHtml::readHtml("html/TimersHandler/html.html");
+	string html = ReadHtml::readHtml("html/TimerHandler/html.html");
 	string s = str( format(html) % content  );
 	mg_printf(conn, s.c_str());
 

@@ -1,20 +1,20 @@
-#include "AddTimerHandler.hpp"
+#include "TimerAddHandler.hpp"
 
-AddTimerHandler::AddTimerHandler(Timer* timer_) {
+TimerAddHandler::TimerAddHandler(Timer* timer_) {
 	timer = timer_;
 }
 
-bool AddTimerHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
+bool TimerAddHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	using namespace std;
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	
-	string html = ReadHtml::readHtml("html/AddTimerHandler/get.html");
+	string html = ReadHtml::readHtml("html/TimerAddHandler/get.html");
 	mg_printf(conn, html.c_str());
 	
 	return true;
 }
 	
-bool AddTimerHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
+bool TimerAddHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 	using namespace std;
 	using boost::format;
 	using boost::io::group;
@@ -48,13 +48,13 @@ bool AddTimerHandler::handlePost(CivetServer *server, struct mg_connection *conn
 	
 	string message = addTimer(startHour, startMinute, duration, boilerItem, oneTime);
 
-	string html = str( format(ReadHtml::readHtml("html/AddTimerHandler/post.html")) % message);
+	string html = str( format(ReadHtml::readHtml("html/TimerAddHandler/post.html")) % message);
 	mg_printf(conn, html.c_str());
 	
 	return true;
 }
 
-std::string AddTimerHandler::addTimer(int hour, int minute, int duration, int boilerItem, bool onetime) {
+std::string TimerAddHandler::addTimer(int hour, int minute, int duration, int boilerItem, bool onetime) {
 	using namespace std;
 	if (timer -> addTimerEvent(hour, minute, duration, boilerItem, true, onetime)) {
 		std::ostringstream oss;

@@ -1,0 +1,29 @@
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+var data1   = google.visualization.arrayToDataTable([
+['Time', 'On the moon'],
+[new Date(2015,11,29,06,15),0],
+[new Date(2015,11,29,23,43),45]
+]);
+var data2   = google.visualization.arrayToDataTable([
+['Time', 'In the shed'],
+[new Date(2015,11,29,06,15),24],
+[new Date(2015,11,29,23,43),-10]
+]);
+var joinedData = google.visualization.data.join(data1, data2, 'full', [[0, 0]], [1], [1]); var options = {
+   title: 'No data available',
+   curveType: 'function',
+   hAxis: {
+      format: 'HH:mm'
+   },
+ interpolateNulls: true,
+legend: { position: 'bottom' }
+ };
+var chart = new google.visualization.LineChart(document.getElementById('linechart_material'));
+chart.draw(joinedData, options);
+}
+
+</script>

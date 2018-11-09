@@ -1,0 +1,19 @@
+var options = {
+          title: 'Temperature',
+	      hAxis: {
+	         format: 'HH:mm',
+			 gridlines: {
+                            color: 'transparent'
+                            },
+	      },
+
+
+	    interpolateNulls: true,
+
+	   legend: { position: 'bottom' },
+	   theme: 'maximized'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('linechart_material'));
+        chart.draw(data, options);
+      }

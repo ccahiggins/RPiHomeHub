@@ -1,0 +1,30 @@
+<html>
+	<head>
+		<meta name = "viewport" content = "width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="/styles.css" type="text/css" media="screen" />
+	</head>
+    <body>
+		<div  class = "enjoy-css">Boiler controller</div>
+		<form method="post" action="addtimer">
+		<form action="addtimey">Select a time:<input type="time" name="starttime" value="06:30">
+		<p><label class="description" for="duration"> Duration</label>
+		<input type="number" name="duration" min="10" max="240" step="10" value="30" required="true">
+		<p>
+		<label class="description" for="boileritem">
+		</label>
+		<input id="boileritem_water" name="boileritem" class="element radio" type="radio" value="0" checked="checked"/>
+		<label class="choice" for="boileritem_water">Water</label>
+		<input id="boileritem_heating" name="boileritem" class="element radio" type="radio" value="1" />
+		<label class="choice" for="boileritem_heating">Heating</label>
+		<p>
+		<label class="description" for="onetime"> </label>
+		<input id="onetime_1" name="onetime" class="element radio" type="radio" value="1" checked="checked"/>
+		<label class="choice" for="onetime_1">One Time</label>
+		<input id="onetime_0" name="onetime" class="element radio" type="radio" value="0" />
+		<label class="choice" for="onetime_0">Daily</label>
+		<p>
+		<input type="submit"></form>
+		<p>
+		<a href="timer">Back to Timer</a>
+	</body>
+</html>

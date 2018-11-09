@@ -1,0 +1,12 @@
+.htpasswd
+*.o
+TODO
+db/
+chartdata
+civet.conf
+old/
+out/
+logs/
+hub
+timers.txt
+libcivetweb.a

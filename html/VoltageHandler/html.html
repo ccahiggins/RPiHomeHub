@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="/styles.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	</head>
+	<body>
+	<div id="foo" class="header">
+		<div class="enjoy-css">Welcome to the Raspberry Pi Home Hub <a href="timer">Timer</a></div>
+	</div>
+		<div id="chart_container"></div>
+		<script>
+			google.charts.load('current', {packages: ['corechart', 'line']});
+			google.charts.setOnLoadCallback(drawChart);
+			function drawChart() {
+			var data = google.visualization.arrayToDataTable([
+				%s
+			]);
+
+			var options = {
+				title: 'Voltage',
+				interpolateNulls: 'true'
+			};
+
+			var chart = new google.visualization.LineChart(document.getElementById('chart_container'));
+
+			chart.draw(data, options);
+			}
+			
+			$(window).resize(function() {
+				if(this.resizeTO) clearTimeout(this.resizeTO);
+				this.resizeTO = setTimeout(function() {
+					$(this).trigger('resizeEnd');
+				}, 100);
+			});
+
+			//redraw graph when window resize is completed  
+			$(window).on('resizeEnd', function() {
+			var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 40) + "px";
+
+			document.getElementById('chart_container').setAttribute("style",sausage);
+				drawChart();
+			});
+
+			var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 40) + "px";
+
+			document.getElementById('chart_container').setAttribute("style",sausage);
+		</script>
+	</body>
+</html>

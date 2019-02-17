@@ -11,6 +11,8 @@
 #include "CivetServer.h"
 #include "ChartCreator.hpp"
 #include "ReadHtml.hpp"
+#include "AuthHandler.hpp"
+#include "boost/format.hpp"
 
 
 class ChartHandler: public CivetHandler

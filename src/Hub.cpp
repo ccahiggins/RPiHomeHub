@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <iterator>
 
 #include "RadioController.hpp"
 #include "TempSensorController.hpp"
@@ -7,12 +8,13 @@
 #include "Timer.hpp"
 
 #define DOCUMENT_ROOT "./html"
-#define PORT "8081"
+#define PORT "8081,443s"
 #define CERT "html/server.pem"
 #define CHART_URI "/chart"
 #define CHART2_URI "/chart2"
 #define EXIT_URI "/exit"
 
+#define HOME_URI "/new"
 #define HUB_URI "/hub"
 #define HUB_JSON_URI "/jsonhub"
 #define BOILER_URI "/boiler"
@@ -27,9 +29,14 @@
 //#define POST_URI "/post"
 #define VOLTAGE_URI "/voltage"
 #define ADDTIMER_URI "/addtimer"
+#define TEST_URI "/test"
+#define LOGIN_URI "/login"
+
+#define IFTTT_URI "/ifttt"
 //#define LIGHTSON_URI "/lightson"
 //#define LIGHTSOFF_URI "/lightsoff"
 
+#include "IftttHandler.hpp"
 #include "TimerHandler.hpp"
 #include "TimerDeleteHandler.hpp"
 #include "TimerAddHandler.hpp"
@@ -40,8 +47,11 @@
 #include "ChartHandler.hpp"
 //#include "ChartHandlerTest.hpp"
 #include "VoltageHandler.hpp"
-#include "JsonBoilerHandler.hpp"
-#include "JsonBoilerStatusHandler.hpp"
+#include "TestHandler.hpp"
+#include "LoginHandler.hpp"
+#include "HomeHandler.hpp"
+//#include "JsonBoilerHandler.hpp"
+//#include "JsonBoilerStatusHandler.hpp"
 //#include "JsonHubHandler.h"
 
 
@@ -100,11 +110,20 @@ void writeToFile(std::string message) {
 }
 
 int main(int argc, char** argv)  {
-	
 	using namespace std;
+
+	ifstream myfile("civet.conf");
+	std::vector<std::string> myLines;
+	std::copy(std::istream_iterator<std::string>(myfile),
+	std::istream_iterator<std::string>(),
+	std::back_inserter(myLines));
+
+	
 	atexit(exiting);
 	timer.loadTimers();
-	CivetServer server(options);
+	//CivetServer server(options);
+	CivetServer server(myLines);
+	server.addHandler(HOME_URI, new HomeHandler());
 	server.addHandler(HUB_URI, new HubHandler(&boilr, &tempSensControl));
 	//server.addHandler(HUB_URI, new HubHandler(&boilr));
 	server.addHandler(BOILER_URI, new BoilerHandler(&boilr));
@@ -115,9 +134,12 @@ int main(int argc, char** argv)  {
 	server.addHandler(TIMER_DELETE_URI, new TimerDeleteHandler(&timer));
 	server.addHandler(CHART_URI, new ChartHandler());
 	server.addHandler(VOLTAGE_URI, new VoltageHandler());
-	server.addHandler(BOILER_JSON_URI, new JsonBoilerHandler(&boilr));
+
+	//server.addHandler(BOILER_JSON_URI, new JsonBoilerHandler(&boilr));
 	//server.addHandler(HUB_JSON_URI, new JsonHubHandler(&boilr));
-	server.addHandler(BOILER_JSON_STATUS_URI, new JsonBoilerStatusHandler(&boilr));
+	//server.addHandler(BOILER_JSON_STATUS_URI, new JsonBoilerStatusHandler(&boilr));
+	server.addHandler(IFTTT_URI, new IftttHandler(&boilr, &timer, &tempSensControl));
+	server.addHandler(LOGIN_URI, new LoginHandler());
 
 	while(keepRunning) {
 		checkTimer();
@@ -131,7 +153,7 @@ int main(int argc, char** argv)  {
 int timerCounterThingy=0;
 
 void checkTimer() {
-	if (timerCounterThingy >= 10) {
+	if (timerCounterThingy >= 5) {
 		Timer::TimerEvent* event;
 			event = timer.checkTimer(1);
 		if (event != NULL) {
@@ -144,10 +166,10 @@ void checkTimer() {
 				 << "Duration: " << event1.duration  
 				 << endl; */
 			if(event1.boilerItem == 0) {
-				//writeToFile("Checking timer: 0");
+				writeToFile("Checking timer: 0");
 				boilr.TurnWaterOn(event1.duration);
 			} else if(event1.boilerItem == 1) {
-				//writeToFile("Checking timer: 1");
+				writeToFile("Checking timer: 1");
 				boilr.TurnHeatingOn(event1.duration);
 			} else {
 				//writeToFile("Checking timer: X");

@@ -1,6 +1,6 @@
 // A2DD.h
 #ifndef HUBHANDLER_HPP
-#define HBUHANDLER_HPP
+#define HUBHANDLER_HPP
 
 #include <string>
 
@@ -9,6 +9,7 @@
 #include "TempSensorController.hpp"
 #include "ReadHtml.hpp"
 #include "boost/format.hpp"
+#include "AuthHandler.hpp"
 
 #define ERROR -2
 #define OFF 0

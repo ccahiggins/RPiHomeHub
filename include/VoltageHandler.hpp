@@ -11,6 +11,7 @@
 #include "CivetServer.h"
 #include "ReadHtml.hpp"
 #include "boost/format.hpp"
+#include "AuthHandler.hpp"
 
 class VoltageHandler: public CivetHandler
 {

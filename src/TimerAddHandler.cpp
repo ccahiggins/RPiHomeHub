@@ -6,51 +6,67 @@ TimerAddHandler::TimerAddHandler(Timer* timer_) {
 
 bool TimerAddHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	using namespace std;
+	using boost::format;	
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	
-	string html = ReadHtml::readHtml("html/TimerAddHandler/get.html");
-	mg_printf(conn, html.c_str());
-	
+	AuthHandler auth = AuthHandler();
+		if (auth.authorised(conn)) {
+		string html = ReadHtml::readHtml("html/TimerAddHandler/get.html");
+		mg_printf(conn, html.c_str());
+	} else {
+		const struct mg_request_info *req_info = mg_get_request_info(conn);
+		string uri = string(req_info->local_uri);
+		string html = ReadHtml::readHtml("html/auth/pleaselogin.html");
+		string s = str( format(html) % uri  );
+		mg_printf(conn, s.c_str());
+	}
 	return true;
 }
 	
 bool TimerAddHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 	using namespace std;
 	using boost::format;
-	using boost::io::group;
 
 	string s = "";
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
+	AuthHandler auth = AuthHandler();
+	if (auth.authorised(conn)) {
 
-	int startHour = 0;
-	int startMinute = 0;
-	int duration = 0;
-	int boilerItem = 0;
-	bool oneTime = true;
-	if (CivetServer::getParam(conn, "starttime", s)) {
-		startHour = atoi(s.substr(0, 2).c_str());
-		startMinute = atoi(s.substr(3, 2).c_str());
-	}
-	if (CivetServer::getParam(conn, "duration", s)) {
-		duration = atoi(s.c_str());
-	}
-	if (CivetServer::getParam(conn, "boileritem", s)) {
-		boilerItem = atoi(s.c_str());
-	}
-	if (CivetServer::getParam(conn, "onetime", s)) {
-		if (s.compare("1") == 0) {
-			oneTime=true;
+		int startHour = 0;
+		int startMinute = 0;
+		int duration = 0;
+		int boilerItem = 0;
+		bool oneTime = true;
+		if (CivetServer::getParam(conn, "starttime", s)) {
+			startHour = atoi(s.substr(0, 2).c_str());
+			startMinute = atoi(s.substr(3, 2).c_str());
 		}
-		else if (s.compare("0") == 0) {
-			oneTime=false;
+		if (CivetServer::getParam(conn, "duration", s)) {
+			duration = atoi(s.c_str());
 		}
-	}
-	
-	string message = addTimer(startHour, startMinute, duration, boilerItem, oneTime);
+		if (CivetServer::getParam(conn, "boileritem", s)) {
+			boilerItem = atoi(s.c_str());
+		}
+		if (CivetServer::getParam(conn, "onetime", s)) {
+			if (s.compare("1") == 0) {
+				oneTime=true;
+			}
+			else if (s.compare("0") == 0) {
+				oneTime=false;
+			}
+		}
+		
+		string message = addTimer(startHour, startMinute, duration, boilerItem, oneTime);
 
-	string html = str( format(ReadHtml::readHtml("html/TimerAddHandler/post.html")) % message);
-	mg_printf(conn, html.c_str());
-	
+		string html = str( format(ReadHtml::readHtml("html/TimerAddHandler/post.html")) % message);
+		mg_printf(conn, html.c_str());
+	} else {
+		const struct mg_request_info *req_info = mg_get_request_info(conn);
+		string uri = string(req_info->local_uri);
+		string html = ReadHtml::readHtml("html/auth/pleaselogin.html");
+		string s = str( format(html) % uri  );
+		mg_printf(conn, s.c_str());
+	}
 	return true;
 }
 

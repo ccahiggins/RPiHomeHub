@@ -63,7 +63,7 @@ overflow:hidden;
   text-shadow: 1px 1px 1px rgba(0,0,0,0.2) ;
 }
 
-.hhh a {
+.hhh a,button {
   float: left;
   display: inline-block;
   -webkit-box-sizing: content-box;
@@ -84,14 +84,20 @@ overflow:hidden;
   text-shadow: 1px 1px 1px rgba(0,0,0,0.2) ;
 }
 
-.hhh a:hover{
+.hhh a:hover,button:hover{
   background: #1c6582;
   -webkit-box-shadow: 5px 5px 3px 0 rgba(0,0,0,0.49) ;
   box-shadow: 5px 5px 3px 0 rgba(0,0,0,0.49) ;
 }
 
-.hhh a:active {
+.hhh a:active,button:active {
   background: #176582;
+  -webkit-box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
+  box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
+}
+
+.hhh button:disabled {
+  background: #1c6582;
   -webkit-box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
   box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
 }
@@ -102,7 +108,7 @@ overflow:hidden;
 	box-shadow: 2px 2px 10px 0 rgba(0,0,0,0.5) ;
 }
 
-.daysCont {
+.dayscont {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
@@ -131,10 +137,12 @@ overflow:hidden;
 	
 }
 
-
-
 .timer {
 	float:right;
+}
+
+.timer button {
+	padding:5px;
 }
 
 #waa {
@@ -149,7 +157,7 @@ overflow:hidden;
 
 .select-style {
 	margin-right: 5px;
-	height: 1.2em;
+	height: 1.1em;
     border: 1px solid #ccc;
     width: 30px;
     border-radius: 3px;
@@ -192,4 +200,8 @@ overflow:hidden;
 
 .heading a {
 	color: white;
+}
+
+[v-cloak] {
+  display: none;
 }

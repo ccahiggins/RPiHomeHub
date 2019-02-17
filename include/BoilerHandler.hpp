@@ -5,6 +5,7 @@
 #include "Boiler.hpp"
 #include "ReadHtml.hpp"
 #include "boost/format.hpp"
+#include "AuthHandler.hpp"
 
 #include <string>
 

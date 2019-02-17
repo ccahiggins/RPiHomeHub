@@ -24,6 +24,7 @@ void TempSensorController::checkSensors() {
 			cout << "Debug-> ID: " << payload.deviceNum << "  ==  " << flush;
 		} else {
 			saveTempData(payload.deviceNum, payload.temp, payload.voltage);
+			system("./push");
 			printSensorData(payload.deviceNum, payload.temp, payload.voltage);
 		}
 	}
@@ -76,7 +77,7 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 }
 
 std::vector<int> TempSensorController::lowBattery() {
-	float low = 3.2;
+	float low = 3.0;
 	std::vector<int> lowBatts;
 	
 	if (lastVoltage1 < low) {

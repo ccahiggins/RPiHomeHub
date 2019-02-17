@@ -8,6 +8,7 @@
 #include "ReadHtml.hpp"
 #include "boost/format.hpp"
 #include "Timer.hpp"
+#include "AuthHandler.hpp"
 
 #include <string>
 

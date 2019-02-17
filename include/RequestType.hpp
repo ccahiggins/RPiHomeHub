@@ -1,0 +1,16 @@
+enum class RequestType {
+	None,
+	WaterOn,
+	WaterOff,
+	HeatingOn,
+	HeatingOff,
+	Status,
+	Timers,
+	TimersAddWater,
+	TimersAddHeating,
+	TimersDelete,
+	TimersEnable,
+	TimersDisable,
+	TemperatureAll,
+	TemperatureOne,
+};

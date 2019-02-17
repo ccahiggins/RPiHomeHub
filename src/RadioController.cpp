@@ -40,7 +40,7 @@ bool RadioController::sendPayload(RF24NetworkHeader header, const void * payload
 	while (radioInUse)
 	{
 		writeToFile("Sleeping1");
-		cout << "Sleeping1" << endl;
+		cout << "|S1|" << flush;
 		usleep(5000);
 	}
 	radioInUse = true;
@@ -55,7 +55,7 @@ bool RadioController::sendPayload(RF24NetworkHeader header, const void * payload
 		counter++;
 	}
 	writeToFile("SendPayloadNotInUse");
-	usleep(100);
+	usleep(1000);
 	radioInUse = false;
 	
 	return ok;
@@ -108,7 +108,7 @@ RadioController::payload_temp RadioController::getTempPayload() {
 	while (radioInUse)
 	{
 		writeToFile("Sleeping3");
-		cout << "Sleeping3" << endl;
+		cout << "|S3|" << flush;
 		usleep(5000);
 	}
 	radioInUse = true;
@@ -117,7 +117,7 @@ RadioController::payload_temp RadioController::getTempPayload() {
 	bool yeah = false;
 	
 	network.update();
-	
+	usleep(5000);
 	while (network.available()) {
 		network.peek(header);
 		uint16_t f1 = 1;
@@ -133,7 +133,7 @@ RadioController::payload_temp RadioController::getTempPayload() {
 	}
 
 	writeToFile("getTempPayloadNotInUse");
-	usleep(100);
+	usleep(1000);
 	radioInUse = false;
 
 	if (yeah) {
@@ -150,7 +150,7 @@ RadioController::payload_boiler_status RadioController::sendGetBoilerPayload(RF2
 	while (radioInUse)
 	{
 		writeToFile("Sleeping4");
-		cout << "Sleeping4" << endl;
+		cout << "|S4|" << flush;
 		usleep(5000);
 	}
 	radioInUse = true;
@@ -164,18 +164,21 @@ RadioController::payload_boiler_status RadioController::sendGetBoilerPayload(RF2
 		ok = network.write(header,payload,size);
 		counter++;
 		cout << "W|" << flush;
+		usleep(5000);
 	}
 	payload_boiler_status returnPayload;
 
 	writeToFile("Network upodate");
 	//network.update();
 		
+	counter = 0;
 	if (ok) {		
 		writeToFile("Ok");
 		bool got=false;
-		while (!got) {
+		while (!got && counter < 50) {
 			writeToFile("!got update");
 			network.update();
+			usleep(5000);
 			while (network.available()) {
 				writeToFile("network avail");
 				got = true;
@@ -185,22 +188,24 @@ RadioController::payload_boiler_status RadioController::sendGetBoilerPayload(RF2
 					writeToFile("b");
 					network.read(header, &returnPayload, sizeof(returnPayload));
 					writeToFile("sendGetBoilerPayloadNotInUse");
-					usleep(100);
+					usleep(5000);
 					radioInUse = false;
 					return returnPayload;
 				}
 				writeToFile("This bit");
 				network.read(header, &returnPayload, sizeof(returnPayload));
+				cout << "Header:" << header.type << endl;
 			}
+			counter++;
 			writeToFile("Before sleep");
-			usleep(1000);
+			usleep(5000);
 		}
 	} else {
 		writeToFile("Not ok");
 		cout << "not ok" << endl;
 	}
 	writeToFile("sendGetBoilerPayloadNotInUse");
-	usleep(100);
+	usleep(1000);
 	radioInUse = false;
 	
 	cout << "Return 65535" << endl;

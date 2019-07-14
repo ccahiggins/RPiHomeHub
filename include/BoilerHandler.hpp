@@ -13,12 +13,12 @@ class BoilerHandler : public CivetHandler {
 	
 public:
  
-	BoilerHandler(Boiler* boiler_);
+	BoilerHandler(Boiler& boiler_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	
 private:
-	Boiler* boiler;
+	Boiler& boiler;
 };
 
 #endif

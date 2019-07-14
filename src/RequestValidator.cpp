@@ -35,11 +35,9 @@ bool RequestValidator::isValid() {
 }
 	
 bool RequestValidator::validNum(std::string numTxt, int minnum, int maxnum) {
-	
-	using namespace std;
-	
+		
 	if (validNum(numTxt)) {
-		int num = stoi(numTxt);
+		int num = std::stoi(numTxt);
 		
 		if (num >= minnum && num <= maxnum) {
 			return true;
@@ -52,10 +50,9 @@ bool RequestValidator::validNum(std::string numTxt, int minnum, int maxnum) {
 	
 bool RequestValidator::validNum(std::string numTxt) {
 
-  using namespace std;
 
   try {
-    stoi(numTxt);
+    std::stoi(numTxt);
   } catch(const std::invalid_argument &ex) {
     return false;
   }
@@ -68,14 +65,13 @@ bool RequestValidator::validNum(std::string numTxt) {
 
 bool RequestValidator::validateRequest(std::string request) {
 
-	using namespace std;
 	
 	//cout << request << endl;
-	string path = request;
-	string first = pathPart(path, 1);
-	string second = pathPart(path, 2);
-	string third = pathPart(path, 3);
-	string fourth = pathPart(path, 4);
+	std::string path = request;
+	std::string first = pathPart(path, 1);
+	std::string second = pathPart(path, 2);
+	std::string third = pathPart(path, 3);
+	std::string fourth = pathPart(path, 4);
 	
 	//cout << "1:" << first << ",2:"<< second << ",3:"<< third << ",4:"<< fourth << endl;
 	
@@ -112,10 +108,10 @@ bool RequestValidator::validateRequest(std::string request) {
 		} else if (third.compare("addwater") == 0) {
 			//hh-mm-onetime-duration
 			//1259
-			string hour = fourth.substr(0,2);
-			string minute = fourth.substr(2,2);
-			string onetime = fourth.substr(4,1);
-			string duration = fourth.substr(5,fourth.length() - 1);
+			std::string hour = fourth.substr(0,2);
+			std::string minute = fourth.substr(2,2);
+			std::string onetime = fourth.substr(4,1);
+			std::string duration = fourth.substr(5,fourth.length() - 1);
 			if (validNum(hour, 0, 23)) {
 				if (validNum(minute, 0, 59)) {
 					if (validNum(duration, 1, 1000)) {
@@ -131,10 +127,10 @@ bool RequestValidator::validateRequest(std::string request) {
 				}
 			}
 		} else if (third.compare("addheating") == 0) {
-			string hour = fourth.substr(0,2);
-			string minute = fourth.substr(2,2);
-			string onetime = fourth.substr(4,1);
-			string duration = fourth.substr(5,fourth.length() - 1);
+			std::string hour = fourth.substr(0,2);
+			std::string minute = fourth.substr(2,2);
+			std::string onetime = fourth.substr(4,1);
+			std::string duration = fourth.substr(5,fourth.length() - 1);
 			if (validNum(hour, 0, 23)) {
 				if (validNum(minute, 0, 59)) {
 					if (validNum(duration, 1, 1000)) {
@@ -187,18 +183,17 @@ bool RequestValidator::validateRequest(std::string request) {
 
 std::string RequestValidator::pathPart(std::string str, int num) {
 	
-	using namespace std;
-	string delimeter = "/";
+	std::string delimeter = "/";
 
-	string start;
-	string end = str.substr(1, str.length());
+	std::string start;
+	std::string end = str.substr(1, str.length());
 	
-	if (str.find(delimeter) == string::npos) {
+	if (str.find(delimeter) == std::string::npos) {
 		return "";
 	} else {
 		for (int i = 0; i < num; i++) {
 			size_t pos = end.find(delimeter);
-			if (pos > end.length() || pos == string::npos) {
+			if (pos > end.length() || pos == std::string::npos) {
 				if (!end.empty()) {
 					start = end.substr(0, end.length());
 					end = "";

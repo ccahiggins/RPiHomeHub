@@ -3,41 +3,37 @@
 
 
 std::string ChartCreator::getChartDays(std::string &days) {
-	using namespace std;
 	
-	string sqlStatement = getSqlStatementDays(days);
-	string tempData = getTempGraph(sqlStatement);
+	std::string sqlStatement = getSqlStatementDays(days);
+	std::string tempData = getTempGraph(sqlStatement);
 	
 	return tempData;
 }
 
 std::string ChartCreator::getChartFromDays(std::string &from, std::string &days) {
-	using namespace std;
 
-	string sqlStatement = getSqlStatementFromDays(from, days);
-	string tempData = getTempGraph(sqlStatement);
+	std::string sqlStatement = getSqlStatementFromDays(from, days);
+	std::string tempData = getTempGraph(sqlStatement);
 	
 	return tempData;
 }
 
 std::string ChartCreator::getChartFromTo(std::string &from, std::string &to) {
-	using namespace std;
 
-	string sqlStatement = getSqlStatementFromTo(from, to);
-	string tempData = getTempGraph(sqlStatement);
+	std::string sqlStatement = getSqlStatementFromTo(from, to);
+	std::string tempData = getTempGraph(sqlStatement);
 	
 	return tempData;
 }
 
 
 void ChartCreator::writeChartToFile() {
-	using namespace std;
 	
-	string days = "1";
-	string sqlStatement = getSqlStatementDays(days);
-	string tempData = getTempGraph(sqlStatement);
+	std::string days = "1";
+	std::string sqlStatement = getSqlStatementDays(days);
+	std::string tempData = getTempGraph(sqlStatement);
 	
-	ofstream myfile;
+	std::ofstream myfile;
 	myfile.open ("chartdata");
 	myfile << tempData;
 	myfile.close();
@@ -46,8 +42,8 @@ void ChartCreator::writeChartToFile() {
 
 
 std::string ChartCreator::getSqlStatementFromDays(std::string &from, std::string &days) {
-	using namespace std;
-	ostringstream ss;
+
+	std::ostringstream ss;
 	ss << "SELECT timestamp, temp, id ";
 	ss << "FROM temps ";
 	ss << "WHERE id IN (1,2,3,4) ";
@@ -58,7 +54,7 @@ std::string ChartCreator::getSqlStatementFromDays(std::string &from, std::string
 
 /* std::string ChartCreator::getSqlStatement(std::string &days)
 {
-	using namespace std;
+	//using namespace std;
 	ostringstream ss;
 	ss << "SELECT (STRFTIME('%Y', timestamp)) || ',' || (STRFTIME('%m', timestamp) - 1) || ',' || (STRFTIME('%d,%H,%M,%S', timestamp)), temp, id ";
 	ss << "FROM temps ";
@@ -68,10 +64,9 @@ std::string ChartCreator::getSqlStatementFromDays(std::string &from, std::string
 	return ss.str();
 } */
 
-std::string ChartCreator::getSqlStatementDays(std::string &days)
-{
-	using namespace std;
-	ostringstream ss;
+std::string ChartCreator::getSqlStatementDays(std::string &days) {
+
+	std::ostringstream ss;
 	ss << "SELECT timestamp, temp, id ";
 	ss << "FROM temps ";
 	ss << "WHERE id IN (1,2,3,4) ";
@@ -80,10 +75,9 @@ std::string ChartCreator::getSqlStatementDays(std::string &days)
 	return ss.str();
 }
 
-std::string ChartCreator::getSqlStatementFromTo(std::string &from, std::string &to)
-{
-	using namespace std;
-	ostringstream ss;
+std::string ChartCreator::getSqlStatementFromTo(std::string &from, std::string &to) {
+
+	std::ostringstream ss;
 	ss << "SELECT timestamp, temp, id ";
 	ss << "FROM temps ";
 	ss << "WHERE id IN (1,2,3,4) ";
@@ -93,16 +87,15 @@ std::string ChartCreator::getSqlStatementFromTo(std::string &from, std::string &
 	return ss.str();
 }
 
-std::string ChartCreator::getTempGraph(std::string &sqlStatement)
-{
-	using namespace std;
+std::string ChartCreator::getTempGraph(std::string &sqlStatement) {
+
 	int numGraphs = 1;
-	string somestuff = "";
+	std::string somestuff = "";
 
 	somestuff.append(ReadHtml::readHtml("html/ChartCreator/graph1.html"));
 	//somestuff.append("=========");
 
-	string data1=getTempData(sqlStatement);
+	std::string data1=getTempData(sqlStatement);
 	somestuff.append(data1);
 
 	somestuff.append(ReadHtml::readHtml("html/ChartCreator/graph2.html"));
@@ -111,7 +104,7 @@ std::string ChartCreator::getTempGraph(std::string &sqlStatement)
 	//Do this to make an example graph
 	//If there is no data returned form database
 	if (numGraphs < 1) {
-		string emptyGraph = "";
+		std::string emptyGraph = "";
 		emptyGraph.append(ReadHtml::readHtml("html/ChartCreator/emptyGraph.html"));
 		return emptyGraph;
 	}
@@ -119,15 +112,13 @@ std::string ChartCreator::getTempGraph(std::string &sqlStatement)
 
 }
 
-std::string ChartCreator::getTempData(std::string &sqlStatement)
-{
-	using namespace std;
+std::string ChartCreator::getTempData(std::string &sqlStatement) {
 
 	sqlite3 *db;
 	char *zErrMsg = 0;
 	int rc;
 	
-	vector<vector<string> > table;
+	std::vector<std::vector<std::string> > table;
 
 	rc = sqlite3_open("db/sqlTemplog.db", &db);
 	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
@@ -146,25 +137,21 @@ std::string ChartCreator::getTempData(std::string &sqlStatement)
 	}
 	
 	sqlite3_close(db);
-	string tempData=formatGraphData(table);
+	std::string tempData=formatGraphData(table);
 
-
-	
 	return tempData;
 }
 
-std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> > &data)
-{
-	using namespace std;
+std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> > &data) {
 	
-	string sensor1Name = "Bed";
-	string sensor2Name = "Living";
-	string sensor3Name = "Kids";
-	string sensor4Name = "Outside";
+	std::string sensor1Name = "Bed";
+	std::string sensor2Name = "Living";
+	std::string sensor3Name = "Kids";
+	std::string sensor4Name = "Outside";
 	
-	vector<string> sensors;
+	std::vector<std::string> sensors;
 	
-	ostringstream tempData;
+	std::ostringstream tempData;
 	if (data.size() < 1) {
 		return tempData.str();
 	}
@@ -180,7 +167,7 @@ std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> >
 			sensors.push_back(data[i][2]);
 	}
 
-	sort(sensors.begin(), sensors.end());
+	std::sort(sensors.begin(), sensors.end());
 
 	//Make titles for graph data
 	tempData << "['Date', ";
@@ -213,7 +200,7 @@ std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> >
 		tempData << data[i][0].substr (0, 4); 	  // year
 		tempData << ",";
 		
-		string month = data[i][0].substr (5, 2);  // Month
+		std::string month = data[i][0].substr (5, 2);  // Month
 		int value = atoi(month.c_str()) - 1;	  // Get month and subtract 1 for graph (Google months are 0-11)
 		
 		tempData << value; 						  // month - 1
@@ -242,17 +229,16 @@ std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> >
 	return tempData.str();
 }	
 
-int ChartCreator::callback(void *ptr, int argc, char* argv[], char* cols[])
-{
-	using namespace std;
-	typedef vector<vector<string> > table_type;
+int ChartCreator::callback(void *ptr, int argc, char* argv[], char* cols[]) {
+
+	typedef std::vector<std::vector<std::string> > table_type;
 	ChartCreator::TempData td;
 	table_type* table = static_cast<table_type*>(ptr);
-	vector<string> row;
-	for (int i = 0; i < argc; i++)
-	{
+	std::vector<std::string> row;
+	for (int i = 0; i < argc; i++) {
 		row.push_back(argv[i] ? argv[i] : "(NULL)");
 	}
 	table -> push_back(row);
+	
 	return 0;
 }

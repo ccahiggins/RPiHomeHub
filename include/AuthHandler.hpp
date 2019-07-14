@@ -17,10 +17,10 @@ class AuthHandler
 {
 	
 public:
-
 	bool authorised(struct mg_connection *conn);
 	bool login(struct mg_connection *conn, std::string &session, std::string &uri);
 	std::string getUserSession(struct mg_connection *conn, std::string username);
+	
 private:
 	std::string getUserPass(struct mg_connection *conn, std::string &username, std::string &password, std::string &uri);
 	void getSession(struct mg_connection *conn, std::string &session);

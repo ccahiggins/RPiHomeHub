@@ -1,8 +1,8 @@
 #include "Boiler.hpp"
 
-Boiler::Boiler(RadioController* radio_) {
+Boiler::Boiler(RadioController& radio_) : radio(radio_) {
 	std::cout << "BC" << std::endl;
-	radio = radio_;
+	//radio = radio_;
 	std::cout << "BC" << std::endl;
 }
 
@@ -14,7 +14,7 @@ bool Boiler::switchPin(int pin, int state, int duration, unsigned char type) {
 	payload.duration=duration;
 	// payload.option = PIN_SET;
 
-	bool ok = radio->sendPayload(header,&payload,sizeof(payload));
+	bool ok = radio.sendPayload(header,&payload,sizeof(payload));
 	
 	return ok;
 }
@@ -29,7 +29,7 @@ w = heating control
 */
 
 /* int Boiler::getStatus() {
-	using namespace std;
+	//using namespace std;
  	RF24NetworkHeader header(03, 'p');
 	RadioController::payload_boiler payload;
 	payload.pinNumber = pin;
@@ -82,7 +82,7 @@ bool Boiler::TurnHeatingOff() {
 }
 
 Boiler::boiler_status Boiler::getBoilerStatus() {
-	using namespace std;
+
  	RF24NetworkHeader header(03, 'b');
 	RadioController::payload_boiler_status payload;
 	payload.deviceNum=0;
@@ -93,7 +93,7 @@ Boiler::boiler_status Boiler::getBoilerStatus() {
 	
 	Boiler::boiler_status boilerStatus;
 	
-	RadioController::payload_boiler_status returnPayload = radio->sendGetBoilerPayload(header,&payload,sizeof(payload));	
+	RadioController::payload_boiler_status returnPayload = radio.sendGetBoilerPayload(header,&payload,sizeof(payload));	
 	if (returnPayload.deviceNum != ERRORPAYLOAD) {
 		if (returnPayload.heatingDuration > 0)
 		{

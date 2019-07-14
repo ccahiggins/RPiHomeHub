@@ -15,13 +15,12 @@
 class TimerDeleteHandler : public CivetHandler {
 	
 public:
- 
-	TimerDeleteHandler(Timer* timer_);
+	TimerDeleteHandler(Timer& timer_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	
 private:
-	Timer* timer;
+	Timer& timer;
 
 };
 

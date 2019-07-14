@@ -10,7 +10,7 @@ class Boiler
 
 public:
 
-	Boiler(RadioController* rcont_);
+	Boiler(RadioController& rcont_);
 
 	struct boiler_status
 	{
@@ -42,7 +42,7 @@ private:
 	const int ERRORPAYLOAD = 65535;
 	
 	// int getStatus(int pin);
-	RadioController* radio;
+	RadioController& radio;
 	bool switchPin(int pin, int state, int duration, unsigned char type);
 };
 

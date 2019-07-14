@@ -1,8 +1,8 @@
 #include "TempSensorController.hpp"
 
-TempSensorController::TempSensorController(RadioController* radio_) {
+TempSensorController::TempSensorController(RadioController& radio_) : radio(radio_) {
 	std::cout << "TC" << std::endl;
-	radio = radio_;
+	//radio = radio_;
 }
 
 float lastVoltage1 = 10;
@@ -15,13 +15,12 @@ const char *dbPath = "db/sqlTemplog.db";
 sqlite3_stmt *stmt = NULL;
 
 void TempSensorController::checkSensors() {
-	using namespace std;
 	
-	RadioController::payload_temp payload = radio->getTempPayload();
+	RadioController::payload_temp payload = radio.getTempPayload();
 	
 	if (payload.deviceNum != 65535) {
 		if (payload.deviceNum > 5) {
-			cout << "Debug-> ID: " << payload.deviceNum << "  ==  " << flush;
+			std::cout << "Debug-> ID: " << payload.deviceNum << "  ==  " << std::flush;
 		} else {
 			saveTempData(payload.deviceNum, payload.temp, payload.voltage);
 			system("./push");
@@ -32,16 +31,14 @@ void TempSensorController::checkSensors() {
 
 void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t voltage) {
 	
-	using namespace std;
-
-	cout << "S:OD=" << flush;
+	std::cout << "S:OD=" << std::flush;
 	int rc = sqlite3_open(dbPath, &db);
 	// If rc is not 0, there was an error
 	if(rc) {
-		cout << "S:ERRDB: " << sqlite3_errmsg(db) << "  ==  " << flush;
+		std::cout << "S:ERRDB: " << sqlite3_errmsg(db) << "  ==  " << std::flush;
 	}
 	
-	stringstream ss;
+	std::stringstream ss;
 	ss << "INSERT INTO temps( id, timestamp, temp, voltage) ";
 	ss << "VALUES(?,datetime('now', 'localtime'), ?, ?);";
 	 
@@ -58,7 +55,7 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 	sqlite3_step(stmt);  // Run SQL INSERT
 	sqlite3_reset(stmt); // Clear statement handle for next use
 	sqlite3_finalize(stmt);
-	cout << "S:CD/" << flush;
+	std::cout << "S:CD/" << std::flush;
 	rc = sqlite3_close(db);
 	int i = 0;
 	while(rc != SQLITE_OK) {
@@ -73,7 +70,7 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 	
 	ChartCreator chartCreator;
 	chartCreator.writeChartToFile();
-	cout << " " << rc << " " << flush;
+	std::cout << " " << rc << " " << std::flush;
 }
 
 std::vector<int> TempSensorController::lowBattery() {
@@ -97,16 +94,15 @@ std::vector<int> TempSensorController::lowBattery() {
 }
 
 void TempSensorController::printSensorData(uint16_t deviceNum, float temp, uint16_t voltage) {
-	using namespace std;
 	
-	stringstream s; 
-	s << fixed <<  setprecision(1) << temp;
+	std::stringstream s; 
+	s << std::fixed << std::setprecision(1) << temp;
 
-	cout << "S" << deviceNum 
+	std::cout << "S" << deviceNum 
 	<< ":" << s.str() << "°C,";
 
 	printCurrentTime();
-	cout << ",";
+	std::cout << ",";
 	
 	float battVolts = voltage * 0.001;
 	
@@ -122,26 +118,26 @@ void TempSensorController::printSensorData(uint16_t deviceNum, float temp, uint1
 					 break;
 		}
 		
-		cout << battVolts << "V" << " = " << flush;
+		std::cout << battVolts << "V" << " = " << std::flush;
 	} else {
-		cout << " = " << flush;
+		std::cout << " = " << std::flush;
 	}
 }
 
 void TempSensorController::printCurrentTime() {
-	using namespace std;
+
 	time_t t = time(0);   // get time now
 	struct tm * now = localtime( & t );
 	int hour=now->tm_hour;
 	if (hour < 10) {
-		cout << "0" << hour << ":" ;
+		std::cout << "0" << hour << ":" ;
 	} else {
-		cout << hour << ":";
+		std::cout << hour << ":";
 	}
 	int minute=now->tm_min;
 	if (minute < 10) {
-		cout << "0" << minute ;
+		std::cout << "0" << minute ;
 	} else{
-		cout << minute;
+		std::cout << minute;
 	}
 }

@@ -15,16 +15,14 @@ unsigned nextEventPos;
 std::vector<Timer::TimerEvent> timers;
 
 
-Timer::Timer()
-{
-	idCounter=0;
+Timer::Timer() {
 
+	idCounter=0;
 }
 
 void Timer::writeToFile(std::string message) {
-	using namespace std;
 	
-	ofstream myfile;
+	std::ofstream myfile;
 	myfile.open ("timer.txt", std::ios_base::app);
 	
 	time_t t = time(0);   // get time now
@@ -51,7 +49,7 @@ void Timer::writeToFile(std::string message) {
 		myfile << second << ": ";
 	}
 
-	myfile << message << endl;
+	myfile << message << std::endl;
 	myfile.close();
 }
 
@@ -140,8 +138,8 @@ std::vector<Timer::TimerEvent>& Timer::getTimers()
 	return timers;
 }
 
-bool Timer::addTimerEvent(int startHour, int startMinute, int duration, int boilerItem, bool enabled, bool oneTime)
-{
+bool Timer::addTimerEvent(int startHour, int startMinute, int duration, int boilerItem, bool enabled, bool oneTime) {
+
 	if (startHour == 24)
 		startHour=0;
 	bool ok=true;
@@ -368,10 +366,8 @@ int Timer::minsBetweenTimes(int hour1, int minute1, int hour2, int minute2)
 
 //Get the position of the next event in the list
 //Set the second to next event so timer can run
- void Timer::getNextTimerEvent()
-{
-	using namespace std;
-	ostringstream oss;
+ void Timer::getNextTimerEvent() {
+	std::ostringstream oss;
 	
 	secondsToNextEvent=0;
 	counter=0;
@@ -396,7 +392,7 @@ int Timer::minsBetweenTimes(int hour1, int minute1, int hour2, int minute2)
 		{
 			TimerEvent& event = timers[x];
 			//cout << "Timer to check: " << timers[x].startHour << ":" << timers[x].startMinute << ", enabled: " << timers[x].enabled << endl;
-			oss << "Check for timer: " << timers[x].startHour << ":" << timers[x].startMinute << ", enabled: " << timers[x].enabled << endl;
+			oss << "Check for timer: " << timers[x].startHour << ":" << timers[x].startMinute << ", enabled: " << timers[x].enabled << std::endl;
 			if (event.enabled)
 			{
 				isEvent=true;
@@ -431,34 +427,33 @@ int Timer::minsBetweenTimes(int hour1, int minute1, int hour2, int minute2)
 }
 
 void Timer::saveTimers() {
-	using namespace std;
 	
-	ofstream f;
+	std::ofstream f;
 	f.open("timers.txt");
 	
 	for (unsigned x=0; x<timers.size(); x++)
 	{
-		f << timers[x].startHour << endl;
-		f << timers[x].startMinute << endl;
-		f << timers[x].duration << endl;
-		f << timers[x].boilerItem << endl;
-		f << timers[x].enabled << endl;
-		f << timers[x].oneTime << endl;
-		f << timers[x].id << endl;
+		f << timers[x].startHour << std::endl;
+		f << timers[x].startMinute << std::endl;
+		f << timers[x].duration << std::endl;
+		f << timers[x].boilerItem << std::endl;
+		f << timers[x].enabled << std::endl;
+		f << timers[x].oneTime << std::endl;
+		f << timers[x].id << std::endl;
 	}
 	
 	f.close();
 }
 
 void Timer::loadTimers() {
-	using namespace std;
-	cout << "Loading timers" << endl;
+
+	std::cout << "Loading timers" << std::endl;
 	
-	ifstream f;
+	std::ifstream f;
 	f.open("timers.txt");
 	
 	int x;
-	vector<int> timerData;
+	std::vector<int> timerData;
 	
 	while (f >>  x) {
 		timerData.push_back(x);
@@ -479,7 +474,7 @@ void Timer::loadTimers() {
 		}
 	}
 	if (timerData.size() > 0) {
-		cout << "Error in timers file" << endl;
+		std::cout << "Error in timers file" << std::endl;
 	}
 	getNextTimerEvent();
 	f.close();

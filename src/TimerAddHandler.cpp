@@ -1,33 +1,28 @@
 #include "TimerAddHandler.hpp"
 
-TimerAddHandler::TimerAddHandler(Timer* timer_) {
-	timer = timer_;
-}
+TimerAddHandler::TimerAddHandler(Timer& timer_) : timer(timer_) {}
 
 bool TimerAddHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
-	using namespace std;
-	using boost::format;	
+	
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	
 	AuthHandler auth = AuthHandler();
 		if (auth.authorised(conn)) {
-		string html = ReadHtml::readHtml("html/TimerAddHandler/get.html");
+		std::string html = ReadHtml::readHtml("html/TimerAddHandler/get.html");
 		mg_printf(conn, html.c_str());
 	} else {
 		const struct mg_request_info *req_info = mg_get_request_info(conn);
-		string uri = string(req_info->local_uri);
-		string html = ReadHtml::readHtml("html/auth/pleaselogin.html");
-		string s = str( format(html) % uri  );
+		std::string uri = std::string(req_info->local_uri);
+		std::string html = ReadHtml::readHtml("html/auth/pleaselogin.html");
+		std::string s = boost::str(boost::format(html) % uri  );
 		mg_printf(conn, s.c_str());
 	}
 	return true;
 }
 	
 bool TimerAddHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
-	using namespace std;
-	using boost::format;
 
-	string s = "";
+	std::string s = "";
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	AuthHandler auth = AuthHandler();
 	if (auth.authorised(conn)) {
@@ -56,23 +51,23 @@ bool TimerAddHandler::handlePost(CivetServer *server, struct mg_connection *conn
 			}
 		}
 		
-		string message = addTimer(startHour, startMinute, duration, boilerItem, oneTime);
+		std::string message = addTimer(startHour, startMinute, duration, boilerItem, oneTime);
 
-		string html = str( format(ReadHtml::readHtml("html/TimerAddHandler/post.html")) % message);
+		std::string html = boost::str(boost::format(ReadHtml::readHtml("html/TimerAddHandler/post.html")) % message);
 		mg_printf(conn, html.c_str());
 	} else {
 		const struct mg_request_info *req_info = mg_get_request_info(conn);
-		string uri = string(req_info->local_uri);
-		string html = ReadHtml::readHtml("html/auth/pleaselogin.html");
-		string s = str( format(html) % uri  );
+		std::string uri = std::string(req_info->local_uri);
+		std::string html = ReadHtml::readHtml("html/auth/pleaselogin.html");
+		std::string s = boost::str(boost::format(html) % uri  );
 		mg_printf(conn, s.c_str());
 	}
 	return true;
 }
 
 std::string TimerAddHandler::addTimer(int hour, int minute, int duration, int boilerItem, bool onetime) {
-	using namespace std;
-	if (timer -> addTimerEvent(hour, minute, duration, boilerItem, true, onetime)) {
+
+	if (timer.addTimerEvent(hour, minute, duration, boilerItem, true, onetime)) {
 		std::ostringstream oss;
 		oss << "Added timer: ";
 		if (boilerItem == BOILER_ITEM_WATER) {

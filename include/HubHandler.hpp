@@ -20,14 +20,14 @@ class HubHandler : public CivetHandler
 	
 public:
  
-	HubHandler(Boiler* boiler_, TempSensorController* tempSens_);
+	HubHandler(Boiler& boiler_, TempSensorController& tempSens_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	
 private:
 
-	Boiler* boiler;
-	TempSensorController* tempSens;
+	Boiler& boiler;
+	TempSensorController& tempSens;
 };
 
 #endif

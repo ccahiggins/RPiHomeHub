@@ -27,7 +27,7 @@ CIVLIBA=libcivetweb.a
 
 all: $(BIN)hub
 	
-$(BIN)hub: $(OUT)Hub.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)JsonBoilerHandler.o $(OUT)JsonBoilerStatusHandler.o $(OUT)IftttHandler.o $(OUT)RequestValidator.o $(OUT)TestHandler.o $(OUT)AuthHandler.o $(OUT)LoginHandler.o $(OUT)HomeHandler.o
+$(BIN)hub: $(OUT)Hub.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)JsonBoilerHandler.o $(OUT)JsonBoilerStatusHandler.o $(OUT)IftttHandler.o $(OUT)RequestValidator.o $(OUT)AuthHandler.o $(OUT)LoginHandler.o $(OUT)HomeHandler.o
 	$(CC) -o $@ $^ $(CXXFLAGS) $(CIVET) $(SQLITE) $(RF24CMB) $(RF24) $(LIB)$(CIVLIBA) $(CRYPTO) $(UUID)
 	
 $(OUT)Hub.o: $(SRC)Hub.cpp
@@ -93,8 +93,8 @@ $(OUT)RequestValidator.o: $(SRC)RequestValidator.cpp $(INC)RequestValidator.hpp
 $(OUT)IftttHandler.o: $(SRC)IftttHandler.cpp $(INC)IftttHandler.hpp
 	$(CC) -o $@ -c $<  $(CXXFLAGS) $(CIVET) $(JSON) $(SQLITE)
 	
-$(OUT)TestHandler.o: $(SRC)TestHandler.cpp $(INC)TestHandler.hpp
-	$(CC) -o $@ -c $<  $(CXXFLAGS) $(CIVET)
+#$(OUT)TestHandler.o: $(SRC)TestHandler.cpp $(INC)TestHandler.hpp
+#	$(CC) -o $@ -c $<  $(CXXFLAGS) $(CIVET)
 	
 $(OUT)AuthHandler.o: $(SRC)AuthHandler.cpp $(INC)AuthHandler.hpp
 	$(CC) -o $@ -c $<  $(CXXFLAGS) $(CIVET) $(BOOST)

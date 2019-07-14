@@ -1,33 +1,27 @@
 #include "HubHandler.hpp"
 
-HubHandler::HubHandler(Boiler* boiler_, TempSensorController* tempSens_){
-	boiler = boiler_;
-	tempSens = tempSens_;
-}
+HubHandler::HubHandler(Boiler& boiler_, TempSensorController& tempSens_) :
+	boiler(boiler_), tempSens(tempSens_){}
 
 bool HubHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
-	using namespace std;
-	using boost::format;
-	using boost::io::group;
 		
-	string content = "";
-	
+	std::string content = "";
 	
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	AuthHandler auth = AuthHandler();
 	if (auth.authorised(conn)) {
-		vector<int> lowBatts = tempSens -> lowBattery();
+		std::vector<int> lowBatts = tempSens.lowBattery();
 		if (lowBatts.size() > 0) {
 			content.append("Low Battery");
 			for(std::vector<int>::iterator it = lowBatts.begin(); it != lowBatts.end(); ++it) {
-				content.append(to_string(*it));
+				content.append(std::to_string(*it));
 			}
 		}
 
 		//Get heating and water status
 		//int waterStatus = boiler->WaterStatus();
 		//int heatingStatus = boiler->HeatingStatus();
-		Boiler::boiler_status boilerStatus = boiler->getBoilerStatus();
+		Boiler::boiler_status boilerStatus = boiler.getBoilerStatus();
 		
 		int waterStatus = boilerStatus.waterStatus;
 		int heatingStatus = boilerStatus.heatingStatus;
@@ -35,19 +29,15 @@ bool HubHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 		if (waterStatus == ERROR) {
 			content.append(ReadHtml::readHtml("html/HubHandler/cantCommunicate.html"));
 		}
-		else
-		{
-			if (waterStatus == OFF)
-			{
+		else {
+			if (waterStatus == OFF) {
 				content.append(ReadHtml::readHtml("html/HubHandler/waterOn.html"));
 			}
-			else if (waterStatus == ON)
-			{
+			else if (waterStatus == ON) {
 				content.append(ReadHtml::readHtml("html/HubHandler/turnWaterOn.html"));
 			}
-			else if (waterStatus > 0)
-			{
-				content.append(str( format(ReadHtml::readHtml("html/HubHandler/waterOnFor.html")) % waterStatus));
+			else if (waterStatus > 0) {
+				content.append(boost::str(boost::format(ReadHtml::readHtml("html/HubHandler/waterOnFor.html")) % waterStatus));
 			}
 			
 		}
@@ -56,24 +46,21 @@ bool HubHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 		}
 		else
 		{
-			if (heatingStatus == OFF)
-			{
+			if (heatingStatus == OFF) {
 				content.append(ReadHtml::readHtml("html/HubHandler/heatingOn.html"));
 			}
-			else if (heatingStatus == ON)
-			{
+			else if (heatingStatus == ON) {
 				content.append(ReadHtml::readHtml("html/HubHandler/turnHeatingOn.html"));
 			}
-			else if (heatingStatus > 0)
-			{
-				content.append(str( format(ReadHtml::readHtml("html/HubHandler/heatingOnFor.html")) % heatingStatus));
+			else if (heatingStatus > 0) {
+				content.append(boost::str(boost::format(ReadHtml::readHtml("html/HubHandler/heatingOnFor.html")) % heatingStatus));
 			}
 			
 		}
 		
-		string days;
-		string from;
-		string to;
+		std::string days;
+		std::string from;
+		std::string to;
 		bool foundDays = CivetServer::getParam(conn, "days", days);
 		bool foundFrom = CivetServer::getParam(conn, "from", from);
 		bool foundTo = CivetServer::getParam(conn, "to", to);
@@ -91,14 +78,14 @@ bool HubHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 			days = "0";
 		}
 
-		string html = str( format(ReadHtml::readHtml("html/HubHandler/html.html")) % content % days % from % to);
+		std::string html = boost::str(boost::format(ReadHtml::readHtml("html/HubHandler/html.html")) % content % days % from % to);
 		
 		mg_printf(conn, html.c_str());
 	} else {
 		const struct mg_request_info *req_info = mg_get_request_info(conn);
-		string uri = string(req_info->local_uri);
-		string html = ReadHtml::readHtml("html/auth/pleaselogin.html");
-		string s = str( format(html) % uri  );
+		std::string uri = std::string(req_info->local_uri);
+		std::string html = ReadHtml::readHtml("html/auth/pleaselogin.html");
+		std::string s = boost::str(boost::format(html) % uri  );
 		mg_printf(conn, s.c_str());
 	}
 	return true;

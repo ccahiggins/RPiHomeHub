@@ -15,12 +15,10 @@
 #define OFF 0
 #define ON -1
 
-class IftttHandler : public CivetHandler
-{
+class IftttHandler : public CivetHandler {
 	
 public:
- 
-	IftttHandler(Boiler* boiler_, Timer* timer_, TempSensorController* tempSens_);
+	IftttHandler(Boiler& boiler_, Timer& timer_, TempSensorController& tempSens_);
 
 	//bool handleGet(CivetServer *server, struct mg_connection *conn);
 	bool handlePost(CivetServer *server, struct mg_connection *conn);
@@ -30,9 +28,9 @@ private:
 	std::string getTemp(std::string id);
 	std::string getTimers();
 	static int callback(void *ptr, int argc, char* argv[], char* cols[]);
-	Boiler* boiler;
-	Timer* timer;
-	TempSensorController* tempSens;
+	Boiler& boiler;
+	Timer& timer;
+	TempSensorController& tempSens;
 };
 
 #endif

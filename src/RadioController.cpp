@@ -6,13 +6,11 @@
 // 'p' Boiler
 
 const int COUNT = 5;
-
 volatile bool radioInUse;
 
-RadioController::RadioController():radio(RPI_V2_GPIO_P1_22, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ),network(radio) {
-	using namespace std;
+RadioController::RadioController() : radio(RPI_V2_GPIO_P1_22, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ),network(radio) {
 
-	cout << "RC" << endl;
+	std::cout << "RC" << std::endl;
 
 	radio.begin();
 	const uint16_t node = 00;
@@ -27,20 +25,18 @@ RadioController::RadioController():radio(RPI_V2_GPIO_P1_22, BCM2835_SPI_CS0, BCM
 }
 
 void RadioController::writeToFile(std::string text) {
-    using namespace std;
-    ofstream myfile;
-    myfile.open ("logs/inUseThingy.txt", ios::app);
-    myfile << text << endl;
+
+    std::ofstream myfile;
+    myfile.open ("logs/inUseThingy.txt", std::ios::app);
+    myfile << text << std::endl;
     myfile.close();
 }
 
 bool RadioController::sendPayload(RF24NetworkHeader header, const void * payload, uint16_t size) {
-	using namespace std;
 
-	while (radioInUse)
-	{
+	while (radioInUse) {
 		writeToFile("Sleeping1");
-		cout << "|S1|" << flush;
+		std::cout << "|S1|" << std::flush;
 		usleep(5000);
 	}
 	radioInUse = true;
@@ -62,7 +58,7 @@ bool RadioController::sendPayload(RF24NetworkHeader header, const void * payload
 }
 
 /* RadioController::payload_boiler_status RadioController::getBoilerPayload() {
-	using namespace std;
+	//using namespace std;
 
 	RF24NetworkHeader header;
 	payload_boiler payload;
@@ -100,15 +96,13 @@ bool RadioController::sendPayload(RF24NetworkHeader header, const void * payload
 } */
 
 RadioController::payload_temp RadioController::getTempPayload() {
-	using namespace std;
 
 	RF24NetworkHeader header;
 	payload_temp payload;
 
-	while (radioInUse)
-	{
+	while (radioInUse) {
 		writeToFile("Sleeping3");
-		cout << "|S3|" << flush;
+		std::cout << "|S3|" << std::flush;
 		usleep(5000);
 	}
 	radioInUse = true;
@@ -145,12 +139,11 @@ RadioController::payload_temp RadioController::getTempPayload() {
 }
 
 RadioController::payload_boiler_status RadioController::sendGetBoilerPayload(RF24NetworkHeader header, const void * payload, uint16_t size) {
-	using namespace std;
 	
 	while (radioInUse)
 	{
 		writeToFile("Sleeping4");
-		cout << "|S4|" << flush;
+		std::cout << "|S4|" << std::flush;
 		usleep(5000);
 	}
 	radioInUse = true;
@@ -158,12 +151,12 @@ RadioController::payload_boiler_status RadioController::sendGetBoilerPayload(RF2
 
 	bool ok = false;
 	int counter = 0;
-	cout << "X|" << flush;
+	std::cout << "X|" << std::flush;
 	while (!ok && counter < COUNT) {
 		writeToFile("while counter thing");
 		ok = network.write(header,payload,size);
 		counter++;
-		cout << "W|" << flush;
+		std::cout << "W|" << std::flush;
 		usleep(5000);
 	}
 	payload_boiler_status returnPayload;
@@ -194,7 +187,7 @@ RadioController::payload_boiler_status RadioController::sendGetBoilerPayload(RF2
 				}
 				writeToFile("This bit");
 				network.read(header, &returnPayload, sizeof(returnPayload));
-				cout << "Header:" << header.type << endl;
+				std::cout << "Header:" << header.type << std::endl;
 			}
 			counter++;
 			writeToFile("Before sleep");
@@ -202,13 +195,13 @@ RadioController::payload_boiler_status RadioController::sendGetBoilerPayload(RF2
 		}
 	} else {
 		writeToFile("Not ok");
-		cout << "not ok" << endl;
+		std::cout << "not ok" << std::endl;
 	}
 	writeToFile("sendGetBoilerPayloadNotInUse");
 	usleep(1000);
 	radioInUse = false;
 	
-	cout << "Return 65535" << endl;
+	std::cout << "Return 65535" << std::endl;
 
 	returnPayload.deviceNum = 65535;
 	return returnPayload;

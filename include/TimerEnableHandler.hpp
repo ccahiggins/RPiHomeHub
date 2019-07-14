@@ -16,12 +16,12 @@ class TimerEnableHandler : public CivetHandler {
 	
 public:
  
-	TimerEnableHandler(Timer* timer_);
+	TimerEnableHandler(Timer& timer_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	
 private:
-	Timer* timer;
+	Timer& timer;
 
 };
 

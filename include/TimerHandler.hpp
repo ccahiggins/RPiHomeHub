@@ -9,17 +9,15 @@
 #include "boost/format.hpp"
 #include "AuthHandler.hpp"
 
-class TimerHandler : public CivetHandler
-{
+class TimerHandler : public CivetHandler {
 	
 public:
- 
-	TimerHandler(Timer* timer_);
+	TimerHandler(Timer& timer_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	
 private:
-	Timer* timer;
+	Timer& timer;
 };
 
 #endif

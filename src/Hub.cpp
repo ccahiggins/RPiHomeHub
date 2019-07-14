@@ -47,7 +47,7 @@
 #include "ChartHandler.hpp"
 //#include "ChartHandlerTest.hpp"
 #include "VoltageHandler.hpp"
-#include "TestHandler.hpp"
+//#include "TestHandler.hpp"
 #include "LoginHandler.hpp"
 #include "HomeHandler.hpp"
 //#include "JsonBoilerHandler.hpp"
@@ -56,8 +56,8 @@
 
 
 RadioController radioControl;
-Boiler boilr(&radioControl);
-TempSensorController tempSensControl(&radioControl);
+Boiler boilr(radioControl);
+TempSensorController tempSensControl(radioControl);
 Timer timer;
 
 int8_t volatile keepRunning = 1;
@@ -77,18 +77,16 @@ const char * options[] = {
 void checkTimer();
 
 void exiting(void) {
-	using namespace std;
-	cout << "exiting" << endl;
+	std::cout << "exiting" << std::endl;
 }
 
 void writeToFile(std::string message) {
-	using namespace std;
 	
-	ofstream myfile;
+	std::ofstream myfile;
 	myfile.open ("timer.txt", std::ios_base::app);
 	
 	time_t t = time(0);   // get time now
-	struct tm * now = localtime( & t );
+	struct tm * now = localtime( &t );
 	int hour=now->tm_hour;
 	if (hour < 10)
 		myfile << "0" << hour << ":" ;
@@ -105,14 +103,13 @@ void writeToFile(std::string message) {
 	else
 		myfile << second << ": ";
 
-	myfile << message << endl;
+	myfile << message << std::endl;
 	myfile.close();
 }
 
 int main(int argc, char** argv)  {
-	using namespace std;
-
-	ifstream myfile("civet.conf");
+	
+	std::ifstream myfile("civet.conf");
 	std::vector<std::string> myLines;
 	std::copy(std::istream_iterator<std::string>(myfile),
 	std::istream_iterator<std::string>(),
@@ -124,21 +121,21 @@ int main(int argc, char** argv)  {
 	//CivetServer server(options);
 	CivetServer server(myLines);
 	server.addHandler(HOME_URI, new HomeHandler());
-	server.addHandler(HUB_URI, new HubHandler(&boilr, &tempSensControl));
+	server.addHandler(HUB_URI, new HubHandler(boilr, tempSensControl));
 	//server.addHandler(HUB_URI, new HubHandler(&boilr));
-	server.addHandler(BOILER_URI, new BoilerHandler(&boilr));
-	server.addHandler(TIMER_URI, new TimerHandler(&timer));
-	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(&timer));
-	server.addHandler(TIMER_ENABLE_URI, new TimerEnableHandler(&timer));
-	server.addHandler(TIMER_DISABLE_URI, new TimerDisableHandler(&timer));
-	server.addHandler(TIMER_DELETE_URI, new TimerDeleteHandler(&timer));
+	server.addHandler(BOILER_URI, new BoilerHandler(boilr));
+	server.addHandler(TIMER_URI, new TimerHandler(timer));
+	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(timer));
+	server.addHandler(TIMER_ENABLE_URI, new TimerEnableHandler(timer));
+	server.addHandler(TIMER_DISABLE_URI, new TimerDisableHandler(timer));
+	server.addHandler(TIMER_DELETE_URI, new TimerDeleteHandler(timer));
 	server.addHandler(CHART_URI, new ChartHandler());
 	server.addHandler(VOLTAGE_URI, new VoltageHandler());
 
 	//server.addHandler(BOILER_JSON_URI, new JsonBoilerHandler(&boilr));
 	//server.addHandler(HUB_JSON_URI, new JsonHubHandler(&boilr));
 	//server.addHandler(BOILER_JSON_STATUS_URI, new JsonBoilerStatusHandler(&boilr));
-	server.addHandler(IFTTT_URI, new IftttHandler(&boilr, &timer, &tempSensControl));
+	server.addHandler(IFTTT_URI, new IftttHandler(boilr, timer, tempSensControl));
 	server.addHandler(LOGIN_URI, new LoginHandler());
 
 	while(keepRunning) {
@@ -146,7 +143,7 @@ int main(int argc, char** argv)  {
 		tempSensControl.checkSensors();
 		usleep(200000);
 	}
-	cout << "Ckosibg" << endl;
+	std::cout << "Ckosibg" << std::endl;
 	return 0;
 }
 

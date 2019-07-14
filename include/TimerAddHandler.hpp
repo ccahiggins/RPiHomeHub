@@ -18,14 +18,14 @@ class TimerAddHandler : public CivetHandler
 	
 public:
  
-	TimerAddHandler(Timer* timer_);
+	TimerAddHandler(Timer& timer_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	bool handlePost(CivetServer *server, struct mg_connection *conn);
 	
 private:
 	const int BOILER_ITEM_WATER = 0;
-	Timer* timer;
+	Timer& timer;
 	std::string addTimer(int hour, int minute, int duration, int boilerItem, bool onetime);
 };
 

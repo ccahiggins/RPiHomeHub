@@ -447,7 +447,7 @@ void Timer::saveTimers() {
 
 void Timer::loadTimers() {
 
-	std::cout << "Loading timers" << std::endl;
+	std::cout << "\033[32mLoading timers\033[0m" << std::endl;
 	
 	std::ifstream f;
 	f.open("timers.txt");

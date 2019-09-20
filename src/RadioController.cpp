@@ -18,7 +18,7 @@ RadioController::RadioController() : radio(RPI_V2_GPIO_P1_22, BCM2835_SPI_CS0, B
 	radio.setChannel(90);
 	radio.setDataRate(RF24_250KBPS);
 	radio.setAutoAck(true);
-	//radio.printDetails();
+	radio.printDetails();
 	delay(5);
 	network.begin(node);
 	std::cout << "RC" << std::endl;
@@ -26,10 +26,10 @@ RadioController::RadioController() : radio(RPI_V2_GPIO_P1_22, BCM2835_SPI_CS0, B
 
 void RadioController::writeToFile(std::string text) {
 
-    std::ofstream myfile;
+   /* std::ofstream myfile;
     myfile.open ("logs/inUseThingy.txt", std::ios::app);
     myfile << text << std::endl;
-    myfile.close();
+    myfile.close();*/
 }
 
 bool RadioController::sendPayload(RF24NetworkHeader header, const void * payload, uint16_t size) {
@@ -140,8 +140,7 @@ RadioController::payload_temp RadioController::getTempPayload() {
 
 RadioController::payload_boiler_status RadioController::sendGetBoilerPayload(RF24NetworkHeader header, const void * payload, uint16_t size) {
 	
-	while (radioInUse)
-	{
+	while (radioInUse) {
 		writeToFile("Sleeping4");
 		std::cout << "|S4|" << std::flush;
 		usleep(5000);

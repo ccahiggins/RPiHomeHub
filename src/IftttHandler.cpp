@@ -3,17 +3,18 @@
 IftttHandler::IftttHandler(Boiler& boiler_, Timer& timer_, TempSensorController& tempSens_)
 	: boiler(boiler_), timer(timer_), tempSens(tempSens_) {}
 
-/**#define ERROR -2
+/**
+#define ERROR -2
 #define OFF 0
-#define ON -1*/
+#define ON -1
+*/
 
 int IftttHandler::callback(void *ptr, int argc, char* argv[], char* cols[]) {
 	
 	typedef std::vector<std::vector<std::string> > table_type;
 	table_type* table = static_cast<table_type*>(ptr);
 	std::vector<std::string> row;
-	for (int i = 0; i < argc; i++)
-	{
+	for (int i = 0; i < argc; i++) {
 		row.push_back(argv[i] ? argv[i] : "(NULL)");
 	}
 	table->push_back(row);
@@ -30,7 +31,7 @@ std::string IftttHandler::getTemp(std::string id) {
 
 	rc = sqlite3_open("/home/pi/h/db/sqlTemplog.db", &db);
 	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
-	if( rc ){
+	if (rc) {
 		fprintf(stderr, "C:ERRDB: %s\n", sqlite3_errmsg(db));
 		return 0;
 	}
@@ -41,15 +42,15 @@ std::string IftttHandler::getTemp(std::string id) {
 	
 	//int startT=clock();
 	rc = sqlite3_exec(db, sql, callback, &table, &zErrMsg);
-	if( rc != SQLITE_OK ) {
+	if (rc != SQLITE_OK ) {
 		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
 		sqlite3_free(zErrMsg);
 	}
 	
 	sqlite3_close(db);
 	
-	for ( auto &i : table ) {
-		for ( auto &j : i ) {
+	for (auto &i : table) {
+		for (auto &j : i) {
 			//cout << "got db:" << j << endl;
 			return j;
 		}

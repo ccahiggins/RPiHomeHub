@@ -98,11 +98,11 @@ void TempSensorController::printSensorData(uint16_t deviceNum, float temp, uint1
 	std::stringstream s; 
 	s << std::fixed << std::setprecision(1) << temp;
 
-	std::cout << "S" << deviceNum 
-	<< ":" << s.str() << "°C,";
+	std::cout << "\033[31mS" << deviceNum 
+	<< ":\033[36m" << s.str() << "°C,\033[32m";
 
 	printCurrentTime();
-	std::cout << ",";
+	std::cout << ",\033[35m";
 	
 	float battVolts = voltage * 0.001;
 	
@@ -118,7 +118,7 @@ void TempSensorController::printSensorData(uint16_t deviceNum, float temp, uint1
 					 break;
 		}
 		
-		std::cout << battVolts << "V" << " = " << std::flush;
+		std::cout << battVolts << "V\033[0m" << " = " << std::flush;
 	} else {
 		std::cout << " = " << std::flush;
 	}

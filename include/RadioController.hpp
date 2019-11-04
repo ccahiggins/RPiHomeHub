@@ -65,6 +65,9 @@ public:
 	payload_temp getTempPayload();
 	payload_boiler_status sendGetBoilerPayload(RF24NetworkHeader header, const void * payload, uint16_t size);
 
+private:
+    void setupRadio();
+
 };
 
 #endif

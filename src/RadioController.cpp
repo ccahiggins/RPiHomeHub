@@ -11,6 +11,19 @@ volatile bool radioInUse;
 RadioController::RadioController() : radio(RPI_V2_GPIO_P1_22, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ),network(radio) {
 
 	std::cout << "RC" << std::endl;
+    setupRadio();
+	std::cout << "RC" << std::endl;
+}
+
+void RadioController::writeToFile(std::string text) {
+
+   /* std::ofstream myfile;
+    myfile.open ("logs/inUseThingy.txt", std::ios::app);
+    myfile << text << std::endl;
+    myfile.close();*/
+}
+
+void RadioController::setupRadio() {
 
 	radio.begin();
 	const uint16_t node = 00;
@@ -21,15 +34,7 @@ RadioController::RadioController() : radio(RPI_V2_GPIO_P1_22, BCM2835_SPI_CS0, B
 	radio.printDetails();
 	delay(5);
 	network.begin(node);
-	std::cout << "RC" << std::endl;
-}
 
-void RadioController::writeToFile(std::string text) {
-
-   /* std::ofstream myfile;
-    myfile.open ("logs/inUseThingy.txt", std::ios::app);
-    myfile << text << std::endl;
-    myfile.close();*/
 }
 
 bool RadioController::sendPayload(RF24NetworkHeader header, const void * payload, uint16_t size) {

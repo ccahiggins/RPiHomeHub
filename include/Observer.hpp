@@ -4,7 +4,7 @@
 class Observer
 {
 public:
-    virtual void update(float temp) = 0;
+    virtual void update(int room, float temp) = 0;
 };
 
 #endif

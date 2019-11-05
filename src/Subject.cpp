@@ -3,22 +3,22 @@
 
 using namespace std;
 
-void Subject::Attach(Observer *shop)
+void Subject::attach(Observer *shop)
 {
     list.push_back(shop);
 }
-void Subject::Detach(Observer *shop)
+void Subject::detach(Observer *shop)
 {    
     list.erase(std::remove(list.begin(), list.end(), shop), list.end());    
 }
 
-void Subject::Notify(float price)
+void Subject::notify(int room, float temp)
 {
     for(vector<Observer*>::const_iterator iter = list.begin(); iter != list.end(); ++iter)
     {
         if(*iter != 0)
         {
-            (*iter)->update(price);
+            (*iter)->update(room, temp);
         }
     }
 }

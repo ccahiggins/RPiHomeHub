@@ -9,6 +9,7 @@
 #include "TempSensorController.hpp"
 #include "Boiler.hpp"
 #include "Timer.hpp"
+#include "Thermostat.hpp"
 
 #define DOCUMENT_ROOT "./html"
 #define PORT "8081,443s"
@@ -34,6 +35,7 @@
 #define ADDTIMER_URI "/addtimer"
 #define TEST_URI "/test"
 #define LOGIN_URI "/login"
+#define THERMOSTAT_URI "/thermostat"
 
 #define IFTTT_URI "/ifttt"
 //#define LIGHTSON_URI "/lightson"
@@ -56,10 +58,11 @@
 //#include "JsonBoilerHandler.hpp"
 //#include "JsonBoilerStatusHandler.hpp"
 //#include "JsonHubHandler.h"
+#include "ThermostatHandler.hpp"
 
 #include "Observer.hpp"
 
-class HubClass : Observer {
+class HubClass {
 
 int8_t volatile keepRunning = 1;
 int timerCounterThingy=0;
@@ -70,7 +73,6 @@ void writeToFile(std::string message);
 
 public:
   int startHub(int argc, char** argv);
-  void update(float temp);
 
 };
 #endif

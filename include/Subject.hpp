@@ -12,9 +12,9 @@ class Subject
     std::vector<Observer*> list;
 
 public:
-    void Attach(Observer *product);
-    void Detach(Observer *product);
-    void Notify(float temp); 
+    void attach(Observer *product);
+    void detach(Observer *product);
+    void notify(int room, float temp); 
 };
 
 #endif

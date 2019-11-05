@@ -10,7 +10,9 @@
 #include "RadioController.hpp"
 #include <sqlite3.h>
 
-class TempSensorController {
+#include "Subject.hpp"
+
+class TempSensorController : public Subject {
 
 public:
 	TempSensorController(RadioController& radio_);

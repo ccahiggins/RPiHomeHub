@@ -16,6 +16,11 @@ public:
 	void set_temperature(float temp);
 	void set_room(int room);
 
+	float get_selected_temp();
+	int get_selected_room();
+
+	bool is_thermostat_on();
+
 private:
 	Boiler& boiler;
 

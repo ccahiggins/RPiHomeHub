@@ -28,6 +28,7 @@ void Thermostat::turn_thermostat_on() {
 
 void Thermostat::turn_thermostat_off() {
 	thermostat_on = false;
+	boiler.TurnHeatingOff();
 }
 
 void Thermostat::set_temperature(float temp) {
@@ -36,4 +37,17 @@ void Thermostat::set_temperature(float temp) {
 
 void Thermostat::set_room(int room) {
 	selected_room = room;
+}
+
+bool Thermostat::is_thermostat_on() {
+
+	return thermostat_on;
+}
+
+float Thermostat::get_selected_temp() {
+	return selected_temp;
+}
+
+int Thermostat::get_selected_room() {
+	return selected_room;
 }

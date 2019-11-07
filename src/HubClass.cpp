@@ -1,3 +1,5 @@
+#include "HubClass.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <iterator>
@@ -54,33 +56,20 @@
 //#include "JsonBoilerStatusHandler.hpp"
 //#include "JsonHubHandler.h"
 
-
 RadioController radioControl;
 Boiler boilr(radioControl);
 TempSensorController tempSensControl(radioControl);
 Timer timer;
+Thermostat thermostat(boilr);
 
 int8_t volatile keepRunning = 1;
 
-void intHandler() {
+void HubClass::intHandler() {
 	printf("\nStopping...\n");
 	keepRunning = 0;
 }
 
-const char * options[] = {
-	"document_root", DOCUMENT_ROOT,
-	"listening_ports", PORT,
-	"global_auth_file" , "./.htpasswd",
-	0
-};
-
-void checkTimer();
-
-void exiting(void) {
-	std::cout << "exiting" << std::endl;
-}
-
-void writeToFile(std::string message) {
+void HubClass::writeToFile(std::string message) {
 	
 	std::ofstream myfile;
 	myfile.open ("timer.txt", std::ios_base::app);
@@ -107,7 +96,9 @@ void writeToFile(std::string message) {
 	myfile.close();
 }
 
-int main(int argc, char** argv)  {
+int HubClass::startHub(int argc, char** argv)  {
+
+	tempSensControl.attach(&thermostat);
 	
 	std::ifstream myfile("civet.conf");
 	std::vector<std::string> myLines;
@@ -116,7 +107,6 @@ int main(int argc, char** argv)  {
 	std::back_inserter(myLines));
 
 	
-	atexit(exiting);
 	timer.loadTimers();
 	//CivetServer server(options);
 	CivetServer server(myLines);
@@ -131,6 +121,7 @@ int main(int argc, char** argv)  {
 	server.addHandler(TIMER_DELETE_URI, new TimerDeleteHandler(timer));
 	server.addHandler(CHART_URI, new ChartHandler());
 	server.addHandler(VOLTAGE_URI, new VoltageHandler());
+	server.addHandler(THERMOSTAT_URI, new ThermostatHandler(thermostat));
 
 	//server.addHandler(BOILER_JSON_URI, new JsonBoilerHandler(&boilr));
 	//server.addHandler(HUB_JSON_URI, new JsonHubHandler(&boilr));
@@ -149,7 +140,7 @@ int main(int argc, char** argv)  {
 
 int timerCounterThingy=0;
 
-void checkTimer() {
+void HubClass::checkTimer() {
 	if (timerCounterThingy >= 5) {
 		Timer::TimerEvent* event;
 			event = timer.checkTimer(1);

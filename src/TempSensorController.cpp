@@ -25,6 +25,7 @@ void TempSensorController::checkSensors() {
 			saveTempData(payload.deviceNum, payload.temp, payload.voltage);
 			system("./push");
 			printSensorData(payload.deviceNum, payload.temp, payload.voltage);
+			notify(payload.deviceNum, payload.temp);
 		}
 	}
 }

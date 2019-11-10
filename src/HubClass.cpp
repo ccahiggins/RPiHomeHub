@@ -1,66 +1,11 @@
 #include "HubClass.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <iterator>
-
-#include "RadioController.hpp"
-#include "TempSensorController.hpp"
-#include "Boiler.hpp"
-#include "Timer.hpp"
-
-#define DOCUMENT_ROOT "./html"
-#define PORT "8081,443s"
-#define CERT "html/server.pem"
-#define CHART_URI "/chart"
-#define CHART2_URI "/chart2"
-#define EXIT_URI "/exit"
-
-#define HOME_URI "/new"
-#define HUB_URI "/hub"
-#define HUB_JSON_URI "/jsonhub"
-#define BOILER_URI "/boiler"
-#define BOILER_JSON_URI "/jsonboiler"
-#define BOILER_JSON_STATUS_URI "/json/boiler/status"
-//#define TIMERS_JSON_URI "/jsontimers"
-#define TIMER_URI "/timer"
-#define TIMER_ADD_URI "/timer/add"
-#define TIMER_DELETE_URI "/timer/delete"
-#define TIMER_ENABLE_URI "/timer/enable"
-#define TIMER_DISABLE_URI "/timer/disable"
-//#define POST_URI "/post"
-#define VOLTAGE_URI "/voltage"
-#define ADDTIMER_URI "/addtimer"
-#define TEST_URI "/test"
-#define LOGIN_URI "/login"
-
-#define IFTTT_URI "/ifttt"
-//#define LIGHTSON_URI "/lightson"
-//#define LIGHTSOFF_URI "/lightsoff"
-
-#include "IftttHandler.hpp"
-#include "TimerHandler.hpp"
-#include "TimerDeleteHandler.hpp"
-#include "TimerAddHandler.hpp"
-#include "TimerEnableHandler.hpp"
-#include "TimerDisableHandler.hpp"
-#include "HubHandler.hpp"
-#include "BoilerHandler.hpp"
-#include "ChartHandler.hpp"
-//#include "ChartHandlerTest.hpp"
-#include "VoltageHandler.hpp"
-//#include "TestHandler.hpp"
-#include "LoginHandler.hpp"
-#include "HomeHandler.hpp"
-//#include "JsonBoilerHandler.hpp"
-//#include "JsonBoilerStatusHandler.hpp"
-//#include "JsonHubHandler.h"
-
 RadioController radioControl;
 Boiler boilr(radioControl);
 TempSensorController tempSensControl(radioControl);
 Timer timer;
 Thermostat thermostat(boilr);
+Emailer emailer;
 
 int8_t volatile keepRunning = 1;
 
@@ -99,6 +44,7 @@ void HubClass::writeToFile(std::string message) {
 int HubClass::startHub(int argc, char** argv)  {
 
 	tempSensControl.attach(&thermostat);
+	tempSensControl.attach(&emailer);
 	
 	std::ifstream myfile("civet.conf");
 	std::vector<std::string> myLines;
@@ -110,9 +56,9 @@ int HubClass::startHub(int argc, char** argv)  {
 	timer.loadTimers();
 	//CivetServer server(options);
 	CivetServer server(myLines);
+
 	server.addHandler(HOME_URI, new HomeHandler());
 	server.addHandler(HUB_URI, new HubHandler(boilr, tempSensControl));
-	//server.addHandler(HUB_URI, new HubHandler(&boilr));
 	server.addHandler(BOILER_URI, new BoilerHandler(boilr));
 	server.addHandler(TIMER_URI, new TimerHandler(timer));
 	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(timer));
@@ -122,10 +68,7 @@ int HubClass::startHub(int argc, char** argv)  {
 	server.addHandler(CHART_URI, new ChartHandler());
 	server.addHandler(VOLTAGE_URI, new VoltageHandler());
 	server.addHandler(THERMOSTAT_URI, new ThermostatHandler(thermostat));
-
-	//server.addHandler(BOILER_JSON_URI, new JsonBoilerHandler(&boilr));
-	//server.addHandler(HUB_JSON_URI, new JsonHubHandler(&boilr));
-	//server.addHandler(BOILER_JSON_STATUS_URI, new JsonBoilerStatusHandler(&boilr));
+	server.addHandler(EMAILER_URI, new EmailerHandler(emailer));
 	server.addHandler(IFTTT_URI, new IftttHandler(boilr, timer, tempSensControl));
 	server.addHandler(LOGIN_URI, new LoginHandler());
 

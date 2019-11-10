@@ -10,6 +10,8 @@
 #include "Boiler.hpp"
 #include "Timer.hpp"
 #include "Thermostat.hpp"
+#include "Emailer.hpp"
+
 
 #define DOCUMENT_ROOT "./html"
 #define PORT "8081,443s"
@@ -36,6 +38,7 @@
 #define TEST_URI "/test"
 #define LOGIN_URI "/login"
 #define THERMOSTAT_URI "/thermostat"
+#define EMAILER_URI "/emailer"
 
 #define IFTTT_URI "/ifttt"
 //#define LIGHTSON_URI "/lightson"
@@ -59,6 +62,7 @@
 //#include "JsonBoilerStatusHandler.hpp"
 //#include "JsonHubHandler.h"
 #include "ThermostatHandler.hpp"
+#include "EmailerHandler.hpp"
 
 #include "Observer.hpp"
 

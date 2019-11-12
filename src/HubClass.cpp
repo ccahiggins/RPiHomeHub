@@ -53,7 +53,7 @@ int HubClass::startHub(int argc, char** argv)  {
 	std::back_inserter(myLines));
 
 	
-	timer.loadTimers();
+	//timer.loadTimers();
 	//CivetServer server(options);
 	CivetServer server(myLines);
 
@@ -79,37 +79,4 @@ int HubClass::startHub(int argc, char** argv)  {
 	}
 	std::cout << "Ckosibg" << std::endl;
 	return 0;
-}
-
-int timerCounterThingy=0;
-
-void HubClass::checkTimer() {
-	if (timerCounterThingy >= 5) {
-		Timer::TimerEvent* event;
-			event = timer.checkTimer(1);
-		if (event != NULL) {
-			Timer::TimerEvent event1 = *event;
-			timer.getNextTimerEvent();
-			//cout << "received this event:" <<  event1.startHour << ":" << event1.startMinute << ", duration:" << event1.duration << ", boilerItem:" << event1.boilerItem << endl;
-			/* cout << event << endl;
-			cout << "Hour: " << event1.startHour << ", "
-				 << "Minute: " << event1.startMinute << ", "
-				 << "Duration: " << event1.duration  
-				 << endl; */
-			if(event1.boilerItem == 0) {
-				writeToFile("Checking timer: 0");
-				boilr.TurnWaterOn(event1.duration);
-			} else if(event1.boilerItem == 1) {
-				writeToFile("Checking timer: 1");
-				boilr.TurnHeatingOn(event1.duration);
-			} else {
-				//writeToFile("Checking timer: X");
-			}
-		} else {
-			//writeToFile("Checking timer: NULL");
-		}
-		timerCounterThingy = 0;
-	} else {
-		timerCounterThingy += 1;
-	}
 }

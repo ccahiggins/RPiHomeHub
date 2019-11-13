@@ -1,5 +1,4 @@
 #include "Timer.hpp"
-
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -7,9 +6,7 @@
 std::thread th;
 bool running = false;
 
-
-Timer::Timer() {
-}
+Timer::Timer() {}
 
 void Timer::start(const Timer::Interval &interval, const Timeout &timeout) {
     running = true;
@@ -101,11 +98,6 @@ void Timer::get_next_event() {
                 }
             }
             counter++;
-        }
-        if (next_event >= 0) {
-            std::cout << "Next event: " << events[next_event]->get_hour() << ":" << events[next_event]->get_minute() << std::endl;
-        } else {
-            std::cout << "Next event: none" << std::endl;
         }
     }
 

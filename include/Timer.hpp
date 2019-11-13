@@ -26,8 +26,6 @@ public:
     std::shared_ptr<TimerEvent> get_event(int idx);
     const std::vector<std::shared_ptr<TimerEvent>> get_events() const;
 
-    
-
 private:
     typedef std::chrono::milliseconds Interval;
     typedef std::function<void(void)> Timeout;

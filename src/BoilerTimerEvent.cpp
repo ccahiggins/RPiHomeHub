@@ -9,12 +9,8 @@ BoilerTimerEvent::BoilerTimerEvent(int hour_, int minute_, bool one_time_, int i
 void BoilerTimerEvent::trigger_event() {
 	if(item == 0) {
 		boiler.TurnWaterOn(duration);
-		std::cout << "Timer turning heating on" << std::endl;
 	} else if(item == 1) {
 		boiler.TurnHeatingOn(duration);
-		std::cout << "Timer turning water on" << std::endl;
-	} else {
-		std::cout << "Timer turning... nothing on" << std::endl;
 	}
 }
 

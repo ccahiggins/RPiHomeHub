@@ -7,9 +7,7 @@ bool TimerHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	
 	AuthHandler auth = AuthHandler();
-	if (auth.authorised(conn)) {
-		//html.append(readHtml.readHtml("html/TimerHandler/head.html"));
-			
+	if (auth.authorised(conn)) {			
 		std::string content = "";
 		
 		std::vector<std::shared_ptr<TimerEvent>> timers = timer.get_events();
@@ -43,9 +41,9 @@ bool TimerHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 				std::string endis;
 				std::string enDis;
 				if (thermostat_event->get_on_off() == 0) {
-					whichone="ON";
-				} else {
 					whichone="OFF";
+				} else {
+					whichone="ON";
 				}
 				if (thermostat_event->is_enabled()) {
 					endis = "disable";

@@ -6,7 +6,6 @@ ThermostatTimerEvent::ThermostatTimerEvent(int hour_, int minute_, bool one_time
 }
 
 void ThermostatTimerEvent::trigger_event() {
-	std::cout << "Thermo trigger" << std::endl;
 	if (on_off) {
 		thermostat.turn_thermostat_on();
 		thermostat.set_room(room);

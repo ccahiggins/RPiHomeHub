@@ -59,7 +59,6 @@ int8_t volatile keepRunning = 1;
 int timerCounterThingy=0;
 
 void intHandler();
-void writeToFile(std::string message);
 void load_timer_events();
 
 public:

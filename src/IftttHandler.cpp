@@ -3,21 +3,17 @@
 IftttHandler::IftttHandler(Boiler& boiler_, Timer& timer_, TempSensorController& tempSens_)
 	: boiler(boiler_), timer(timer_), tempSens(tempSens_) {}
 
-/**
-#define ERROR -2
-#define OFF 0
-#define ON -1
-*/
-
 int IftttHandler::callback(void *ptr, int argc, char* argv[], char* cols[]) {
 	
 	typedef std::vector<std::vector<std::string> > table_type;
 	table_type* table = static_cast<table_type*>(ptr);
 	std::vector<std::string> row;
+
 	for (int i = 0; i < argc; i++) {
 		row.push_back(argv[i] ? argv[i] : "(NULL)");
 	}
 	table->push_back(row);
+
 	return 0;
 }
 
@@ -64,33 +60,37 @@ std::string IftttHandler::getTimers() {
 	std::string timerjson = "{\"timers\":[";
 	std::vector<std::shared_ptr<TimerEvent>> timers = timer.get_events();
 	for (unsigned x=0; x < timers.size(); x++) {
-		std::shared_ptr<BoilerTimerEvent> boiler_event = std::dynamic_pointer_cast<BoilerTimerEvent> (timers[x]);
-		std::string whichone;
-		std::string endis;
-		std::string onetime;
-		if (boiler_event->get_item() == 0) {
-			whichone="water";
-		} else {
-			whichone="heating";
-		}
-		if (boiler_event->is_enabled()) {
-			endis = "true";
-		} else {
-			endis = "false";
-		}
-		
-		if (boiler_event->is_one_time()) {
-			onetime = "true";
-		} else {
-			onetime = "false";
-		}
-		timerjson.append("{\"id\":\"" + std::to_string(x) + "\", \"boiler_item\":\"" + whichone + "\", \"hours\":\"" + std::to_string(boiler_event->get_hour()) + "\", \"minutes\":\"" +  std::to_string(boiler_event->get_minute()) + "\",\"duration\":\"" + std::to_string(boiler_event->get_duration()) + "\", \"onetime\":\"" + onetime + "\", \"enabled\":\"" + endis + "\"");
-		
-		//string s = str( format(line) % whichone % timers[x].startHour % timers[x].startMinute% timers[x].duration % enDis % timers[x].id % endis % timers[x].id );
-		//content.append(s);
-		timerjson.append("}");
-		if (!(x == timers.size() - 1)) {
-			timerjson.append(",");
+		std::shared_ptr<BoilerTimerEvent> boiler_event;
+		std::shared_ptr<ThermostatTimerEvent> thermostat_event;
+
+		if (boiler_event = std::dynamic_pointer_cast<BoilerTimerEvent> (timers[x])) {
+			std::string whichone;
+			std::string endis;
+			std::string onetime;
+			if (boiler_event->get_item() == 0) {
+				whichone = "water";
+			} else {
+				whichone = "heating";
+			}
+			if (boiler_event->is_enabled()) {
+				endis = "true";
+			} else {
+				endis = "false";
+			}
+			
+			if (boiler_event->is_one_time()) {
+				onetime = "true";
+			} else {
+				onetime = "false";
+			}
+			timerjson.append("{\"id\":\"" + std::to_string(x) + "\", \"boiler_item\":\"" + whichone + "\", \"hours\":\"" + std::to_string(boiler_event->get_hour()) + "\", \"minutes\":\"" +  std::to_string(boiler_event->get_minute()) + "\",\"duration\":\"" + std::to_string(boiler_event->get_duration()) + "\", \"onetime\":\"" + onetime + "\", \"enabled\":\"" + endis + "\"");
+			
+			//string s = str( format(line) % whichone % timers[x].startHour % timers[x].startMinute% timers[x].duration % enDis % timers[x].id % endis % timers[x].id );
+			//content.append(s);
+			timerjson.append("}");
+			if (!(x == timers.size() - 1)) {
+				timerjson.append(",");
+			}
 		}
 	}
 	timerjson.append("]}");

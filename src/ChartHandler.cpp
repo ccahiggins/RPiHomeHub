@@ -1,8 +1,5 @@
 #include "ChartHandler.hpp"
 
-int startTime=0;
-int endTime=0;
-
 ChartCreator chartCreator;
 
 bool ChartHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
@@ -10,7 +7,6 @@ bool ChartHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	AuthHandler auth = AuthHandler();
 	if (auth.authorised(conn)) {
-			startTime = clock();
 		std::string days;
 		std::string to;
 		std::string from;
@@ -27,22 +23,18 @@ bool ChartHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 			chart = chartCreator.getChartFromDays(from, days);
 		} else if (foundDays) {
 			if (days.compare("1") == 0) {
-			std::cout << "File" << std::flush;
-			chart = ReadHtml::readHtml("chartdata");
+				chart = ReadHtml::readHtml("chartdata");
 			} else {
 				chart = chartCreator.getChartDays(days);
 			}
 		}
 		else {
-			std::cout << "File" << std::flush;
 			chart = ReadHtml::readHtml("chartdata");
 			//days="1";
 			//chart = chartCreator.getChartDays(days);
 		}
 		
 		mg_printf(conn, "%s", chart.c_str());
-		endTime = clock();
-		std::cout << "T:" << endTime - startTime << std::flush;
 	} else {
 		const struct mg_request_info *req_info = mg_get_request_info(conn);
 		std::string uri = std::string(req_info->local_uri);

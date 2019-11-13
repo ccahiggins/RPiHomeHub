@@ -2,13 +2,7 @@
 
 TempSensorController::TempSensorController(RadioController& radio_) : radio(radio_) {
 	std::cout << "TC" << std::endl;
-	//radio = radio_;
 }
-
-float lastVoltage1 = 10;
-float lastVoltage2 = 10;
-float lastVoltage3 = 10;
-float lastVoltage4 = 10;
 
 sqlite3 *db = NULL;
 const char *dbPath = "db/sqlTemplog.db";
@@ -26,6 +20,7 @@ void TempSensorController::checkSensors() {
 			system("./push");
 			printSensorData(payload.deviceNum, payload.temp, payload.voltage);
 			notify(payload.deviceNum, payload.temp);
+			last_volts[payload.deviceNum] = payload.voltage;
 		}
 	}
 }
@@ -56,6 +51,7 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 	sqlite3_step(stmt);  // Run SQL INSERT
 	sqlite3_reset(stmt); // Clear statement handle for next use
 	sqlite3_finalize(stmt);
+
 	std::cout << "S:CD/" << std::flush;
 	rc = sqlite3_close(db);
 	int i = 0;
@@ -77,18 +73,11 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 std::vector<int> TempSensorController::lowBattery() {
 	float low = 3.0;
 	std::vector<int> lowBatts;
-	
-	if (lastVoltage1 < low) {
-		lowBatts.push_back(1);
-	}
-	if (lastVoltage2 < low) {
-		lowBatts.push_back(2);
-	}
-	if (lastVoltage3 < low) {
-		lowBatts.push_back(3);
-	}
-	if (lastVoltage4 < low) {
-		lowBatts.push_back(4);
+
+	for (std::pair<int, float> element : last_volts) {
+		if (element.second <= low) {
+			lowBatts.push_back(element.first);
+		}
 	}
 
 	return lowBatts;
@@ -99,46 +88,33 @@ void TempSensorController::printSensorData(uint16_t deviceNum, float temp, uint1
 	std::stringstream s; 
 	s << std::fixed << std::setprecision(1) << temp;
 
-	std::cout << "\033[31mS" << deviceNum 
-	<< ":\033[36m" << s.str() << "°C,\033[32m";
+	std::cout << "\033[31mS" << deviceNum << ":\033[36m" << s.str() << "°C,\033[32m";
 
 	printCurrentTime();
 	std::cout << ",\033[35m";
 	
 	float battVolts = voltage * 0.001;
 	
-	if (battVolts > 0) {
-		switch(deviceNum) {
-			case 1 : lastVoltage1 = battVolts;
-					 break;
-			case 2 : lastVoltage2 = battVolts;
-					 break;
-			case 3 : lastVoltage3 = battVolts;
-					 break;
-			case 4 : lastVoltage4 = battVolts;
-					 break;
-		}
-		
-		std::cout << battVolts << "V\033[0m" << " = " << std::flush;
-	} else {
-		std::cout << " = " << std::flush;
+	if (battVolts > 0) {	
+		std::cout << battVolts << "V\033[0m";
 	}
+	std::cout << " = " << std::flush;
 }
 
 void TempSensorController::printCurrentTime() {
 
 	time_t t = time(0);   // get time now
-	struct tm * now = localtime( & t );
-	int hour=now->tm_hour;
+	struct tm* now = localtime( & t );
+	int hour = now->tm_hour;
+	int minute = now->tm_min;
+
 	if (hour < 10) {
-		std::cout << "0" << hour << ":" ;
-	} else {
-		std::cout << hour << ":";
+		std::cout << "0";
 	}
-	int minute=now->tm_min;
+	std::cout << hour << ":";
+	
 	if (minute < 10) {
-		std::cout << "0" << minute ;
-	} else{
-		std::cout << minute;
+		std::cout << "0";
 	}
+	std::cout << minute;
 }

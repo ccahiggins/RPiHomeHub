@@ -14,33 +14,6 @@ void HubClass::intHandler() {
 	keepRunning = 0;
 }
 
-void HubClass::writeToFile(std::string message) {
-	
-	std::ofstream myfile;
-	myfile.open ("timer.txt", std::ios_base::app);
-	
-	time_t t = time(0);   // get time now
-	struct tm * now = localtime( &t );
-	int hour=now->tm_hour;
-	if (hour < 10)
-		myfile << "0" << hour << ":" ;
-	else
-		myfile << hour << ":";
-	int minute=now->tm_min;
-	if (minute < 10)
-		myfile << "0" << minute << ":" ;
-	else
-		myfile << minute << ":";
-	int second = now->tm_sec;
-	if (second < 10)
-		myfile << "0" << second << ": ";
-	else
-		myfile << second << ": ";
-
-	myfile << message << std::endl;
-	myfile.close();
-}
-
 int HubClass::startHub(int argc, char** argv)  {
 
 	tempSensControl.attach(&thermostat);

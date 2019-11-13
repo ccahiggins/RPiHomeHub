@@ -62,28 +62,29 @@ std::string IftttHandler::getTemp(std::string id) {
 std::string IftttHandler::getTimers() {
 	
 	std::string timerjson = "{\"timers\":[";
-	std::vector<Timer::TimerEvent>& timers = timer.getTimers();
+	std::vector<std::shared_ptr<TimerEvent>> timers = timer.get_events();
 	for (unsigned x=0; x < timers.size(); x++) {
+		std::shared_ptr<BoilerTimerEvent> boiler_event = std::dynamic_pointer_cast<BoilerTimerEvent> (timers[x]);
 		std::string whichone;
 		std::string endis;
 		std::string onetime;
-		if (timers[x].boilerItem == 0) {
+		if (boiler_event->get_item() == 0) {
 			whichone="water";
 		} else {
 			whichone="heating";
 		}
-		if (timers[x].enabled) {
+		if (boiler_event->is_enabled()) {
 			endis = "true";
 		} else {
 			endis = "false";
 		}
 		
-		if (timers[x].oneTime) {
+		if (boiler_event->is_one_time()) {
 			onetime = "true";
 		} else {
 			onetime = "false";
 		}
-		timerjson.append("{\"id\":\"" + std::to_string(timers[x].id) + "\", \"boiler_item\":\"" + whichone + "\", \"hours\":\"" + std::to_string(timers[x].startHour) + "\", \"minutes\":\"" +  std::to_string(timers[x].startMinute) + "\",\"duration\":\"" + std::to_string(timers[x].duration) + "\", \"onetime\":\"" + onetime + "\", \"enabled\":\"" + endis + "\"");
+		timerjson.append("{\"id\":\"" + std::to_string(x) + "\", \"boiler_item\":\"" + whichone + "\", \"hours\":\"" + std::to_string(boiler_event->get_hour()) + "\", \"minutes\":\"" +  std::to_string(boiler_event->get_minute()) + "\",\"duration\":\"" + std::to_string(boiler_event->get_duration()) + "\", \"onetime\":\"" + onetime + "\", \"enabled\":\"" + endis + "\"");
 		
 		//string s = str( format(line) % whichone % timers[x].startHour % timers[x].startMinute% timers[x].duration % enDis % timers[x].id % endis % timers[x].id );
 		//content.append(s);
@@ -240,7 +241,8 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 		int minute = stoi(rv.getMinute());
 		int duration = stoi(rv.getDuration());
 		
-		if (timer.addTimerEvent(hour, minute, duration, 0, true, onetime)) {
+		std::shared_ptr<TimerEvent> ev(new BoilerTimerEvent(hour, minute, onetime, 0, duration, boiler));
+		if (timer.add_event(ev)) {
 			mg_printf(conn, "{\"status\":\"done\"}");
 			change = true;
 		} else {
@@ -258,28 +260,29 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 		int minute = stoi(rv.getMinute());
 		int duration = stoi(rv.getDuration());
 		
-		if (timer.addTimerEvent(hour, minute, duration, 1, true, onetime)) {
+		std::shared_ptr<TimerEvent> ev(new BoilerTimerEvent(hour, minute, onetime, 1, duration, boiler));
+		if (timer.add_event(ev)) {
 			mg_printf(conn, "{\"status\":\"done\"}");
 			change = true;
 		} else {
 			mg_printf(conn, "{\"status\":\"error\"}");
 		}
 	} else if (rv.getType() == RequestType::TimersDelete) {
-		if (timer.removeTimerEvent(stoi(rv.getTimerId()))) {
+		if (timer.delete_event(stoi(rv.getTimerId()))) {
 			mg_printf(conn, "{\"status\":\"done\"}");
 			change = true;
 		} else {
 			mg_printf(conn, "{\"status\":\"error\"}");
 		}
 	} else if (rv.getType() == RequestType::TimersEnable) {
-		if (timer.enableTimerEvent(stoi(rv.getTimerId()))) {
+		if (timer.enable_event(stoi(rv.getTimerId()))) {
 			mg_printf(conn, "{\"status\":\"done\"}");
 			change = true;
 		} else {
 			mg_printf(conn, "{\"status\":\"error\"}");
 		}
 	} else if (rv.getType() == RequestType::TimersDisable) {
-		if (timer.disableTimerEvent(stoi(rv.getTimerId()))) {
+		if (timer.disable_event(stoi(rv.getTimerId()))) {
 			mg_printf(conn, "{\"status\":\"done\"}");
 			change = true;
 		} else {

@@ -10,6 +10,8 @@
 #include "Timer.hpp"
 #include "TempSensorController.hpp"
 #include "RequestValidator.hpp"
+#include "TimerEvent.hpp"
+#include "BoilerTimerEvent.hpp"
 
 #define ERROR -2
 #define OFF 0

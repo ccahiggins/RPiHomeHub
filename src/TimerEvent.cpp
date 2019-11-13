@@ -40,3 +40,17 @@ int TimerEvent::get_trig_min() {
 int TimerEvent::get_trig_day() {
 	return trig_day;
 }
+bool TimerEvent::is_enabled() {
+	return enabled;
+}
+void TimerEvent::enable() {
+	enabled = true;
+}
+
+void TimerEvent::disable() {
+	enabled = false;
+}
+
+bool TimerEvent::is_one_time() {
+	return one_time;
+}

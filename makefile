@@ -27,7 +27,7 @@ CIVLIBA=libcivetweb.a
 
 all: $(BIN)start_hub
 	
-$(BIN)start_hub: $(OUT)HubMain.o $(OUT)HubClass.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)IftttHandler.o $(OUT)RequestValidator.o $(OUT)AuthHandler.o $(OUT)LoginHandler.o $(OUT)HomeHandler.o $(OUT)Thermostat.o $(OUT)ThermostatHandler.o $(OUT)Subject.o $(OUT)Emailer.o $(OUT)EmailerHandler.o
+$(BIN)start_hub: $(OUT)HubMain.o $(OUT)HubClass.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)IftttHandler.o $(OUT)RequestValidator.o $(OUT)AuthHandler.o $(OUT)LoginHandler.o $(OUT)HomeHandler.o $(OUT)Thermostat.o $(OUT)ThermostatHandler.o $(OUT)Subject.o $(OUT)Emailer.o $(OUT)EmailerHandler.o $(OUT)TimerEvent.o $(OUT)BoilerTimerEvent.o $(OUT)ThermostatTimerEvent.o
 	$(CC) -o $@ $^ $(CXXFLAGS) $(CIVET) $(SQLITE) $(RF24CMB) $(RF24) $(LIB)$(CIVLIBA) $(CRYPTO) $(UUID)
 	
 $(OUT)HubMain.o: $(SRC)HubMain.cpp
@@ -110,6 +110,15 @@ $(OUT)Emailer.o: $(SRC)Emailer.cpp $(INC)Emailer.hpp
 
 $(OUT)EmailerHandler.o: $(SRC)EmailerHandler.cpp $(INC)EmailerHandler.hpp
 	$(CC) -o $@ -c $<  $(CXXFLAGS) $(CIVET) $(BOOST)
+
+$(OUT)TimerEvent.o: $(SRC)TimerEvent.cpp $(INC)TimerEvent.hpp
+	$(CC) -o $@ -c $<  $(CXXFLAGS)
+
+$(OUT)BoilerTimerEvent.o: $(SRC)BoilerTimerEvent.cpp $(INC)BoilerTimerEvent.hpp
+	$(CC) -o $@ -c $<  $(CXXFLAGS)
+
+$(OUT)ThermostatTimerEvent.o: $(SRC)ThermostatTimerEvent.cpp $(INC)ThermostatTimerEvent.hpp
+	$(CC) -o $@ -c $<  $(CXXFLAGS)
 	
 clean:
 ifeq ($(OS),Windows_NT)

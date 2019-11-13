@@ -1,6 +1,6 @@
 #include "TimerAddHandler.hpp"
 
-TimerAddHandler::TimerAddHandler(Timer& timer_) : timer(timer_) {}
+TimerAddHandler::TimerAddHandler(Timer& timer_, Boiler& boiler_) : timer(timer_), boiler(boiler_) {}
 
 bool TimerAddHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	
@@ -67,7 +67,8 @@ bool TimerAddHandler::handlePost(CivetServer *server, struct mg_connection *conn
 
 std::string TimerAddHandler::addTimer(int hour, int minute, int duration, int boilerItem, bool onetime) {
 
-	if (timer.addTimerEvent(hour, minute, duration, boilerItem, true, onetime)) {
+	std::shared_ptr<TimerEvent> event(new BoilerTimerEvent(hour, minute, onetime, boilerItem, duration, boiler));
+	if (timer.add_event(event)) {
 		std::ostringstream oss;
 		oss << "Added timer: ";
 		if (boilerItem == BOILER_ITEM_WATER) {
@@ -78,8 +79,7 @@ std::string TimerAddHandler::addTimer(int hour, int minute, int duration, int bo
 		oss << duration << " minutes " << " at " << hour << ":" << minute;
 		
 		return oss.str();
-	}
-	else {
+	} else {
 		return "Error";
 	}
 }

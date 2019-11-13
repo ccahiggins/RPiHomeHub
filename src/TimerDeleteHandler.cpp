@@ -15,7 +15,7 @@ bool TimerDeleteHandler::handleGet(CivetServer *server, struct mg_connection *co
 			std::string idString = s;
 			
 			int id = atoi(idString.c_str());
-			if (timer.removeTimerEvent(id)) {
+			if (timer.delete_event(id)) {
 				content = "Timer deleterised";
 			} else {
 				content = "Error deleterising timer";

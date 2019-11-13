@@ -25,6 +25,11 @@ public:
 	int get_trig_hour();
 	int get_trig_min();
 	int get_trig_day();
+	bool is_enabled();
+	bool is_one_time();
+	void enable();
+	void disable();
+
 };
 
 #endif

@@ -11,7 +11,7 @@ bool TimerEnableHandler::handleGet(CivetServer *server, struct mg_connection *co
 		std::string content;
 		std::string param = "";
 		if (CivetServer::getParam(conn, "id", param)) {
-			if (timer.enableTimerEvent(atoi(param.c_str()))) {
+			if (timer.enable_event(atoi(param.c_str()))) {
 				content = "Timer enabled";
 			} else {
 				content = "There was an erroreroror";

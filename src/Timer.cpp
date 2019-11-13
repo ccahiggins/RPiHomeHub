@@ -31,13 +31,13 @@ void Timer::check_timer() {
         int m = now->tm_min;
         int d = now->tm_wday;
 
-        const std::shared_ptr<TimerEvent> e = events.at(next_event);
-
         if (next_event >= 0) {
+            const std::shared_ptr<TimerEvent> e = events[next_event];
             if (h == e->get_hour()) {
                 if (m == e->get_minute()) {
                     if (d > e->get_trig_day()) {
                         e->trigger();
+                        get_next_event();
                     }
                 }
             }
@@ -49,13 +49,28 @@ void Timer::stop() {
     running = false;
 }
 
-void Timer::add_event(std::shared_ptr<TimerEvent> &event) {
+bool Timer::add_event(std::shared_ptr<TimerEvent> &event) {
     events.push_back(event);
     get_next_event();
+    return true;
 }
 
-void Timer::delete_event(int idx) {
+bool Timer::delete_event(int idx) {
+    events.erase(events.begin() + idx);
     get_next_event();
+    return true;
+}
+
+bool Timer::disable_event(int idx) {
+    events[idx]->disable();
+    get_next_event();
+    return true;
+}
+
+bool Timer::enable_event(int idx) {
+    events[idx]->enable();
+    get_next_event();
+    return true;
 }
 
 std::shared_ptr<TimerEvent> Timer::get_event(int idx) {
@@ -64,7 +79,8 @@ std::shared_ptr<TimerEvent> Timer::get_event(int idx) {
 
 void Timer::get_next_event() {
     if (events.size() == 0) {
-        next_event = 0;
+        next_event = -1;
+        std::cout << "No events" << std::endl;
     } else {
         next_event = -1;
         time_t t = time(0);
@@ -75,16 +91,25 @@ void Timer::get_next_event() {
 
         int counter = 0;
         for (auto &ev : events) {
-            int diff = time_diff(h, m, ev->get_hour(), ev->get_minute());
+            if (ev->is_enabled()) {
+                int diff = time_diff(h, m, ev->get_hour(), ev->get_minute());
 
-            if (diff > 0 && diff < last_diff) {
-                last_diff = diff;
-                next_event = counter;
+                if (diff > 0 && diff < last_diff) {
+                    last_diff = diff;
+                    next_event = counter;
 
-                counter++;
+                }
             }
+            counter++;
+        }
+        if (next_event >= 0) {
+            std::cout << "Next event: " << events[next_event]->get_hour() << ":" << events[next_event]->get_minute() << std::endl;
+        } else {
+            std::cout << "Next event: none" << std::endl;
         }
     }
+
+    save_events();
 }
 
 int Timer::time_diff(int hour1, int minute1, int hour2, int minute2) {
@@ -97,4 +122,53 @@ int Timer::time_diff(int hour1, int minute1, int hour2, int minute2) {
     else {
         return ((mins2 + (60 * 24)) - mins1);
     }
+}
+
+const std::vector<std::shared_ptr<TimerEvent>> Timer::get_events() const{
+    return events;
+}
+
+void Timer::save_events() {
+    std::ofstream f;
+    f.open("timers.txt");
+    
+    for (unsigned x = 0; x < events.size(); x++)
+    {
+        std::shared_ptr<BoilerTimerEvent> be;
+        std::shared_ptr<ThermostatTimerEvent> te;
+
+        if (be = std::dynamic_pointer_cast<BoilerTimerEvent> (events[x])) {
+
+            f << "BOILER" << std::endl;
+            //Write TimerEvent variables
+            f << be->get_hour() << std::endl;
+            f << be->get_minute() << std::endl;
+            f << be->is_one_time() << std::endl;
+            f << be->is_enabled() << std::endl;
+            f << be->get_trig_hour() << std::endl;
+            f << be->get_trig_min() << std::endl;
+            f << be->get_trig_day() << std::endl;
+
+            //Write BoilerTimerEvent variables
+            f << be->get_item() << std::endl;
+            f << be->get_duration() << std::endl;
+        } else if (te = std::dynamic_pointer_cast<ThermostatTimerEvent> (events[x])) {
+            f << "THERMOSTAT" << std::endl;
+            //Write TimerEvent variables
+            f << te->get_hour() << std::endl;
+            f << te->get_minute() << std::endl;
+            f << te->is_one_time() << std::endl;
+            f << te->is_enabled() << std::endl;
+            f << te->get_trig_hour() << std::endl;
+            f << te->get_trig_min() << std::endl;
+            f << te->get_trig_day() << std::endl;
+
+            //Write ThermostatTimerEvent variables
+            f << te->get_on_off() << std::endl;
+            f << te->get_room() << std::endl;
+            f << te->get_temp() << std::endl;
+        }
+    }
+    
+    f.close();
 }

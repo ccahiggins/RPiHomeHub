@@ -34,8 +34,9 @@ std::string VoltageHandler::formatVolts(std::vector<std::vector<std::string> > &
 	//String for the name the title for each sensor
 	std::string sensor1Name = "Bed";
 	std::string sensor2Name = "Living";
-	std::string sensor3Name = "Kids";
+	std::string sensor3Name = "Izzy";
 	std::string sensor4Name = "Outside";
+	std::string sensor5Name = "Bob";
 	
 
 	std::string voltsData="";		// String which will contain temp data for graph
@@ -86,6 +87,12 @@ std::string VoltageHandler::formatVolts(std::vector<std::vector<std::string> > &
 		voltsData.append(sensor4Name);
 		voltsData.append("', ");
 	}
+	if (find(sensors.begin(), sensors.end(), "5") != sensors.end())			//Add title if data for sensor exists in Vector: data
+	{
+		voltsData.append("'");
+		voltsData.append(sensor5Name);
+		voltsData.append("', ");
+	}
 	voltsData.append("],\n");
 
 	
@@ -94,6 +101,7 @@ std::string VoltageHandler::formatVolts(std::vector<std::vector<std::string> > &
 	std::string lastV2 = "";
 	std::string lastV3 = "";
 	std::string lastV4 = "";
+	std::string lastV5 = "";
 	
 	for (unsigned int i = 0; i < data.size(); i++) {
 		bool skipData = false;					//Skip if voltage unchanged bool
@@ -130,6 +138,13 @@ std::string VoltageHandler::formatVolts(std::vector<std::vector<std::string> > &
 			}
 			else {
 				lastV4=data[i][1];
+			}
+		} else if (!idString.compare("5")) {
+			if (!lastV5.compare(data[i][1])) {	//Compare last voltage to current
+				skipData=true;
+			}
+			else {
+				lastV5=data[i][1];
 			}
 		}
 		
@@ -204,7 +219,7 @@ std::string VoltageHandler::printVolts(int days) {
 
 	ss << "SELECT timestamp, voltage, id ";
 	ss << "FROM temps ";
-	ss << "WHERE id in (1,2,3,4) ";
+	ss << "WHERE id in (1,2,3,4,5) ";
 	ss << "AND timestamp>datetime('now', 'localtime', '-";
 	ss << days;
 	ss << " days') AND voltage IS NOT NULL;";
@@ -256,7 +271,7 @@ std::string VoltageHandler::printVolts() {
 	ss << "SELECT timestamp, voltage, id ";
 	ss << "FROM temps ";
 	ss << "WHERE voltage IS NOT NULL ";
-	ss << "AND id IN (1,2,3,4);";
+	ss << "AND id IN (1,2,3,4,5);";
 	
 	auto x = ss.str();
 	sql = x.c_str();

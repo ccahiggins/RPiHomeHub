@@ -19,7 +19,7 @@ int HubClass::startHub(int argc, char** argv)  {
 	tempSensControl.attach(&thermostat);
 	tempSensControl.attach(&emailer);
 	load_timer_events();
-	timer.start(std::chrono::milliseconds(1000), [&timer]{
+	timer.start(std::chrono::milliseconds(1000), []{
 		timer.check_timer();
 	});
 	

@@ -27,7 +27,7 @@ void TempSensorController::checkSensors() {
 
 void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t voltage) {
 	
-	std::cout << "S:OD=" << std::flush;
+	//std::cout << "S:OD=" << std::flush;
 	int rc = sqlite3_open(dbPath, &db);
 	// If rc is not 0, there was an error
 	if(rc) {
@@ -52,7 +52,7 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 	sqlite3_reset(stmt); // Clear statement handle for next use
 	sqlite3_finalize(stmt);
 
-	std::cout << "S:CD/" << std::flush;
+	//std::cout << "S:CD/" << std::flush;
 	rc = sqlite3_close(db);
 	int i = 0;
 	while(rc != SQLITE_OK) {
@@ -67,7 +67,7 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 	
 	ChartCreator chartCreator;
 	chartCreator.writeChartToFile();
-	std::cout << " " << rc << " " << std::flush;
+	//std::cout << " " << rc << " " << std::flush;
 }
 
 std::vector<int> TempSensorController::lowBattery() {

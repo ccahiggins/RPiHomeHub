@@ -2,27 +2,91 @@
 	<head>
 		<meta name = "viewport" content = "width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="/styles.css" type="text/css" media="screen" />
+		<script>
+			function timer_type_check() {
+	    		if (document.getElementById('boiler_type').checked) {
+	        		document.getElementById('boiler_timer').style.display = 'block';
+	        		document.getElementById('thermostat_timer').style.display = 'none';
+	    		} else if(document.getElementById('thermostat_type').checked) {
+	        		document.getElementById('boiler_timer').style.display = 'none';
+	        		document.getElementById('thermostat_timer').style.display = 'block';
+	   			}
+			}
+
+			function thermostat_on_check() {
+	    		if (document.getElementById('thermo_on').checked) {
+	        		document.getElementById('room_div').style.display = 'block';
+	        		document.getElementById('temp_div').style.display = 'block';
+	    		} else {
+	        		document.getElementById('room_div').style.display = 'none';
+	        		document.getElementById('temp_div').style.display = 'none';
+	   			}
+			}
+		</script>
 	</head>
     <body>
-		<div  class = "enjoy-css">Boiler controller</div>
+		<div class = "enjoy-css">Boiler controller</div>
 		<form method="post" action="/timer/add">
-			<div class="heading"><label class="starttime" for="starttime">Select a time:<input type="time" name="starttime" value="06:30"></div>
-			<div class="heading"><label class="description" for="duration"> Duration</label>
-			<input type="number" name="duration" min="10" max="240" step="10" value="30" required="true">
+			<div class="heading">
+				<label class="starttime" for="starttime">Select type:</label>
+				<input type="radio" name="timer_type" id="boiler_type" value="boiler" onclick="javascript:timer_type_check();" checked="true">Boiler
+				<input type="radio" name="timer_type" id="thermostat_type" value="thermostat" onclick="javascript:timer_type_check();">Thermostat
 			</div>
-			<div class="heading"><label class="description" for="boileritem">
-			</label>
-			<input id="boileritem_water" name="boileritem" class="element radio" type="radio" value="0" checked="checked"/>
-			<label class="choice" for="boileritem_water">Water</label>
-			<input id="boileritem_heating" name="boileritem" class="element radio" type="radio" value="1" />
-			<label class="choice" for="boileritem_heating">Heating</label></div>
-
-			<div class="heading"><label class="description" for="onetime"> </label>
-			<input id="onetime_1" name="onetime" class="element radio" type="radio" value="1" checked="checked"/>
-			<label class="choice" for="onetime_1">One Time</label>
-			<input id="onetime_0" name="onetime" class="element radio" type="radio" value="0" />
-			<label class="choice" for="onetime_0">Daily</label></div>
-
+			<div id="boiler_timer">
+				<div class="heading">
+					<label class="starttime" for="starttime">Select a time:</label>
+					<input type="time" name="starttime" value="06:30">
+				</div>
+				<div class="heading">
+					<label class="description" for="duration"> Duration</label>
+					<input type="number" name="duration" min="10" max="240" step="10" value="30" required="true">
+				</div>
+				<div class="heading">
+					<label class="description" for="boileritem"></label>
+					<input id="boileritem_water" name="boileritem" class="element radio" type="radio" value="0" checked="checked"/>
+					<label class="choice" for="boileritem_water">Water</label>
+					<input id="boileritem_heating" name="boileritem" class="element radio" type="radio" value="1" />
+					<label class="choice" for="boileritem_heating">Heating</label>
+				</div>
+				<div class="heading">
+					<label class="description" for="onetime"> </label>
+					<input id="onetime_1" name="onetime" class="element radio" type="radio" value="1" checked="checked"/>
+					<label class="choice" for="onetime_1">One Time</label>
+					<input id="onetime_0" name="onetime" class="element radio" type="radio" value="0" />
+					<label class="choice" for="onetime_0">Daily</label>
+				</div>
+			</div>
+			<div id="thermostat_timer" style="display:none">
+				<div class="heading">
+					<label class="starttime" for="starttime_thermostat">Select a time:</label>
+					<input type="time" name="starttime_thermostat" value="06:30">
+				</div>
+				<div class="heading">
+					<label class="description" for="on_off"> </label>
+					<input id="thermo_on" name="on_off" class="element radio" type="radio" value="on"  onclick="javascript:thermostat_on_check();" checked="checked"/>
+					<label class="choice" for="on_off">On</label>
+					<input id="thermo_off" name="on_off" class="element radio" type="radio" value="off" onclick="javascript:thermostat_on_check();"/>
+					<label class="choice" for="on_off">Off</label>
+				</div>
+				<div class="heading" id="room_div">
+					<label class="description" for="room">Room</label>
+					<input type="radio" name="room" value="1" checked="true">Bedroom
+					<input type="radio" name="room" value="2">Living room
+					<input type="radio" name="room" value="3">Izzzy
+					<input type="radio" name="room" value="5">Bob
+				</div>
+				<div class="heading" id="temp_div">
+					<label class="description" for="temperature">Temperature</label>
+					<input type="number" name="temperature" min="10" max="30" step="0.5" value="21" required="true">
+				</div>
+				<div class="heading">
+					<label class="description" for="onetime_thermostat"> </label>
+					<input id="onetime_1" name="onetime_thermostat" class="element radio" type="radio" value="1" checked="checked"/>
+					<label class="choice" for="onetime_thermostat">One Time</label>
+					<input id="onetime_0" name="onetime_thermostat" class="element radio" type="radio" value="0" />
+					<label class="choice" for="onetime_thermostat">Daily</label>
+				</div>
+			</div>
 			<div class="heading"><input type="submit"></div>
 		</form>
 		<div class="hhh"><a href="/timer">Back to Timer</a></div>

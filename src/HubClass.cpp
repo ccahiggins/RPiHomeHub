@@ -36,7 +36,7 @@ int HubClass::startHub(int argc, char** argv)  {
 	server.addHandler(TIMER_URI, new TimerHandler(timer));
 	server.addHandler(BOILER_URI, new BoilerHandler(boiler));
 	server.addHandler(EMAILER_URI, new EmailerHandler(emailer));
-	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(timer, boiler));
+	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(timer, boiler, thermostat));
 	server.addHandler(TIMER_ENABLE_URI, new TimerEnableHandler(timer));
 	server.addHandler(TIMER_DISABLE_URI, new TimerDisableHandler(timer));
 	server.addHandler(TIMER_DELETE_URI, new TimerDeleteHandler(timer));

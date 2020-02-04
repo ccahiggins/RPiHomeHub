@@ -1,7 +1,7 @@
 #include "IftttHandler.hpp"
 
-IftttHandler::IftttHandler(Boiler& boiler_, Timer& timer_, TempSensorController& tempSens_)
-	: boiler(boiler_), timer(timer_), tempSens(tempSens_) {}
+IftttHandler::IftttHandler(Boiler& boiler_, Thermostat& thermostat_, Timer& timer_, TempSensorController& tempSens_)
+	: boiler(boiler_), thermostat(thermostat_), timer(timer_), tempSens(tempSens_) {}
 
 int IftttHandler::callback(void *ptr, int argc, char* argv[], char* cols[]) {
 	
@@ -233,7 +233,7 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 		bool onetime = true;
 		if (rv.getOneTime().compare("f") == 0) {
 			onetime = false;
-		} else if (rv.getOneTime().compare("f") == 0) {
+		} else if (rv.getOneTime().compare("t") == 0) {
 			onetime = true;
 		}
 		
@@ -252,7 +252,7 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 		bool onetime = true;
 		if (rv.getOneTime().compare("f") == 0) {
 			onetime = false;
-		} else if (rv.getOneTime().compare("f") == 0) {
+		} else if (rv.getOneTime().compare("t") == 0) {
 			onetime = true;
 		}
 		
@@ -261,6 +261,33 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 		int duration = stoi(rv.getDuration());
 		
 		std::shared_ptr<TimerEvent> ev(new BoilerTimerEvent(hour, minute, onetime, 1, duration, boiler));
+		if (timer.add_event(ev)) {
+			mg_printf(conn, "{\"status\":\"done\"}");
+			change = true;
+		} else {
+			mg_printf(conn, "{\"status\":\"error\"}");
+		}
+	} else if (rv.getType() == RequestType::TimersAddThermostat) {
+		bool onetime = true;
+		if (rv.getOneTime().compare("f") == 0) {
+			onetime = false;
+		} else if (rv.getOneTime().compare("t") == 0) {
+			onetime = true;
+		}
+
+		bool on_off = true;
+		if (rv.getOnOff().compare("f") == 0) {
+			on_off = false;
+		} else if (rv.getOnOff().compare("t") == 0) {
+			on_off = true;
+		}
+		
+		int hour = stoi(rv.getHour());
+		int minute = stoi(rv.getMinute());
+		int room = stoi(rv.getRoom());
+		float temp = stof(rv.getTemp());
+
+		std::shared_ptr<TimerEvent> ev(new ThermostatTimerEvent(hour, minute, onetime, on_off, room, temp, thermostat));
 		if (timer.add_event(ev)) {
 			mg_printf(conn, "{\"status\":\"done\"}");
 			change = true;

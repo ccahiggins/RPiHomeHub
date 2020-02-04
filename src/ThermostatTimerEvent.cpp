@@ -26,3 +26,17 @@ int ThermostatTimerEvent::get_room() {
 float ThermostatTimerEvent::get_temp() {
 	return temp;
 }
+
+void ThermostatTimerEvent::to_stringstream(std::ostringstream& oss) {
+	oss << "THERMOSTAT" << std::endl;
+    oss << get_hour() << std::endl;
+    oss << get_minute() << std::endl;
+    oss << is_one_time() << std::endl;
+    oss << is_enabled() << std::endl;
+    oss << get_trig_hour() << std::endl;
+    oss << get_trig_min() << std::endl;
+    oss << get_trig_day() << std::endl;
+    oss << on_off << std::endl;
+    oss << room << std::endl;
+    oss << temp << std::endl;
+}

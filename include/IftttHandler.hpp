@@ -7,6 +7,7 @@
 #include <sqlite3.h>
 #include "CivetServer.h"
 #include "Boiler.hpp"
+#include "Thermostat.hpp"
 #include "Timer.hpp"
 #include "TempSensorController.hpp"
 #include "RequestValidator.hpp"
@@ -20,7 +21,7 @@
 class IftttHandler : public CivetHandler {
 	
 public:
-	IftttHandler(Boiler& boiler_, Timer& timer_, TempSensorController& tempSens_);
+	IftttHandler(Boiler& boiler_, Thermostat& thermostat_, Timer& timer_, TempSensorController& tempSens_);
 
 	//bool handleGet(CivetServer *server, struct mg_connection *conn);
 	bool handlePost(CivetServer *server, struct mg_connection *conn);
@@ -31,6 +32,7 @@ private:
 	std::string getTimers();
 	static int callback(void *ptr, int argc, char* argv[], char* cols[]);
 	Boiler& boiler;
+	Thermostat& thermostat;
 	Timer& timer;
 	TempSensorController& tempSens;
 };

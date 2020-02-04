@@ -27,10 +27,10 @@ bool TimerHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 				}
 				if (boiler_event->is_enabled()) {
 					endis = "disable";
-					enDis = "Disable";
+					enDis = "disable";
 				} else {
 					endis = "enable";
-					enDis = "Enable";
+					enDis = "enable";
 				}
 				std::string line = ReadHtml::readHtml("html/TimerHandler/enableDisable.html");
 
@@ -47,14 +47,19 @@ bool TimerHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 				}
 				if (thermostat_event->is_enabled()) {
 					endis = "disable";
-					enDis = "Disable";
+					enDis = "disable";
 				} else {
 					endis = "enable";
-					enDis = "Enable";
+					enDis = "enable";
 				}
-				std::string line = ReadHtml::readHtml("html/TimerHandler/enableDisable.html");
+				std::string room_thing = "";
+				if (thermostat_event->get_on_off() == 1) {
+					room_thing = " in room ";
+					room_thing.append(std::to_string(thermostat_event->get_room()));
+				}
+				std::string line = ReadHtml::readHtml("html/TimerHandler/enable_disable_thermostat.html");
 
-				std::string s = boost::str(boost::format(line) % whichone % thermostat_event->get_hour() % thermostat_event->get_minute() % thermostat_event->get_room() % enDis % x % endis % x );
+				std::string s = boost::str(boost::format(line) % whichone % room_thing % thermostat_event->get_hour() % thermostat_event->get_minute() % enDis % x % endis % x );
 				content.append(s);
 			}
 		}

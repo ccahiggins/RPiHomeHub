@@ -50,9 +50,19 @@ bool LoginHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
         mg_printf(conn,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nSet-Cookie: session=");
 		mg_printf(conn, session.c_str());
 		mg_printf(conn, "; secure; httpOnly;\r\n\r\n");
+
+		//mg_printf(conn,"HTTP/1.1 303 See Other\r\n");
+		//mg_printf(conn, "Location: ");
+		//mg_printf(conn, uri.c_str());
+		//mg_printf(conn, "\r\n\r\n");
+		//mg_printf(conn, "Set-Cookie: session=");
+		//mg_printf(conn, session.c_str());
+		//mg_printf(conn, "; secure; httpOnly;\r\n\r\n");
+		
 		
 		std::string html = ReadHtml::readHtml("html/auth/loggedin.html");
-		std::string s = boost::str(boost::format(html) % uri  );
+		//std::string s = boost::str(boost::format(html) % uri % uri );
+		std::string s = boost::str(boost::format(html) % uri);
 		mg_printf(conn, s.c_str());
     } else {
         // Show HTML form.

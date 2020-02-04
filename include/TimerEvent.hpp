@@ -2,6 +2,7 @@
 #define TIMEREVENT_HPP
 
 #include <ctime>
+#include <ostream>
 
 class TimerEvent {
 	
@@ -29,6 +30,8 @@ public:
 	bool is_one_time();
 	void enable();
 	void disable();
+
+	virtual void to_stringstream(std::ostringstream& oss) = 0;
 
 };
 

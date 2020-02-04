@@ -19,6 +19,8 @@ private:
 
 	void trigger_event();
 
+	void to_stringstream(std::ostringstream& oss);
+
 };
 
 

@@ -77,11 +77,11 @@ bool TimerAddHandler::handlePost(CivetServer *server, struct mg_connection *conn
 					on_off = false;
 				}
 			}
-			if (CivetServer::getParam(conn, "onetime", s)) {
+			if (CivetServer::getParam(conn, "onetime_thermostat", s)) {
 				if (s.compare("1") == 0) {
-					oneTime = true;
+					oneTime=true;
 				} else if (s.compare("0") == 0) {
-					oneTime = false;
+					oneTime=false;
 				}
 			}
 

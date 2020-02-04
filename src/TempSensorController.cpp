@@ -20,7 +20,7 @@ void TempSensorController::checkSensors() {
 			system("./push");
 			printSensorData(payload.deviceNum, payload.temp, payload.voltage);
 			notify(payload.deviceNum, payload.temp);
-			last_volts[payload.deviceNum] = payload.voltage;
+			last_volts[payload.deviceNum] = payload.voltage * 0.001;
 		}
 	}
 }

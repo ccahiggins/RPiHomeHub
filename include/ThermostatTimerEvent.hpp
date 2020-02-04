@@ -4,6 +4,8 @@
 #include "TimerEvent.hpp"
 #include "Thermostat.hpp"
 
+#include <sstream>
+
 class ThermostatTimerEvent : public TimerEvent {
 
 public:
@@ -11,6 +13,8 @@ public:
 	bool get_on_off();
 	int get_room();
 	float get_temp();
+
+	void to_stringstream(std::ostringstream& oss);
 	
 private:
 	Thermostat& thermostat;

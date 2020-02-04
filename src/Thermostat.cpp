@@ -59,7 +59,7 @@ void Thermostat::set_temperature(float temp) {
 		got_last_temp = true;
 	}
 
-	if (got_last_temp && last_temp < selected_temp) {
+	if (thermostat_on && got_last_temp && last_temp < selected_temp) {
 		boiler.TurnHeatingOn();
 	} else if (got_last_temp && last_temp >= selected_temp) {
 		boiler.TurnHeatingOff();
@@ -80,7 +80,7 @@ void Thermostat::set_room(int room) {
 		got_last_temp = true;
 	}
 
-	if (got_last_temp && last_temp < selected_temp) {
+	if (thermostat_on && got_last_temp && last_temp < selected_temp) {
 		boiler.TurnHeatingOn();
 	} else if (got_last_temp && last_temp >= selected_temp) {
 		boiler.TurnHeatingOff();

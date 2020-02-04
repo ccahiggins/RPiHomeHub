@@ -37,13 +37,14 @@ int HubClass::startHub(int argc, char** argv)  {
 	server.addHandler(BOILER_URI, new BoilerHandler(boiler));
 	server.addHandler(EMAILER_URI, new EmailerHandler(emailer));
 	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(timer, boiler, thermostat));
+	server.addHandler(IFTTT_URI, new IftttHandler(boiler, thermostat, timer, tempSensControl));
 	server.addHandler(TIMER_ENABLE_URI, new TimerEnableHandler(timer));
 	server.addHandler(TIMER_DISABLE_URI, new TimerDisableHandler(timer));
 	server.addHandler(TIMER_DELETE_URI, new TimerDeleteHandler(timer));
 	server.addHandler(THERMOSTAT_URI, new ThermostatHandler(thermostat));
 	server.addHandler(VOLTAGE_URI, new VoltageHandler());
 	server.addHandler(CHART_URI, new ChartHandler());
-	server.addHandler(IFTTT_URI, new IftttHandler(boiler, timer, tempSensControl));
+
 	server.addHandler(LOGIN_URI, new LoginHandler());
 
 	while(keepRunning) {

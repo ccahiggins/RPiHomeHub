@@ -2,6 +2,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <ostream>
 
 std::thread th;
 bool running = false;
@@ -32,9 +33,11 @@ void Timer::check_timer() {
             const std::shared_ptr<TimerEvent> e = events[next_event];
             if (h == e->get_hour()) {
                 if (m == e->get_minute()) {
-                    if (d > e->get_trig_day()) {
-                        e->trigger();
-                        get_next_event();
+                    if (d != e->get_trig_day()) {
+                        if (e->is_enabled()) {
+                            e->trigger();
+                            get_next_event();
+                        }
                     }
                 }
             }
@@ -124,43 +127,14 @@ void Timer::save_events() {
     std::ofstream f;
     f.open("timers.txt");
     
+    std::ostringstream oss;
+
     for (unsigned x = 0; x < events.size(); x++)
     {
-        std::shared_ptr<BoilerTimerEvent> be;
-        std::shared_ptr<ThermostatTimerEvent> te;
 
-        if (be = std::dynamic_pointer_cast<BoilerTimerEvent> (events[x])) {
-
-            f << "BOILER" << std::endl;
-            //Write TimerEvent variables
-            f << be->get_hour() << std::endl;
-            f << be->get_minute() << std::endl;
-            f << be->is_one_time() << std::endl;
-            f << be->is_enabled() << std::endl;
-            f << be->get_trig_hour() << std::endl;
-            f << be->get_trig_min() << std::endl;
-            f << be->get_trig_day() << std::endl;
-
-            //Write BoilerTimerEvent variables
-            f << be->get_item() << std::endl;
-            f << be->get_duration() << std::endl;
-        } else if (te = std::dynamic_pointer_cast<ThermostatTimerEvent> (events[x])) {
-            f << "THERMOSTAT" << std::endl;
-            //Write TimerEvent variables
-            f << te->get_hour() << std::endl;
-            f << te->get_minute() << std::endl;
-            f << te->is_one_time() << std::endl;
-            f << te->is_enabled() << std::endl;
-            f << te->get_trig_hour() << std::endl;
-            f << te->get_trig_min() << std::endl;
-            f << te->get_trig_day() << std::endl;
-
-            //Write ThermostatTimerEvent variables
-            f << te->get_on_off() << std::endl;
-            f << te->get_room() << std::endl;
-            f << te->get_temp() << std::endl;
-        }
+        events[x]->to_stringstream(oss);
     }
-    
+
+    f << oss.str();
     f.close();
 }

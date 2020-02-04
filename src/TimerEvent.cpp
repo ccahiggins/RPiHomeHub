@@ -22,6 +22,9 @@ void TimerEvent::trigger() {
 	trig_min = m;
 	trig_day = d;
 
+    if (one_time) {
+        enabled = false;
+    }
 	trigger_event();
 }
 

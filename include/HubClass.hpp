@@ -9,40 +9,9 @@
 #include "TempSensorController.hpp"
 #include "Boiler.hpp"
 #include "Timer.hpp"
+#include "Observer.hpp"
 #include "Thermostat.hpp"
 #include "Emailer.hpp"
-
-
-#define DOCUMENT_ROOT "./html"
-#define PORT "8081,443s"
-#define CERT "html/server.pem"
-#define CHART_URI "/chart"
-#define CHART2_URI "/chart2"
-#define EXIT_URI "/exit"
-
-#define HOME_URI "/new"
-#define HUB_URI "/hub"
-#define HUB_JSON_URI "/jsonhub"
-#define BOILER_URI "/boiler"
-#define BOILER_JSON_URI "/jsonboiler"
-#define BOILER_JSON_STATUS_URI "/json/boiler/status"
-//#define TIMERS_JSON_URI "/jsontimers"
-#define TIMER_URI "/timer"
-#define TIMER_ADD_URI "/timer/add"
-#define TIMER_DELETE_URI "/timer/delete"
-#define TIMER_ENABLE_URI "/timer/enable"
-#define TIMER_DISABLE_URI "/timer/disable"
-//#define POST_URI "/post"
-#define VOLTAGE_URI "/voltage"
-#define ADDTIMER_URI "/addtimer"
-#define TEST_URI "/test"
-#define LOGIN_URI "/login"
-#define THERMOSTAT_URI "/thermostat"
-#define EMAILER_URI "/emailer"
-
-#define IFTTT_URI "/ifttt"
-//#define LIGHTSON_URI "/lightson"
-//#define LIGHTSOFF_URI "/lightsoff"
 
 #include "IftttHandler.hpp"
 #include "TimerHandler.hpp"
@@ -53,18 +22,36 @@
 #include "HubHandler.hpp"
 #include "BoilerHandler.hpp"
 #include "ChartHandler.hpp"
-//#include "ChartHandlerTest.hpp"
 #include "VoltageHandler.hpp"
-//#include "TestHandler.hpp"
 #include "LoginHandler.hpp"
 #include "HomeHandler.hpp"
-//#include "JsonBoilerHandler.hpp"
-//#include "JsonBoilerStatusHandler.hpp"
-//#include "JsonHubHandler.h"
 #include "ThermostatHandler.hpp"
 #include "EmailerHandler.hpp"
 
-#include "Observer.hpp"
+
+#define DOCUMENT_ROOT "./html"
+#define PORT "8081,443s"
+#define CERT "html/server.pem"
+#define CHART_URI "/chart"
+#define CHART2_URI "/chart2"
+#define HOME_URI "/new"
+#define HUB_URI "/hub"
+#define BOILER_URI "/boiler"
+#define TIMER_URI "/timer"
+#define TIMER_ADD_URI "/timer/add"
+#define TIMER_DELETE_URI "/timer/delete"
+#define TIMER_ENABLE_URI "/timer/enable"
+#define TIMER_DISABLE_URI "/timer/disable"
+#define VOLTAGE_URI "/voltage"
+#define ADDTIMER_URI "/addtimer"
+#define TEST_URI "/test"
+#define LOGIN_URI "/login"
+#define THERMOSTAT_URI "/thermostat"
+#define EMAILER_URI "/emailer"
+#define IFTTT_URI "/ifttt"
+
+//#define LIGHTSON_URI "/lightson"
+//#define LIGHTSOFF_URI "/lightsoff"
 
 class HubClass {
 
@@ -72,11 +59,10 @@ int8_t volatile keepRunning = 1;
 int timerCounterThingy=0;
 
 void intHandler();
-void checkTimer();
-void writeToFile(std::string message);
+void load_timer_events();
 
 public:
-  int startHub(int argc, char** argv);
+	int startHub(int argc, char** argv);
 
 };
 #endif

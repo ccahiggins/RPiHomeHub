@@ -1,48 +1,45 @@
-// A2DD.h
 #ifndef TIMER_HPP
 #define TIMER_HPP
-#include <unistd.h>
-#include <iostream>
-#include <fstream>
+
+#include "TimerEvent.hpp"
+#include "BoilerTimerEvent.hpp"
+#include "ThermostatTimerEvent.hpp"
+
+#include <thread>
+#include <chrono>
 #include <vector>
 #include <sstream>
 
-#include "Timer.hpp"
-
-class Timer
-{
+class Timer {
 
 public:
+    Timer();
 
-	struct TimerEvent {
-		int startHour;
-		int startMinute;
-		int duration;
-		int boilerItem;
-		bool enabled;
-		bool oneTime;
-		int id;
-	};
+    void start(const std::chrono::milliseconds &interval, const std::function<void(void)> &timeout);
+    void stop();
 
-	Timer();
-	
-	bool enableTimerEvent(int id);
-	bool disableTimerEvent(int id);
-	//bool removeTimerEvent(unsigned position);
-	bool removeTimerEvent(int id);
-	TimerEvent* checkTimer(int interval);
-	bool addTimerEvent(int startHour, int startMinute, int duration, int boilerItem, bool enabled, bool oneTime);
-	std::vector<TimerEvent>& getTimers();
-	bool addTimerEvent(TimerEvent event);
-	void getNextTimerEvent();
-	void loadTimers();
+	void check_timer();
+
+    bool add_event(std::shared_ptr<TimerEvent> &event);
+    bool delete_event(int idx);
+    bool enable_event(int idx);
+    bool disable_event(int idx);
+    std::shared_ptr<TimerEvent> get_event(int idx);
+    const std::vector<std::shared_ptr<TimerEvent>> get_events() const;
 
 private:
-	int getSecondsToNextEvent(TimerEvent& event);
-	int minsBetweenTimes(int hour1, int minute1, int hour2, int minute2);
-	void saveTimers();
-	void writeToFile(std::string message);
+    typedef std::chrono::milliseconds Interval;
+    typedef std::function<void(void)> Timeout;
+    std::vector<std::shared_ptr<TimerEvent>> events;
+
+    int time_diff(int hour1, int minute1, int hour2, int minute2);
+
+    void get_next_event();
+    void save_events();
+
+    int next_event = 0;
 
 };
+
 
 #endif

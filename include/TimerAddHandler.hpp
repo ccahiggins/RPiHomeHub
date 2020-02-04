@@ -9,6 +9,9 @@
 #include "boost/format.hpp"
 #include "Timer.hpp"
 #include "AuthHandler.hpp"
+#include "BoilerTimerEvent.hpp"
+#include "Boiler.hpp"
+#include "Thermostat.hpp"
 
 #include <string>
 
@@ -18,7 +21,7 @@ class TimerAddHandler : public CivetHandler
 	
 public:
  
-	TimerAddHandler(Timer& timer_);
+	TimerAddHandler(Timer& timer_, Boiler& boiler_, Thermostat& thermostat_);
 
 	bool handleGet(CivetServer *server, struct mg_connection *conn);
 	bool handlePost(CivetServer *server, struct mg_connection *conn);
@@ -26,7 +29,10 @@ public:
 private:
 	const int BOILER_ITEM_WATER = 0;
 	Timer& timer;
-	std::string addTimer(int hour, int minute, int duration, int boilerItem, bool onetime);
+	Boiler& boiler;
+	Thermostat& thermostat;
+	std::string addBoilerTimer(int hour, int minute, int duration, int boilerItem, bool onetime);
+	std::string addThermostatTimer(int hour, int minute, bool on_off, int room, float temperature, bool onetime);
 };
 
 #endif

@@ -6,7 +6,6 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
-#include <ctime>
 
 #include "CivetServer.h"
 #include "ChartCreator.hpp"

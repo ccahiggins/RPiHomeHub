@@ -2,8 +2,6 @@
 
 Boiler::Boiler(RadioController& radio_) : radio(radio_) {
 	std::cout << "BC" << std::endl;
-	//radio = radio_;
-	std::cout << "BC" << std::endl;
 }
 
 bool Boiler::switchPin(int pin, int state, int duration, unsigned char type) {
@@ -85,39 +83,33 @@ Boiler::boiler_status Boiler::getBoilerStatus() {
 
  	RF24NetworkHeader header(03, 'b');
 	RadioController::payload_boiler_status payload;
-	payload.deviceNum=0;
-	payload.heatingState=0;
-	payload.heatingDuration=0;
-	payload.waterState=0;
-    payload.waterDuration=0;
+	payload.deviceNum = 0;
+	payload.heatingState = 0;
+	payload.heatingDuration = 0;
+	payload.waterState = 0;
+    payload.waterDuration = 0;
 	
 	Boiler::boiler_status boilerStatus;
 	
 	RadioController::payload_boiler_status returnPayload = radio.sendGetBoilerPayload(header,&payload,sizeof(payload));	
 	if (returnPayload.deviceNum != ERRORPAYLOAD) {
-		if (returnPayload.heatingDuration > 0)
-		{
+		if (returnPayload.heatingDuration > 0) {
 			boilerStatus.heatingStatus = returnPayload.heatingDuration;
 		}
-		else if (returnPayload.heatingState == OFF)
-		{
+		else if (returnPayload.heatingState == OFF) {
 			boilerStatus.heatingStatus = returnPayload.heatingState;
 		}
-		else if (returnPayload.heatingState == ON)
-		{
+		else if (returnPayload.heatingState == ON) {
 			boilerStatus.heatingStatus = SENDON;
 		}
 		
-		if (returnPayload.waterDuration > 0)
-		{
+		if (returnPayload.waterDuration > 0) {
 			boilerStatus.waterStatus = returnPayload.waterDuration;
 		}
-		else if (returnPayload.waterState == OFF)
-		{
+		else if (returnPayload.waterState == OFF) {
 			boilerStatus.waterStatus = returnPayload.waterState;
 		}
-		else if (returnPayload.waterState == ON)
-		{
+		else if (returnPayload.waterState == ON) {
 			boilerStatus.waterStatus = SENDON;
 		}
 	} else {

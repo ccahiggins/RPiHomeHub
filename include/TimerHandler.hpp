@@ -8,6 +8,9 @@
 #include <string>
 #include "boost/format.hpp"
 #include "AuthHandler.hpp"
+#include "TimerEvent.hpp"
+#include "BoilerTimerEvent.hpp"
+#include "ThermostatTimerEvent.hpp"
 
 class TimerHandler : public CivetHandler {
 	

@@ -46,7 +46,7 @@ std::string ChartCreator::getSqlStatementFromDays(std::string &from, std::string
 	std::ostringstream ss;
 	ss << "SELECT timestamp, temp, id ";
 	ss << "FROM temps ";
-	ss << "WHERE id IN (1,2,3,4) ";
+	ss << "WHERE id IN (1,2,3,4,5) ";
 	ss << "AND timestamp BETWEEN date('" << from << "') AND date('" << from << "','+" << days << " days');";
 	
 	return ss.str();
@@ -58,7 +58,7 @@ std::string ChartCreator::getSqlStatementFromDays(std::string &from, std::string
 	ostringstream ss;
 	ss << "SELECT (STRFTIME('%Y', timestamp)) || ',' || (STRFTIME('%m', timestamp) - 1) || ',' || (STRFTIME('%d,%H,%M,%S', timestamp)), temp, id ";
 	ss << "FROM temps ";
-	ss << "WHERE id IN (1,2,3,4) ";
+	ss << "WHERE id IN (1,2,3,4,5) ";
 	ss << "AND timestamp > datetime('now', 'localtime', '-" << days << " days');";
 	
 	return ss.str();
@@ -69,7 +69,7 @@ std::string ChartCreator::getSqlStatementDays(std::string &days) {
 	std::ostringstream ss;
 	ss << "SELECT timestamp, temp, id ";
 	ss << "FROM temps ";
-	ss << "WHERE id IN (1,2,3,4) ";
+	ss << "WHERE id IN (1,2,3,4,5) ";
 	ss << "AND timestamp > datetime('now', 'localtime', '-" << days << " days');";
 	
 	return ss.str();
@@ -80,7 +80,7 @@ std::string ChartCreator::getSqlStatementFromTo(std::string &from, std::string &
 	std::ostringstream ss;
 	ss << "SELECT timestamp, temp, id ";
 	ss << "FROM temps ";
-	ss << "WHERE id IN (1,2,3,4) ";
+	ss << "WHERE id IN (1,2,3,4,5) ";
 	ss << "AND timestamp BETWEEN date('" << from << "') ";
 	ss << "AND date('" << to << "');";
 	
@@ -146,8 +146,9 @@ std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> >
 	
 	std::string sensor1Name = "Bed";
 	std::string sensor2Name = "Living";
-	std::string sensor3Name = "Kids";
+	std::string sensor3Name = "Izzy";
 	std::string sensor4Name = "Outside";
+	std::string sensor5Name = "Bob";
 	
 	std::vector<std::string> sensors;
 	
@@ -189,6 +190,11 @@ std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> >
 	if (find(sensors.begin(), sensors.end(), "4") != sensors.end()) {
 		tempData << "'";
 		tempData << sensor4Name;
+		tempData << "', ";
+	}
+	if (find(sensors.begin(), sensors.end(), "5") != sensors.end()) {
+		tempData << "'";
+		tempData << sensor5Name;
 		tempData << "', ";
 	}
 	tempData << "],\n";

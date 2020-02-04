@@ -1,6 +1,6 @@
 #include "TimerAddHandler.hpp"
 
-TimerAddHandler::TimerAddHandler(Timer& timer_) : timer(timer_) {}
+TimerAddHandler::TimerAddHandler(Timer& timer_, Boiler& boiler_, Thermostat& thermostat_) : timer(timer_), boiler(boiler_), thermostat(thermostat_) {}
 
 bool TimerAddHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	
@@ -26,35 +26,69 @@ bool TimerAddHandler::handlePost(CivetServer *server, struct mg_connection *conn
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	AuthHandler auth = AuthHandler();
 	if (auth.authorised(conn)) {
-
-		int startHour = 0;
-		int startMinute = 0;
-		int duration = 0;
-		int boilerItem = 0;
-		bool oneTime = true;
-		if (CivetServer::getParam(conn, "starttime", s)) {
-			startHour = atoi(s.substr(0, 2).c_str());
-			startMinute = atoi(s.substr(3, 2).c_str());
-		}
-		if (CivetServer::getParam(conn, "duration", s)) {
-			duration = atoi(s.c_str());
-		}
-		if (CivetServer::getParam(conn, "boileritem", s)) {
-			boilerItem = atoi(s.c_str());
-		}
-		if (CivetServer::getParam(conn, "onetime", s)) {
-			if (s.compare("1") == 0) {
-				oneTime=true;
+		if (CivetServer::getParam(conn, "timer_type", s) && s.compare("boiler") == 0) {
+			int startHour = 0;
+			int startMinute = 0;
+			int duration = 0;
+			int boilerItem = 0;
+			bool oneTime = true;
+			if (CivetServer::getParam(conn, "starttime", s)) {
+				startHour = atoi(s.substr(0, 2).c_str());
+				startMinute = atoi(s.substr(3, 2).c_str());
 			}
-			else if (s.compare("0") == 0) {
-				oneTime=false;
+			if (CivetServer::getParam(conn, "duration", s)) {
+				duration = atoi(s.c_str());
 			}
-		}
-		
-		std::string message = addTimer(startHour, startMinute, duration, boilerItem, oneTime);
+			if (CivetServer::getParam(conn, "boileritem", s)) {
+				boilerItem = atoi(s.c_str());
+			}
+			if (CivetServer::getParam(conn, "onetime", s)) {
+				if (s.compare("1") == 0) {
+					oneTime=true;
+				} else if (s.compare("0") == 0) {
+					oneTime=false;
+				}
+			}
 
-		std::string html = boost::str(boost::format(ReadHtml::readHtml("html/TimerAddHandler/post.html")) % message);
-		mg_printf(conn, html.c_str());
+			std::string message = addBoilerTimer(startHour, startMinute, duration, boilerItem, oneTime);
+			std::string html = boost::str(boost::format(ReadHtml::readHtml("html/TimerAddHandler/post.html")) % message);
+			mg_printf(conn, html.c_str());
+		} else if (CivetServer::getParam(conn, "timer_type", s) && s.compare("thermostat") == 0) {
+			int startHour = 0;
+			int startMinute = 0;
+			int room = 0;
+			float temp = 0;
+			bool on_off = true;
+			bool oneTime = true;
+			if (CivetServer::getParam(conn, "starttime_thermostat", s)) {
+				startHour = stoi(s.substr(0, 2));
+				startMinute = stoi(s.substr(3, 2));
+			}
+			if (CivetServer::getParam(conn, "room", s)) {
+				room = stoi(s);
+			}
+			if (CivetServer::getParam(conn, "temperature", s)) {
+				temp = stof(s);
+			}
+			if (CivetServer::getParam(conn, "on_off", s)) {
+				if (s.compare("on") == 0) {
+					on_off = true;
+				} else {
+					on_off = false;
+				}
+			}
+			if (CivetServer::getParam(conn, "onetime_thermostat", s)) {
+				if (s.compare("1") == 0) {
+					oneTime=true;
+				} else if (s.compare("0") == 0) {
+					oneTime=false;
+				}
+			}
+
+			std::string message = addThermostatTimer(startHour, startMinute, on_off, room, temp, oneTime);
+			std::string html = boost::str(boost::format(ReadHtml::readHtml("html/TimerAddHandler/post.html")) % message);
+			mg_printf(conn, html.c_str());
+		}
 	} else {
 		const struct mg_request_info *req_info = mg_get_request_info(conn);
 		std::string uri = std::string(req_info->local_uri);
@@ -65,9 +99,10 @@ bool TimerAddHandler::handlePost(CivetServer *server, struct mg_connection *conn
 	return true;
 }
 
-std::string TimerAddHandler::addTimer(int hour, int minute, int duration, int boilerItem, bool onetime) {
+std::string TimerAddHandler::addBoilerTimer(int hour, int minute, int duration, int boilerItem, bool onetime) {
 
-	if (timer.addTimerEvent(hour, minute, duration, boilerItem, true, onetime)) {
+	std::shared_ptr<TimerEvent> event(new BoilerTimerEvent(hour, minute, onetime, boilerItem, duration, boiler));
+	if (timer.add_event(event)) {
 		std::ostringstream oss;
 		oss << "Added timer: ";
 		if (boilerItem == BOILER_ITEM_WATER) {
@@ -78,8 +113,36 @@ std::string TimerAddHandler::addTimer(int hour, int minute, int duration, int bo
 		oss << duration << " minutes " << " at " << hour << ":" << minute;
 		
 		return oss.str();
+	} else {
+		return "Error";
 	}
-	else {
+}
+
+std::string TimerAddHandler::addThermostatTimer(int hour, int minute, bool on_off, int room, float temperature, bool onetime) {
+
+	std::shared_ptr<TimerEvent> event(new ThermostatTimerEvent(hour, minute, onetime, on_off, room, temperature, thermostat));
+	if (timer.add_event(event)) {
+		std::ostringstream oss;
+		oss << "Added timer: ";
+		if (on_off) {
+			oss << "Thermostat on in ";
+			if (room == 1) {
+				oss << "Bedroom ";
+			} else if (room == 2) {
+				oss << "Living room ";
+			} else if (room == 3) {
+				oss << "Izzy's room ";
+			} else if (room == 4) {
+				oss << "Bob's room ";
+			}
+			oss << "at " << temperature << "C";
+		} else {
+			oss << "Thermostat off ";
+		}
+
+		oss << " at " << hour << ":" << minute;
+		return oss.str();
+	} else {
 		return "Error";
 	}
 }

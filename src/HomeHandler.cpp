@@ -1,8 +1,6 @@
 #include "HomeHandler.hpp"
 
 bool HomeHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
-	//using namespace std;
-	//using boost::format;	
 	
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	AuthHandler auth = AuthHandler();

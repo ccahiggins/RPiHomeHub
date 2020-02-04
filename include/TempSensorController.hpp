@@ -1,11 +1,12 @@
 #ifndef TEMPSENSORCONTROLLER_HPP
 #define TEMPSENSORCONTROLLER_HPP
+
 #include <unistd.h>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <vector>
-
+#include <unordered_map>
 #include "ChartCreator.hpp"
 #include "RadioController.hpp"
 #include <sqlite3.h>
@@ -26,6 +27,7 @@ private:
 	void saveTempData(uint16_t deviceNum, float temp, uint16_t voltage);
 	void printSensorData(uint16_t deviceNum, float temp, uint16_t voltage);
 	void printCurrentTime();
+	std::unordered_map<int, float> last_volts;
 };
 
 #endif

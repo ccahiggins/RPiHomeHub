@@ -121,8 +121,9 @@ RadioController::payload_temp RadioController::getTempPayload() {
 		network.peek(header);
 		uint16_t f1 = 1;
 		uint16_t f2 = 2;
-		uint16_t f3 = 4;
-		if (header.from_node == f1 || header.from_node == f2 || header.from_node == f3) {
+		uint16_t f3 = 3;
+		uint16_t f4 = 4;
+		if (header.from_node == f1 || header.from_node == f2 || header.from_node == f3 || header.from_node == f4) {
 			network.read(header, &payload, sizeof(payload));
 			yeah = true;
 		} else {
@@ -155,12 +156,12 @@ RadioController::payload_boiler_status RadioController::sendGetBoilerPayload(RF2
 
 	bool ok = false;
 	int counter = 0;
-	std::cout << "X|" << std::flush;
+	//std::cout << "X|" << std::flush;
 	while (!ok && counter < COUNT) {
 		writeToFile("while counter thing");
 		ok = network.write(header,payload,size);
 		counter++;
-		std::cout << "W|" << std::flush;
+		//std::cout << "W|" << std::flush;
 		usleep(5000);
 	}
 	payload_boiler_status returnPayload;

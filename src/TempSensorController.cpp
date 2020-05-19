@@ -8,6 +8,17 @@ sqlite3 *db = NULL;
 const char *dbPath = "db/sqlTemplog.db";
 sqlite3_stmt *stmt = NULL;
 
+
+void TempSensorController::set_low_voltage_trigger(float voltage) {
+
+    low_voltage_threshold = voltage;
+}
+
+float TempSensorController::get_low_voltage_trigger() {
+
+    return low_voltage_threshold;
+}
+
 void TempSensorController::checkSensors() {
 	
 	RadioController::payload_temp payload = radio.getTempPayload();
@@ -71,11 +82,11 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 }
 
 std::vector<int> TempSensorController::lowBattery() {
-	float low = 3.0;
+//	float low = 3.0;
 	std::vector<int> lowBatts;
 
 	for (std::pair<int, float> element : last_volts) {
-		if (element.second <= low) {
+		if (element.second <= low_voltage_threshold) {
 			lowBatts.push_back(element.first);
 		}
 	}

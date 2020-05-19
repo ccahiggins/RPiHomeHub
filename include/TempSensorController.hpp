@@ -20,6 +20,9 @@ public:
 
 	std::vector<int> lowBattery();
 	void checkSensors();
+
+    void set_low_voltage_trigger(float voltage);
+    float get_low_voltage_trigger();
 	
 private:
 
@@ -28,6 +31,8 @@ private:
 	void printSensorData(uint16_t deviceNum, float temp, uint16_t voltage);
 	void printCurrentTime();
 	std::unordered_map<int, float> last_volts;
+
+    float low_voltage_threshold = 3.0;
 };
 
 #endif

@@ -22,6 +22,43 @@ int HubClass::startHub(int argc, char** argv)  {
 	timer.start(std::chrono::milliseconds(1000), []{
 		timer.check_timer();
 	});
+
+    std::ifstream hub_cfg;
+    hub_cfg.open("hub.cfg");
+
+    std::string hubcfg_line;
+
+    while (hub_cfg >> hubcfg_line) {
+        std::string delimiter = ":";
+        std::string cfg1 = hubcfg_line.substr(0, hubcfg_line.find(delimiter));
+        std::string cfg2 = hubcfg_line.substr(hubcfg_line.find(delimiter) + 1, hubcfg_line.length());
+
+
+        if (cfg1.compare("volt_alert") == 0) {
+            int volt_alert = std::stoi(cfg2);
+            tempSensControl.set_low_voltage_trigger(volt_alert);
+            std::cout << "Setting voltage alert to " << volt_alert << "V" << std::endl;
+        }
+
+        if (cfg1.compare("emailer") == 0) {
+            if (cfg2.compare("on") == 0) {
+                emailer.turn_emailer_on();
+                std::cout << "Emailer on" << std::endl;
+            } else if (cfg2.compare("off") == 0) {
+                emailer.turn_emailer_off();
+                std::cout << "Emailer off" << std::endl;
+            }
+        }
+
+        if (cfg1.compare("temp_alert") == 0) {
+            int temp_alert = std::stoi(cfg2);
+            emailer.set_trigger_temp(temp_alert);
+            std::cout << "Setting temperate alert to " << temp_alert << "C" << std::endl;
+        }
+
+
+    }
+    hub_cfg.close();
 	
 	std::ifstream cfg_file("civet.conf");
 	std::vector<std::string> config;

@@ -30,12 +30,15 @@ private:
 		float temp;
 		int id;
 	};
+	
 	std::string getSqlStatementDays(std::string &days);
 	std::string getSqlStatementFromTo(std::string &from, std::string &to);
 	std::string getSqlStatementFromDays(std::string &from, std::string &days);
 	std::string getTempGraph(std::string &sqlStatement);
 	std::string getTempData(std::string &sqlStatement);
+	std::string getSqlStatementForSensors();
 	
+	std::vector<std::vector<std::string>> getSensorNames();
 	std::string formatGraphData(std::vector<std::vector<std::string> > &data);
 	static int callback(void *ptr, int argc, char* argv[], char* cols[]);
 };

@@ -41,6 +41,7 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 	//std::cout << "S:OD=" << std::flush;
 	int rc = sqlite3_open(dbPath, &db);
 	// If rc is not 0, there was an error
+	std::cout << "D1:" << rc << std::flush;
 	if(rc) {
 		std::cout << "S:ERRDB: " << sqlite3_errmsg(db) << "  ==  " << std::flush;
 	}
@@ -51,8 +52,11 @@ void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t
 	 
 	auto x = ss.str();
 	const char *sql = x.c_str();
-	
-	if(!sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL)== SQLITE_OK) {
+
+    int sql_result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+	std::cout << "D2:" << sql_result << std::flush;
+
+	if(!sql_result == SQLITE_OK) {
 		fprintf(stderr, "S:XXX: %s\n", sqlite3_errmsg(db));
 	}
 
@@ -99,7 +103,7 @@ void TempSensorController::printSensorData(uint16_t deviceNum, float temp, uint1
 	std::stringstream s; 
 	s << std::fixed << std::setprecision(1) << temp;
 
-	std::cout << "\033[31mS" << deviceNum << ":\033[36m" << s.str() << "°C,\033[32m";
+	std::cout << "-\033[31mS" << deviceNum << ":\033[36m" << s.str() << "°C,\033[32m";
 
 	printCurrentTime();
 	std::cout << ",\033[35m";

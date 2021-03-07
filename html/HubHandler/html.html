@@ -7,28 +7,40 @@
 		<link rel="manifest" href="/manifest.json">
 		<link rel="shortcut icon" href="/favicon.ico">
 		<link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
-<script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-    var pageStart = new Date();
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script>
+		    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+		    var pageStart = new Date();
 
-    ga('create', 'UA-148181516-1', {
-        'cookieDomain': '.pi.chrishigs.co.uk',
-        'allowLinker': true
-    });
+		    ga('create', 'UA-148181516-1', {
+		        'cookieDomain': '.pi.chrishigs.co.uk',
+		        'allowLinker': true
+		    });
 
-    ga('set','anonymizeIp', true);
-    ga('send', 'pageview');
-
-</script>
+		    ga('set','anonymizeIp', true);
+		    ga('send', 'pageview');
+		</script>
 
 	</head>
 	<body>
 		<div class="full">
 			<div id="foo" class="header">
-				<div class="enjoy-css">Welcome to the Raspberry Pi Home Hub </div>
+				<div class="enjoy-css">
+					<button id="menu_btn" class="btn" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
+					<a>Welcome to the Raspberry Pi Home Hub</a>
+				</div>
+
+				%s
+			</div>
+			<div id="chart_container">
+				<div id="linechart_material" style="width:100%%; height:100%%"></div>
+			</div>
+				
+			<div id="menu_div" style="display:none">
+				<div class = "heading">Menu</div>
 				<div class="dayscont">
 					<div class="days">
 						<div id="waa">Show</div>
@@ -50,24 +62,48 @@
 								<option value="365">265</option>
 							</select>
 						</div>
-						<input id="daysbut" type="button" value="Days" onclick="getChart();">
-						<input class="select-style" id="fromdate" type="date">
+						<input id="daysbut" type="button" value="Days" onclick="days_bnt_click();">
+						<input class="o" id="fromdate" type="date">
 					</div>
-					<div class="timer">
-						<a id="timer" href="/thermostat">Thermostat</a>
-						<a id="timer" href="/timer">Timer</a>
-					</div>
+				
 				</div>
-				%s
+				<div class = "heading">Links</div>
+				<div class="hhh">
+					<a href="/thermostat">Thermostat</a>
+					<a href="/timer">Timer</a>
+				</div>
 			</div>
-			<div id="chart_container">
-				<div id="linechart_material" style="width:100%%; height:100%%"></div>
-			</div>
+
 		</div>
 		
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<script>
+			var menu_vis="off";
+			function toggleMenu() {
+			  var y = document.getElementById("chart_container");
+			  var z = document.getElementById("menu_div");
+			  if (menu_vis === "off") {
+			    y.style.display = "none";
+			    z.style.display = "block";
+			    $('.boiler_controls').hide();
+			    menu_vis = "on";
+			  } else {
+			    y.style.display = "block";
+			    z.style.display = "none";
+			    $('.boiler_controls').show();
+			    menu_vis = "off";
+			    drawChart();
+			  }
+			}
+		</script>
+
+		<script>
+
+			function days_bnt_click() {
+				getChart();
+				toggleMenu();
+			}
 
 			var paramDays = %s;
 			var from = "%s";
@@ -121,8 +157,6 @@
 			}
 			jQuery.loadScript = function (url, callback) { jQuery.ajax({  url: url, dataType: 'script', success: callback, async: true }); }
 			google.charts.load('current', {'packages':['corechart'], "callback": getChart, 'ignoreWindowOnLoad': true});
-
-			
 		</script>
 		
 		<script>

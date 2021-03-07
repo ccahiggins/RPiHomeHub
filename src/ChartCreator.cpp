@@ -39,12 +39,6 @@ void ChartCreator::writeChartToFile() {
 	myfile.close();
 }
 
-std::string ChartCreator::getSqlStatementForSensors() {
-	std::string sql = "select * from sensor;";
-	return sql;
-}
-
-
 std::string ChartCreator::getSqlStatementFromDays(std::string &from, std::string &days) {
 
 	std::ostringstream ss;
@@ -116,41 +110,6 @@ std::string ChartCreator::getTempGraph(std::string &sqlStatement) {
 
 }
 
-std::vector<std::vector<std::string> > ChartCreator::getSensorNames() {
-	
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
-	
-	std::vector<std::vector<std::string> > table;
-
-	rc = sqlite3_open("db/sensors.db", &db);
-	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
-	if( rc ){
-		fprintf(stderr, "C:ERRDB: %s\n", sqlite3_errmsg(db));
-		//return "";
-	}
-	
-	//const char *sql = "select * from sensor;";
-	std::string sqlStatement = getSqlStatementForSensors();
-	const char *sql = sqlStatement.c_str();
-	
-	//std::cout << "Getting sensor names" << std::endl;
-	//int startT=clock();
-	rc = sqlite3_exec(db, sql, callback, &table, &zErrMsg);
-	if( rc != SQLITE_OK ){
-		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	
-	sqlite3_close(db);
-	//std::string tempData=formatGraphData(table);
-
-	//std::cout << "SensorTableSize: " << table.size() << std::endl;
-
-	return table;
-}
-
 std::string ChartCreator::getTempData(std::string &sqlStatement) {
 
 	sqlite3 *db;
@@ -184,14 +143,12 @@ std::string ChartCreator::getTempData(std::string &sqlStatement) {
 }
 
 std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> > &data) {
-	
-	std::vector<std::vector<std::string>> sensorNames = getSensorNames();
-	
-	std::string sensor1Name = sensorNames[0][2];
-	std::string sensor2Name = sensorNames[1][2];
-	std::string sensor3Name = sensorNames[2][2];
-	std::string sensor4Name = sensorNames[3][2];
-	std::string sensor5Name = sensorNames[4][2];
+		
+	std::string sensor1Name = Sensors::getShortName(1);
+	std::string sensor2Name = Sensors::getShortName(2);
+	std::string sensor3Name = Sensors::getShortName(3);
+	std::string sensor4Name = Sensors::getShortName(4);
+	std::string sensor5Name = Sensors::getShortName(5);
 	
 	std::vector<std::string> sensors;
 	

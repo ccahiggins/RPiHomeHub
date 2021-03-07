@@ -9,6 +9,7 @@
 #include <ctime>
 
 #include "ReadHtml.hpp"
+#include "Sensors.hpp"
 //#include "boost/format.hpp"
 
 #include <sqlite3.h>
@@ -36,9 +37,7 @@ private:
 	std::string getSqlStatementFromDays(std::string &from, std::string &days);
 	std::string getTempGraph(std::string &sqlStatement);
 	std::string getTempData(std::string &sqlStatement);
-	std::string getSqlStatementForSensors();
 	
-	std::vector<std::vector<std::string>> getSensorNames();
 	std::string formatGraphData(std::vector<std::vector<std::string> > &data);
 	static int callback(void *ptr, int argc, char* argv[], char* cols[]);
 };

@@ -32,11 +32,11 @@ bool VoltageHandler::handleGet(CivetServer *server, struct mg_connection *conn) 
 std::string VoltageHandler::formatVolts(std::vector<std::vector<std::string> > &data) {
 
 	//String for the name the title for each sensor
-	std::string sensor1Name = "Bed";
-	std::string sensor2Name = "Living";
-	std::string sensor3Name = "Izzy";
-	std::string sensor4Name = "Outside";
-	std::string sensor5Name = "Bob";
+	std::string sensor1Name = Sensors::getName(1);
+	std::string sensor2Name = Sensors::getName(2);
+	std::string sensor3Name = Sensors::getName(3);
+	std::string sensor4Name = Sensors::getName(4);
+	std::string sensor5Name = Sensors::getName(5);
 	
 
 	std::string voltsData="";		// String which will contain temp data for graph

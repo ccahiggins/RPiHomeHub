@@ -9,9 +9,10 @@
 
 #include <sqlite3.h>
 #include "CivetServer.h"
-#include "ReadHtml.hpp"
 #include "boost/format.hpp"
+#include "ReadHtml.hpp"
 #include "AuthHandler.hpp"
+#include "Sensors.hpp"
 
 class VoltageHandler: public CivetHandler
 {

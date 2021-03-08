@@ -54,8 +54,8 @@ bool TimerHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 				}
 				std::string room_thing = "";
 				if (thermostat_event->get_on_off() == 1) {
-					room_thing = " in room ";
-					room_thing.append(std::to_string(thermostat_event->get_room()));
+					room_thing = " in ";
+					room_thing.append(Sensors::getName(thermostat_event->get_room()));
 				}
 				std::string line = ReadHtml::readHtml("html/TimerHandler/enable_disable_thermostat.html");
 

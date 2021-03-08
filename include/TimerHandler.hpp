@@ -11,6 +11,7 @@
 #include "TimerEvent.hpp"
 #include "BoilerTimerEvent.hpp"
 #include "ThermostatTimerEvent.hpp"
+#include "Sensors.hpp"
 
 class TimerHandler : public CivetHandler {
 	

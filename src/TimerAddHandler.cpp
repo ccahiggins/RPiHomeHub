@@ -9,6 +9,19 @@ bool TimerAddHandler::handleGet(CivetServer *server, struct mg_connection *conn)
 	AuthHandler auth = AuthHandler();
 		if (auth.authorised(conn)) {
 		std::string html = ReadHtml::readHtml("html/TimerAddHandler/get.html");
+		std::vector<std::vector<std::string>> sensors = Sensors::getSensors();
+		bool first = true;
+		for ( auto &i : sensors ) {
+			if (i[3].compare("1") == 0 && first) {
+				html.append(boost::str(boost::format(ReadHtml::readHtml("html/TimerAddHandler/first_room.html")) % i[0] % i[1]));
+				first = false;
+			} else if (i[3].compare("1") == 0 && !first) {
+				html.append(boost::str(boost::format(ReadHtml::readHtml("html/TimerAddHandler/other_rooms.html")) % i[0] % i[1]));
+			}
+		}
+		html.append(ReadHtml::readHtml("html/TimerAddHandler/get2.html"));
+		
+		
 		mg_printf(conn, html.c_str());
 	} else {
 		const struct mg_request_info *req_info = mg_get_request_info(conn);
@@ -126,16 +139,8 @@ std::string TimerAddHandler::addThermostatTimer(int hour, int minute, bool on_of
 		oss << "Added timer: ";
 		if (on_off) {
 			oss << "Thermostat on in ";
-			if (room == 1) {
-				oss << "Bedroom ";
-			} else if (room == 2) {
-				oss << "Living room ";
-			} else if (room == 3) {
-				oss << "Izzy's room ";
-			} else if (room == 4) {
-				oss << "Bob's room ";
-			}
-			oss << "at " << temperature << "C";
+			oss << Sensors::getName(room);
+			oss << " at " << temperature << "C";
 		} else {
 			oss << "Thermostat off ";
 		}

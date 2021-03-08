@@ -6,6 +6,7 @@
 #include "ReadHtml.hpp"
 #include "boost/format.hpp"
 #include "AuthHandler.hpp"
+#include "Sensors.hpp"
 
 #include <string>
 

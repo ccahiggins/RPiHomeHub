@@ -39,8 +39,6 @@ void ChartCreator::writeChartToFile() {
 	myfile.close();
 }
 
-
-
 std::string ChartCreator::getSqlStatementFromDays(std::string &from, std::string &days) {
 
 	std::ostringstream ss;
@@ -130,6 +128,7 @@ std::string ChartCreator::getTempData(std::string &sqlStatement) {
 	const char *sql = sqlStatement.c_str();
 	
 	//int startT=clock();
+	//std::cout << "Getting temp data" << std::endl;
 	rc = sqlite3_exec(db, sql, callback, &table, &zErrMsg);
 	if( rc != SQLITE_OK ){
 		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
@@ -137,18 +136,19 @@ std::string ChartCreator::getTempData(std::string &sqlStatement) {
 	}
 	
 	sqlite3_close(db);
+	//std::cout << "TempTableSize: " << table.size() << std::endl;
 	std::string tempData=formatGraphData(table);
 
 	return tempData;
 }
 
 std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> > &data) {
-	
-	std::string sensor1Name = "Bed";
-	std::string sensor2Name = "Living";
-	std::string sensor3Name = "Izzy";
-	std::string sensor4Name = "Outside";
-	std::string sensor5Name = "Bob";
+		
+	std::string sensor1Name = Sensors::getShortName(1);
+	std::string sensor2Name = Sensors::getShortName(2);
+	std::string sensor3Name = Sensors::getShortName(3);
+	std::string sensor4Name = Sensors::getShortName(4);
+	std::string sensor5Name = Sensors::getShortName(5);
 	
 	std::vector<std::string> sensors;
 	
@@ -237,11 +237,13 @@ std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> >
 
 int ChartCreator::callback(void *ptr, int argc, char* argv[], char* cols[]) {
 
+	//std::cout << "Callback" << std::endl;
 	typedef std::vector<std::vector<std::string> > table_type;
 	ChartCreator::TempData td;
 	table_type* table = static_cast<table_type*>(ptr);
 	std::vector<std::string> row;
 	for (int i = 0; i < argc; i++) {
+		//std::cout << argv[i] << std::endl;
 		row.push_back(argv[i] ? argv[i] : "(NULL)");
 	}
 	table -> push_back(row);

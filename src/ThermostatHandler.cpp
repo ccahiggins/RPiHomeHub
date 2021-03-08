@@ -34,11 +34,8 @@ bool ThermostatHandler::handleGet(CivetServer *server, struct mg_connection *con
 				if (std::string::npos != s.find_first_of("0123456789")) {
 					std::string room_string = s.substr(s.find_first_of("0123456789"), s.length());
 					int room = stoi(room_string);
-					if (room == 1) {
-						room_string = "Bedroom";
-					} else if (room == 2) {
-						room_string = "Living room";
-					}
+					
+					room_string = Sensors::getName(room);
 
 					thermostat.set_room(room);
 					content.append(boost::str(boost::format(ReadHtml::readHtml("html/ThermostatHandler/set_room.html")) % room_string));
@@ -53,16 +50,21 @@ bool ThermostatHandler::handleGet(CivetServer *server, struct mg_connection *con
 			} else {
 				content.append(ReadHtml::readHtml("html/ThermostatHandler/thermostatOff.html"));
 			}
-			int room = thermostat.get_selected_room();
-			std::string room_string = "";
-			if (room == 1) {
-				room_string = "Bedroom";
-			} else if (room == 2) {
-				room_string = "Living room";
-			}
 
-			std::string temp_string = std::to_string(thermostat.get_selected_temp());
+			std::string room_string = Sensors::getName(thermostat.get_selected_room());
+
+			std::stringstream stream;
+			stream << std::fixed << std::setprecision(2) << thermostat.get_selected_temp();
+			std::string temp_string = stream.str();
 			content.append(boost::str(boost::format(ReadHtml::readHtml("html/ThermostatHandler/blah.html")) % temp_string % room_string));
+			
+			std::vector<std::vector<std::string>> sensors = Sensors::getSensors();
+			for ( auto &i : sensors ) {
+				if (i[3].compare("1") == 0) {
+					content.append(boost::str(boost::format(ReadHtml::readHtml("html/ThermostatHandler/rooms.html")) % i[0] % i[1]));
+				}
+			}
+			content.append(ReadHtml::readHtml("html/ThermostatHandler/blah2.html"));
 		}
 		
 		std::string html = boost::str(boost::format(ReadHtml::readHtml("html/ThermostatHandler/html.html")) % content);

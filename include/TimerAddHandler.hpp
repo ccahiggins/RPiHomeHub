@@ -12,6 +12,7 @@
 #include "BoilerTimerEvent.hpp"
 #include "Boiler.hpp"
 #include "Thermostat.hpp"
+#include "Sensors.hpp"
 
 #include <string>
 

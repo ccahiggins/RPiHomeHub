@@ -9,6 +9,7 @@
 #include <ctime>
 
 #include "ReadHtml.hpp"
+#include "Sensors.hpp"
 //#include "boost/format.hpp"
 
 #include <sqlite3.h>
@@ -30,6 +31,7 @@ private:
 		float temp;
 		int id;
 	};
+	
 	std::string getSqlStatementDays(std::string &days);
 	std::string getSqlStatementFromTo(std::string &from, std::string &to);
 	std::string getSqlStatementFromDays(std::string &from, std::string &days);

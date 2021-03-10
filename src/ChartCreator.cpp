@@ -4,24 +4,24 @@
 
 std::string ChartCreator::getChartDays(std::string &days) {
 	
-	std::string sqlStatement = getSqlStatementDays(days);
-	std::string tempData = getTempGraph(sqlStatement);
+	std::vector<std::vector<std::string>> data = DatabaseController::getChartDataDays(days);
+	std::string tempData = getTempGraph(data);
 	
 	return tempData;
 }
 
 std::string ChartCreator::getChartFromDays(std::string &from, std::string &days) {
 
-	std::string sqlStatement = getSqlStatementFromDays(from, days);
-	std::string tempData = getTempGraph(sqlStatement);
+	std::vector<std::vector<std::string>> data = DatabaseController::getChartDataFromDays(from, days);
+	std::string tempData = getTempGraph(data);
 	
 	return tempData;
 }
 
 std::string ChartCreator::getChartFromTo(std::string &from, std::string &to) {
 
-	std::string sqlStatement = getSqlStatementFromTo(from, to);
-	std::string tempData = getTempGraph(sqlStatement);
+	std::vector<std::vector<std::string>> data = DatabaseController::getChartDataFromTo(from, to);
+	std::string tempData = getTempGraph(data);
 	
 	return tempData;
 }
@@ -30,8 +30,9 @@ std::string ChartCreator::getChartFromTo(std::string &from, std::string &to) {
 void ChartCreator::writeChartToFile() {
 	
 	std::string days = "1";
-	std::string sqlStatement = getSqlStatementDays(days);
-	std::string tempData = getTempGraph(sqlStatement);
+	
+	std::vector<std::vector<std::string>> data = DatabaseController::getChartDataDays(days);
+	std::string tempData = getTempGraph(data);
 	
 	std::ofstream myfile;
 	myfile.open ("chartdata");
@@ -39,53 +40,7 @@ void ChartCreator::writeChartToFile() {
 	myfile.close();
 }
 
-std::string ChartCreator::getSqlStatementFromDays(std::string &from, std::string &days) {
-
-	std::ostringstream ss;
-	ss << "SELECT timestamp, temp, id ";
-	ss << "FROM temps ";
-	ss << "WHERE id IN (1,2,3,4,5) ";
-	ss << "AND timestamp BETWEEN date('" << from << "') AND date('" << from << "','+" << days << " days');";
-	
-	return ss.str();
-}
-
-/* std::string ChartCreator::getSqlStatement(std::string &days)
-{
-	//using namespace std;
-	ostringstream ss;
-	ss << "SELECT (STRFTIME('%Y', timestamp)) || ',' || (STRFTIME('%m', timestamp) - 1) || ',' || (STRFTIME('%d,%H,%M,%S', timestamp)), temp, id ";
-	ss << "FROM temps ";
-	ss << "WHERE id IN (1,2,3,4,5) ";
-	ss << "AND timestamp > datetime('now', 'localtime', '-" << days << " days');";
-	
-	return ss.str();
-} */
-
-std::string ChartCreator::getSqlStatementDays(std::string &days) {
-
-	std::ostringstream ss;
-	ss << "SELECT timestamp, temp, id ";
-	ss << "FROM temps ";
-	ss << "WHERE id IN (1,2,3,4,5) ";
-	ss << "AND timestamp > datetime('now', 'localtime', '-" << days << " days');";
-	
-	return ss.str();
-}
-
-std::string ChartCreator::getSqlStatementFromTo(std::string &from, std::string &to) {
-
-	std::ostringstream ss;
-	ss << "SELECT timestamp, temp, id ";
-	ss << "FROM temps ";
-	ss << "WHERE id IN (1,2,3,4,5) ";
-	ss << "AND timestamp BETWEEN date('" << from << "') ";
-	ss << "AND date('" << to << "');";
-	
-	return ss.str();
-}
-
-std::string ChartCreator::getTempGraph(std::string &sqlStatement) {
+std::string ChartCreator::getTempGraph(std::vector<std::vector<std::string>> &data) {
 
 	int numGraphs = 1;
 	std::string somestuff = "";
@@ -93,8 +48,8 @@ std::string ChartCreator::getTempGraph(std::string &sqlStatement) {
 	somestuff.append(ReadHtml::readHtml("html/ChartCreator/graph1.html"));
 	//somestuff.append("=========");
 
-	std::string data1=getTempData(sqlStatement);
-	somestuff.append(data1);
+	std::string tempData = formatGraphData(data);
+	somestuff.append(tempData);
 
 	somestuff.append(ReadHtml::readHtml("html/ChartCreator/graph2.html"));
 
@@ -110,39 +65,7 @@ std::string ChartCreator::getTempGraph(std::string &sqlStatement) {
 
 }
 
-std::string ChartCreator::getTempData(std::string &sqlStatement) {
-
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
-	
-	std::vector<std::vector<std::string> > table;
-
-	rc = sqlite3_open("db/sqlTemplog.db", &db);
-	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
-	if( rc ){
-		fprintf(stderr, "C:ERRDB: %s\n", sqlite3_errmsg(db));
-		return "";
-	}
-	
-	const char *sql = sqlStatement.c_str();
-	
-	//int startT=clock();
-	//std::cout << "Getting temp data" << std::endl;
-	rc = sqlite3_exec(db, sql, callback, &table, &zErrMsg);
-	if( rc != SQLITE_OK ){
-		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	
-	sqlite3_close(db);
-	//std::cout << "TempTableSize: " << table.size() << std::endl;
-	std::string tempData=formatGraphData(table);
-
-	return tempData;
-}
-
-std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> > &data) {
+std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string>> &data) {
 		
 	std::string sensor1Name = Sensors::getShortName(1);
 	std::string sensor2Name = Sensors::getShortName(2);
@@ -233,20 +156,4 @@ std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string> >
 	tempData << "]);\n";
 	
 	return tempData.str();
-}	
-
-int ChartCreator::callback(void *ptr, int argc, char* argv[], char* cols[]) {
-
-	//std::cout << "Callback" << std::endl;
-	typedef std::vector<std::vector<std::string> > table_type;
-	ChartCreator::TempData td;
-	table_type* table = static_cast<table_type*>(ptr);
-	std::vector<std::string> row;
-	for (int i = 0; i < argc; i++) {
-		//std::cout << argv[i] << std::endl;
-		row.push_back(argv[i] ? argv[i] : "(NULL)");
-	}
-	table -> push_back(row);
-	
-	return 0;
 }

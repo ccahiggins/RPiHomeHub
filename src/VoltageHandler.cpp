@@ -6,30 +6,29 @@ bool VoltageHandler::handleGet(CivetServer *server, struct mg_connection *conn) 
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	AuthHandler auth = AuthHandler();
 	if (auth.authorised(conn)) {
-	std::string param;
-	std::string voltageData="";
-	if (CivetServer::getParam(conn, "days", param)) {
-		int days = atoi(param.c_str()); 
-		voltageData=printVolts(days);
-	}
-	else {
-		voltageData = printVolts();
-	}
-	
-	//printHtml("html/VoltageHandler/html.html", voltageData.c_str(), conn);
-	std::string html = boost::str(boost::format(ReadHtml::readHtml("html/VoltageHandler/html.html")) % voltageData);
-	mg_printf(conn, html.c_str());
-} else {
+		std::string param;
+		std::string voltageData = "";
+		if (CivetServer::getParam(conn, "days", param)) {
+			int days = atoi(param.c_str()); 
+			voltageData=printVolts(days);
+		} else {
+			voltageData = printVolts();
+		}
+		
+		std::string html = boost::str(boost::format(ReadHtml::readHtml("html/VoltageHandler/html.html")) % voltageData);
+		mg_printf(conn, html.c_str());
+	} else {
 		const struct mg_request_info *req_info = mg_get_request_info(conn);
 		std::string uri = std::string(req_info->local_uri);
 		std::string html = ReadHtml::readHtml("html/auth/pleaselogin.html");
 		std::string s = boost::str(boost::format(html) % uri  );
 		mg_printf(conn, s.c_str());
 	}
+	
 	return true;
 }
 
-std::string VoltageHandler::formatVolts(std::vector<std::vector<std::string> > &data) {
+std::string VoltageHandler::formatVolts(std::vector<std::vector<std::string>> &data) {
 
 	//String for the name the title for each sensor
 	std::string sensor1Name = Sensors::getName(1);
@@ -193,113 +192,17 @@ std::string VoltageHandler::formatVolts(std::vector<std::vector<std::string> > &
 
 std::string VoltageHandler::printVolts(int days) {
 
-	//cout << "Num days for Voltage graph: " << days << endl;
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
-	const char *sql;
-	std::vector<std::vector<std::string> > table;
+
+	std::vector<std::vector<std::string>> data = DatabaseController::getSensorVoltage(days);
+	std::string voltsData = formatVolts(data);
 	
-	std::cout << "V:OD=" << std::endl;
-	rc = sqlite3_open("db/sqlTemplog.db", &db);
-	if( rc ) {
-		fprintf(stderr, "V:ERRDB: %s\n", sqlite3_errmsg(db));
-		//exit(0);
-		return "";
-	} else {
-		//fprintf(stderr, "Opened database successfully\n");
-	}
-
-	//string sqlText = "SELECT timestamp, temp FROM temps WHERE id=";
-	//sqlText.append(Result2);
-	//sqlText.append(" AND timestamp>datetime('now', 'localtime', '-168 hours')");
-	//sqlText.append(" AND timestamp>datetime('now', 'localtime', '-24 hours')");
-	
-	std::stringstream ss;
-
-	ss << "SELECT timestamp, voltage, id ";
-	ss << "FROM temps ";
-	ss << "WHERE id in (1,2,3,4,5) ";
-	ss << "AND timestamp>datetime('now', 'localtime', '-";
-	ss << days;
-	ss << " days') AND voltage IS NOT NULL;";
-
-	auto x = ss.str();
-	sql = x.c_str();
-
-  
-   rc = sqlite3_exec(db, sql, callback, &table, &zErrMsg);
-   if( rc != SQLITE_OK ){
-      fprintf(stderr, "V: SQL error: %s\n", zErrMsg);
-      sqlite3_free(zErrMsg);
-   } else {
-      //fprintf(stdout, "Operation done successfully\n");
-   }
-   std::cout << "V:CD/" << std::endl;
-   sqlite3_close(db);
-  
-   std::string voltsData = formatVolts(table);
-
 	return voltsData;
 }
 
 std::string VoltageHandler::printVolts() {
 
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
-	const char *sql;
-	std::vector<std::vector<std::string> > table;
+	std::vector<std::vector<std::string>> data = DatabaseController::getSensorVoltage();
+	std::string voltsData = formatVolts(data);
 	
-	std::cout << "V:OD=" << std::endl;
-	rc = sqlite3_open("db/sqlTemplog.db", &db);
-	if( rc ) {
-		fprintf(stderr, "V:ERRDB: %s\n", sqlite3_errmsg(db));
-		//exit(0);
-		return "";
-	} else {
-	//fprintf(stderr, "Opened database successfully\n");
-	}
-
-	//string sqlText = "SELECT timestamp, temp FROM temps WHERE id=";
-	//sqlText.append(Result2);
-	//sqlText.append(" AND timestamp>datetime('now', 'localtime', '-168 hours')");
-	//sqlText.append(" AND timestamp>datetime('now', 'localtime', '-24 hours')");
-	
-	//string sqlText = "SELECT timestamp, voltage, id FROM temps WHERE timestamp>datetime('now', 'localtime', '-24 hours')";
-	std::stringstream ss;
-	ss << "SELECT timestamp, voltage, id ";
-	ss << "FROM temps ";
-	ss << "WHERE voltage IS NOT NULL ";
-	ss << "AND id IN (1,2,3,4,5);";
-	
-	auto x = ss.str();
-	sql = x.c_str();
-
-  
-   rc = sqlite3_exec(db, sql, callback, &table, &zErrMsg);
-   if( rc != SQLITE_OK ) {
-      fprintf(stderr, "SQL error: %s\n", zErrMsg);
-      sqlite3_free(zErrMsg);
-   } else {
-      //fprintf(stdout, "Operation done successfully\n");
-   }
-   std::cout << "V:CD/" << std::endl;
-   sqlite3_close(db);
-  
-   std::string voltsData=formatVolts(table);
-
 	return voltsData;
-}
-
-int VoltageHandler::callback(void *ptr, int argc, char* argv[], char* cols[]) {
-
-	typedef std::vector<std::vector<std::string> > table_type;
-    table_type* table = static_cast<table_type*>(ptr);
-    std::vector<std::string> row;
-    for (int i = 0; i < argc; i++) {
-        row.push_back(argv[i] ? argv[i] : "(NULL)");
-	}
-    table -> push_back(row);
-    return 0;
 }

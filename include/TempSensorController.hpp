@@ -1,17 +1,18 @@
 #ifndef TEMPSENSORCONTROLLER_HPP
 #define TEMPSENSORCONTROLLER_HPP
 
-#include <unistd.h>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <vector>
 #include <unordered_map>
+
+#include <unistd.h>
+
 #include "ChartCreator.hpp"
 #include "RadioController.hpp"
-#include <sqlite3.h>
-
 #include "Subject.hpp"
+#include "DatabaseController.hpp"
 
 class TempSensorController : public Subject {
 

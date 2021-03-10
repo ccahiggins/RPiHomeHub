@@ -34,12 +34,7 @@ bool AuthHandler::login(struct mg_connection *conn, std::string &session, std::s
 }
 
 bool AuthHandler::authorised(struct mg_connection *conn) {
-	//cout << "AuthHandler" << endl;
 	
-	//string content = "Test POST";
-
-	//string username;
-	//string password;
 	std::string session;
 	//const struct mg_request_info *req_info = mg_get_request_info(conn);
 	//cout << "Loc: " << req_info->local_uri << endl;
@@ -98,71 +93,17 @@ void AuthHandler::getSession(struct mg_connection *conn, std::string &session) {
 
 std::string AuthHandler::getSalt(std::string username) {
 
-	//cout << "Getting session for " << username << endl;
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
+	std::string salt = DatabaseController::getUserSalt(username);
 	
-	std::string sqlStatement = "select salt from users where username = '" + username + "'";
-	
-	std::vector<std::vector<std::string> > salts;
-
-	rc = sqlite3_open("db/auth.db", &db);
-	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
-	if( rc ){
-		fprintf(stderr, "C:ERRDB: %s\n", sqlite3_errmsg(db));
-		return "";
-	}
-	
-	const char *sql = sqlStatement.c_str();
-	
-	//int startT=clock();
-	rc = sqlite3_exec(db, sql, callback, &salts, &zErrMsg);
-	if( rc != SQLITE_OK ){
-		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	
-	sqlite3_close(db);
-	
-	if (salts.size() > 0) {
-		return salts[0][0];
-	} else {
-		return "";
-	}
+	return salt;
 }
 
 bool AuthHandler::checkUserPass(std::string username, std::string password)
 {
 
-	//cout << "Getting login for " << username << endl;
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
+	std::string user = DatabaseController::getUserFromUsernamePassword(username, password);
 	
-	std::string sqlStatement = "select * from users where username = '" + username + "' and password = '" + password + "'";
-	
-	std::vector<std::vector<std::string> > users;
-
-	rc = sqlite3_open("db/auth.db", &db);
-	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
-	if( rc ){
-		fprintf(stderr, "C:ERRDB: %s\n", sqlite3_errmsg(db));
-		return "";
-	}
-	
-	const char *sql = sqlStatement.c_str();
-	
-	//int startT=clock();
-	rc = sqlite3_exec(db, sql, callback, &users, &zErrMsg);
-	if( rc != SQLITE_OK ){
-		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	
-	sqlite3_close(db);
-	
-	if (users.size() > 0) {
+	if (username.compare(user) == 0) {
 		return true;
 	} else {
 		return false;
@@ -172,34 +113,9 @@ bool AuthHandler::checkUserPass(std::string username, std::string password)
 bool AuthHandler::hasDBSession(std::string session)
 {
 
-	//cout << "Getting session for " << session << endl;
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
+	std::string sesh = DatabaseController::getUsernameFromSession(session);
 	
-	std::string sqlStatement = "select username from users where session = '" + session + "'";
-	
-	std::vector<std::vector<std::string> > sessions;
-
-	rc = sqlite3_open("db/auth.db", &db);
-	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
-	if( rc ){
-		fprintf(stderr, "C:ERRDB: %s\n", sqlite3_errmsg(db));
-		return "";
-	}
-	
-	const char *sql = sqlStatement.c_str();
-	
-	//int startT=clock();
-	rc = sqlite3_exec(db, sql, callback, &sessions, &zErrMsg);
-	if( rc != SQLITE_OK ){
-		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	
-	sqlite3_close(db);
-	
-	if (sessions.size() > 0) {
+	if (sesh.compare("") != 0) {
 		return true;
 	} else {
 		return false;
@@ -210,34 +126,10 @@ std::string AuthHandler::createSessionForUser(std::string user) {
 	
 	std::string session = uuid();
 	
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
+	std::string sess = DatabaseController::setUserSession(user, session);
 	
-	std::string sqlStatement = "update users set session='" + session + "' where username = '" + user + "'";
-	
-	std::vector<std::vector<std::string> > sessions;
-
-	rc = sqlite3_open("db/auth.db", &db);
-	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
-	if( rc ){
-		fprintf(stderr, "C:ERRDB: %s\n", sqlite3_errmsg(db));
-		return "";
-	}
-	
-	const char *sql = sqlStatement.c_str();
-	
-	//int startT=clock();
-	rc = sqlite3_exec(db, sql, callback, &sessions, &zErrMsg);
-	if( rc != SQLITE_OK ){
-		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	
-	sqlite3_close(db);
-	//cout << "------" << endl;
-	if (sessions.size() > 0) {
-		return sessions[0][0];
+	if (!sess.empty()) {
+		return session;
 	} else {
 		return "";
 	}
@@ -247,38 +139,9 @@ std::string AuthHandler::createSessionForUser(std::string user) {
 std::string AuthHandler::getDBSessionForUser(std::string user)
 {
 	
-	//cout << "Getting session for user " << user << endl;
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
+	std::string session = DatabaseController::getSessionFromUsername(user);
 	
-	std::string sqlStatement = "select session from users where username = '" + user + "'";
-	
-	std::vector<std::vector<std::string> > sessions;
-
-	rc = sqlite3_open("db/auth.db", &db);
-	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
-	if( rc ){
-		fprintf(stderr, "C:ERRDB: %s\n", sqlite3_errmsg(db));
-		return "";
-	}
-	
-	const char *sql = sqlStatement.c_str();
-	
-	//int startT=clock();
-	rc = sqlite3_exec(db, sql, callback, &sessions, &zErrMsg);
-	if( rc != SQLITE_OK ){
-		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	
-	sqlite3_close(db);
-	//cout << "------" << endl;
-	if (sessions.size() > 0) {
-		return sessions[0][0];
-	} else {
-		return "";
-	}
+	return session;
 }
 
 
@@ -309,17 +172,4 @@ std::string AuthHandler::uuid() {
 	rrr = nullptr;
 
 	return uuuuuid;
-}
-
-int AuthHandler::callback(void *ptr, int argc, char* argv[], char* cols[]) {
-	//cout << "DB callback" << endl;
-	typedef std::vector<std::vector<std::string> > table_type;
-	table_type* table = static_cast<table_type*>(ptr);
-	std::vector<std::string> row;
-	for (int i = 0; i < argc; i++)
-	{
-		row.push_back(argv[i] ? argv[i] : "(NULL)");
-	}
-	table -> push_back(row);
-	return 0;
 }

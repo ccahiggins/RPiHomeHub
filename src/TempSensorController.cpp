@@ -4,11 +4,6 @@ TempSensorController::TempSensorController(RadioController& radio_) : radio(radi
 	std::cout << "TC" << std::endl;
 }
 
-sqlite3 *db = NULL;
-const char *dbPath = "db/sqlTemplog.db";
-sqlite3_stmt *stmt = NULL;
-
-
 void TempSensorController::set_low_voltage_trigger(float voltage) {
 
     low_voltage_threshold = voltage;
@@ -38,47 +33,7 @@ void TempSensorController::checkSensors() {
 
 void TempSensorController::saveTempData(uint16_t deviceNum, float temp, uint16_t voltage) {
 	
-	//std::cout << "S:OD=" << std::flush;
-	int rc = sqlite3_open(dbPath, &db);
-	// If rc is not 0, there was an error
-	std::cout << "D1:" << rc << std::flush;
-	if(rc) {
-		std::cout << "S:ERRDB: " << sqlite3_errmsg(db) << "  ==  " << std::flush;
-	}
-	
-	std::stringstream ss;
-	ss << "INSERT INTO temps( id, timestamp, temp, voltage) ";
-	ss << "VALUES(?,datetime('now', 'localtime'), ?, ?);";
-	 
-	auto x = ss.str();
-	const char *sql = x.c_str();
-
-    int sql_result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
-	std::cout << "D2:" << sql_result << std::flush;
-
-	if(!sql_result == SQLITE_OK) {
-		fprintf(stderr, "S:XXX: %s\n", sqlite3_errmsg(db));
-	}
-
-	sqlite3_bind_int(stmt, 1, deviceNum);
-	sqlite3_bind_double(stmt, 2, temp);
-	sqlite3_bind_double(stmt, 3,  (voltage * 0.001));
-	sqlite3_step(stmt);  // Run SQL INSERT
-	sqlite3_reset(stmt); // Clear statement handle for next use
-	sqlite3_finalize(stmt);
-
-	//std::cout << "S:CD/" << std::flush;
-	rc = sqlite3_close(db);
-	int i = 0;
-	while(rc != SQLITE_OK) {
-		printf("it is busy\n");
-		i++;
-		if ( i > 10 ) {
-			break;
-		}
-		sleep(1);
-		rc=sqlite3_close(db);
-	}
+	DatabaseController::insertTempData(deviceNum, temp, voltage);
 	
 	ChartCreator chartCreator;
 	chartCreator.writeChartToFile();

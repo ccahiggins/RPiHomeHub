@@ -4,14 +4,15 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
+#include <cstring>
+
+#include "DatabaseController.hpp"
 
 #include "CivetServer.h"
-#include <sqlite3.h>
 #include <openssl/sha.h>
 #include <uuid/uuid.h>
 #include <boost/algorithm/string.hpp>
-#include <iostream>
-#include <cstring>
 
 class AuthHandler
 {
@@ -27,7 +28,6 @@ private:
 	bool hasDBSession(std::string session);
 	std::string getSalt(std::string username);
 	std::string getDBSessionForUser(std::string user);
-	static int callback(void *ptr, int argc, char* argv[], char* cols[]);
 	bool checkUserPass(std::string username, std::string password);
 	std::string sha256(const std::string str);
 	std::string createSessionForUser(std::string user);

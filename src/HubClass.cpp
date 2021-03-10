@@ -16,13 +16,6 @@ void HubClass::intHandler() {
 
 int HubClass::startHub(int argc, char** argv)  {
 
-	tempSensControl.attach(&thermostat);
-	tempSensControl.attach(&emailer);
-	load_timer_events();
-	timer.start(std::chrono::milliseconds(1000), []{
-		timer.check_timer();
-	});
-
     std::ifstream hub_cfg;
     hub_cfg.open("hub.cfg");
 
@@ -32,7 +25,6 @@ int HubClass::startHub(int argc, char** argv)  {
         std::string delimiter = ":";
         std::string cfg1 = hubcfg_line.substr(0, hubcfg_line.find(delimiter));
         std::string cfg2 = hubcfg_line.substr(hubcfg_line.find(delimiter) + 1, hubcfg_line.length());
-
 
         if (cfg1.compare("volt_alert") == 0) {
             int volt_alert = std::stoi(cfg2);
@@ -56,15 +48,41 @@ int HubClass::startHub(int argc, char** argv)  {
             std::cout << "Setting temperate alert to " << temp_alert << "C" << std::endl;
         }
 
+		if (cfg1.compare("temp_db") == 0) {
+            DatabaseController::set_temps_database(cfg2);
+            std::cout << "Setting temps database to " << cfg2 << std::endl;
+        }
+		
+		if (cfg1.compare("auth_db") == 0) {
+            DatabaseController::set_auth_database(cfg2);
+            std::cout << "Setting auth database to " << cfg2 << std::endl;
+        }
+		
+		if (cfg1.compare("sensors_db") == 0) {
+            DatabaseController::set_sensors_database(cfg2);
+            std::cout << "Setting sensors database to " << cfg2 << std::endl;
+        }
 
     }
     hub_cfg.close();
 	
+	if (DatabaseController::databaseCheck()) {
+		std::cout << "Databases looks good" << std::endl;
+	} else {
+		std::cout << "DATABASE ERROR" << std::endl;
+		exit(1);
+	}
+	
+	tempSensControl.attach(&thermostat);
+	tempSensControl.attach(&emailer);
+	load_timer_events();
+	timer.start(std::chrono::milliseconds(1000), []{
+		timer.check_timer();
+	});
+	
 	std::ifstream cfg_file("civet.conf");
 	std::vector<std::string> config;
-	std::copy(std::istream_iterator<std::string>(cfg_file),
-		std::istream_iterator<std::string>(),
-		std::back_inserter(config));
+	std::copy(std::istream_iterator<std::string>(cfg_file), std::istream_iterator<std::string>(), std::back_inserter(config));
 
 	CivetServer server(config);
 
@@ -81,14 +99,13 @@ int HubClass::startHub(int argc, char** argv)  {
 	server.addHandler(THERMOSTAT_URI, new ThermostatHandler(thermostat));
 	server.addHandler(VOLTAGE_URI, new VoltageHandler());
 	server.addHandler(CHART_URI, new ChartHandler());
-
 	server.addHandler(LOGIN_URI, new LoginHandler());
 
 	while(keepRunning) {
 		tempSensControl.checkSensors();
 		usleep(200000);
 	}
-	std::cout << "Ckosibg" << std::endl;
+	std::cout << "Closing" << std::endl;
 	return 0;
 }
 

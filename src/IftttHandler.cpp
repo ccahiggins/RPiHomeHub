@@ -3,56 +3,11 @@
 IftttHandler::IftttHandler(Boiler& boiler_, Thermostat& thermostat_, Timer& timer_, TempSensorController& tempSens_)
 	: boiler(boiler_), thermostat(thermostat_), timer(timer_), tempSens(tempSens_) {}
 
-int IftttHandler::callback(void *ptr, int argc, char* argv[], char* cols[]) {
-	
-	typedef std::vector<std::vector<std::string> > table_type;
-	table_type* table = static_cast<table_type*>(ptr);
-	std::vector<std::string> row;
-
-	for (int i = 0; i < argc; i++) {
-		row.push_back(argv[i] ? argv[i] : "(NULL)");
-	}
-	table->push_back(row);
-
-	return 0;
-}
-
 std::string IftttHandler::getTemp(std::string id) {
 	
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
+	std::string temp = DatabaseController::getTempFromId(id);
 	
-	std::vector<std::vector<std::string> > table;
-
-	rc = sqlite3_open("/home/pi/h/db/sqlTemplog.db", &db);
-	//rc = sqlite3_open("/media/ramdisk/sqlTemplog.db", &db);
-	if (rc) {
-		fprintf(stderr, "C:ERRDB: %s\n", sqlite3_errmsg(db));
-		return 0;
-	}
-	
-	std::string sqlbuilder = "select printf(\"%.1f\", temp) as temp from temps where id = " + id + " order by timestamp desc limit 1";
-	
-	const char *sql = sqlbuilder.c_str();
-	
-	//int startT=clock();
-	rc = sqlite3_exec(db, sql, callback, &table, &zErrMsg);
-	if (rc != SQLITE_OK ) {
-		fprintf(stderr, "C:SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	
-	sqlite3_close(db);
-	
-	for (auto &i : table) {
-		for (auto &j : i) {
-			//cout << "got db:" << j << endl;
-			return j;
-		}
-	}
-	
-	return "";
+	return temp;
 }
 
 std::string IftttHandler::getTimers() {

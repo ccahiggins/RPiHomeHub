@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iterator>
 
+#include "DatabaseController.hpp"
+
 #include "RadioController.hpp"
 #include "TempSensorController.hpp"
 #include "Boiler.hpp"

@@ -4,8 +4,9 @@
 
 #include <string>
 #include <vector>
-#include <sqlite3.h>
 #include "CivetServer.h"
+
+#include "DatabaseController.hpp"
 #include "Boiler.hpp"
 #include "Thermostat.hpp"
 #include "Timer.hpp"
@@ -23,14 +24,12 @@ class IftttHandler : public CivetHandler {
 public:
 	IftttHandler(Boiler& boiler_, Thermostat& thermostat_, Timer& timer_, TempSensorController& tempSens_);
 
-	//bool handleGet(CivetServer *server, struct mg_connection *conn);
 	bool handlePost(CivetServer *server, struct mg_connection *conn);
 	
 private:
 	bool apiKeyMatch(std::string requestKey);
 	std::string getTemp(std::string id);
 	std::string getTimers();
-	static int callback(void *ptr, int argc, char* argv[], char* cols[]);
 	Boiler& boiler;
 	Thermostat& thermostat;
 	Timer& timer;

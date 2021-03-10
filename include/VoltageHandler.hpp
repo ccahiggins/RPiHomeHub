@@ -7,12 +7,12 @@
 #include <sstream>
 #include <algorithm>
 
-#include <sqlite3.h>
 #include "CivetServer.h"
 #include "boost/format.hpp"
 #include "ReadHtml.hpp"
 #include "AuthHandler.hpp"
 #include "Sensors.hpp"
+#include "DatabaseController.hpp"
 
 class VoltageHandler: public CivetHandler
 {
@@ -25,7 +25,6 @@ private:
 	std::string formatVolts(std::vector<std::vector<std::string> > &data);
 	std::string printVolts(int days);
 	std::string printVolts();
-	static int callback(void *ptr, int argc, char* argv[], char* cols[]);
 };
 
 #endif

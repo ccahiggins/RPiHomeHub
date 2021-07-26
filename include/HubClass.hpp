@@ -29,7 +29,7 @@
 #include "HomeHandler.hpp"
 #include "ThermostatHandler.hpp"
 #include "EmailerHandler.hpp"
-
+#include "SonoffHandler.hpp"
 
 #define DOCUMENT_ROOT "./html"
 #define PORT "8081,443s"
@@ -51,6 +51,7 @@
 #define THERMOSTAT_URI "/thermostat"
 #define EMAILER_URI "/emailer"
 #define IFTTT_URI "/ifttt"
+#define SONOFF_URI "/sonoff"
 
 //#define LIGHTSON_URI "/lightson"
 //#define LIGHTSOFF_URI "/lightsoff"

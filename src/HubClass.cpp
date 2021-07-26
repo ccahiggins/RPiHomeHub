@@ -15,7 +15,7 @@ void HubClass::intHandler() {
 }
 
 int HubClass::startHub(int argc, char** argv)  {
-
+	
     std::ifstream hub_cfg;
     hub_cfg.open("hub.cfg");
 
@@ -86,20 +86,32 @@ int HubClass::startHub(int argc, char** argv)  {
 
 	CivetServer server(config);
 
+	std::string ip1="192.168.1.101";
+	std::string ip2="192.168.1.102";
+	std::string ip3="192.168.1.103";
+	Sonoff s1(ip1);
+	Sonoff s2(ip2);
+	Sonoff s3(ip3);
+	std::vector<Sonoff> sonoff_list;
+	sonoff_list.push_back(s1);
+	sonoff_list.push_back(s2);
+	sonoff_list.push_back(s3);
+
 	server.addHandler(HUB_URI, new HubHandler(boiler, tempSensControl));
 	server.addHandler(HOME_URI, new HomeHandler());
 	server.addHandler(TIMER_URI, new TimerHandler(timer));
 	server.addHandler(BOILER_URI, new BoilerHandler(boiler));
 	server.addHandler(EMAILER_URI, new EmailerHandler(emailer));
 	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(timer, boiler, thermostat));
-	server.addHandler(IFTTT_URI, new IftttHandler(boiler, thermostat, timer, tempSensControl));
 	server.addHandler(TIMER_ENABLE_URI, new TimerEnableHandler(timer));
 	server.addHandler(TIMER_DISABLE_URI, new TimerDisableHandler(timer));
 	server.addHandler(TIMER_DELETE_URI, new TimerDeleteHandler(timer));
 	server.addHandler(THERMOSTAT_URI, new ThermostatHandler(thermostat));
 	server.addHandler(VOLTAGE_URI, new VoltageHandler());
+	server.addHandler(SONOFF_URI, new SonoffHandler(sonoff_list));
 	server.addHandler(CHART_URI, new ChartHandler());
 	server.addHandler(LOGIN_URI, new LoginHandler());
+	server.addHandler(IFTTT_URI, new IftttHandler(boiler, thermostat, timer, tempSensControl));
 
 	while(keepRunning) {
 		tempSensControl.checkSensors();

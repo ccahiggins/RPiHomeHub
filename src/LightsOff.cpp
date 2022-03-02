@@ -2,7 +2,7 @@ class LightsOff: public CivetHandler
 {
 public:
 	bool handleGet(CivetServer *server, struct mg_connection *conn) {
-mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
+		mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 		string param;
 		mg_printf(conn, "<html><head>");
 

@@ -2,15 +2,9 @@
 
 SonoffHandler::SonoffHandler(std::vector<Sonoff> _sonoff_list) {
 	
-	for (auto &s : _sonoff_list) // access by reference to avoid copying
-		{  
-			/* if (attack->m_num == input)
-			{
-				attack->makeDamage();
-			} */
-			
+	for (auto &s : _sonoff_list)
+		{  			
 			sonoff_list.push_back(s);
-			
 		}
 }
 
@@ -40,13 +34,8 @@ bool SonoffHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 			html = boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/html.html")) % content  % "sonoff" % "Sonoff");
 		} else {
 			int cnt = 0;
-			for (auto &s : sonoff_list) // access by reference to avoid copying
+			for (auto &s : sonoff_list)
 			{  
-				/* if (attack->m_num == input)
-				{
-					attack->makeDamage();
-				} */
-				
 				int status = s.status();
 				if (status == 0) {
 					//content.append("\nOFF");

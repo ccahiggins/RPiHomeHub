@@ -23,7 +23,7 @@ public:
 	
 private:
 	
-	std::string getTempGraph(std::vector<std::vector<std::string>> &data);	
+	std::string getTempGraph(std::vector<std::vector<std::string>> &data);
 	std::string formatGraphData(std::vector<std::vector<std::string> > &data);
 };
 

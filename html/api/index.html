@@ -1,0 +1,706 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="application-name" content="Raspberry Pi Hub">
+		<meta name="theme-color" content="#4EA2E4">
+		<link rel="stylesheet" href="styles.css" type="text/css" media="screen" />
+		<link rel="manifest" href="manifest.json">
+		<link rel="shortcut icon" href="favicon.ico">
+		<link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+		<script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+		var pageStart = new Date();
+
+		ga('create', '%s', {
+			'cookieDomain': '.%s',
+			'allowLinker': true
+		});
+
+		ga('set','anonymizeIp', true);
+		ga('send', 'pageview');
+	</script>
+	</head>
+	<body>
+	<div id="app">
+	<!-- ============================================================================== -->
+		<div v-if="boiler" class="full" v-cloak>
+			<div id="foo" class="header">
+			<button id="menu_btn" class="btn" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
+				<div class="enjoy-css"><a>Welcome to the Raspberry Pi Home Hub</a></div>
+				
+				
+		<div class="heading boiler_controls" v-text="waterstatus" v-cloak></div>
+		<div v-if="!waterwaiting && wateroff" v-cloak class="hhh">
+			<button v-on:click="turnWaterOn(1000)">Turn the water on</button>
+			<button v-on:click="turnWaterOn(30)">30</button>
+			<button v-on:click="turnWaterOn(45)">45</button>
+			<button v-on:click="turnWaterOn(60)">60</button>
+			<button v-on:click="turnWaterOn(90)">90</button>
+		</div>
+		<div v-if="!waterwaiting && wateron" v-cloak class="hhh">
+			<button :disabled="waterwaiting" v-on:click="turnWaterOff">Turn the water off</button>
+		</div>
+		<div v-if="waterwaiting" v-cloak class="hhh">
+			<button :disabled="waterwaiting" >Contacting boiler</button>
+		</div>
+		
+		<div class = "heading boiler_controls" v-text="heatingstatus" v-cloak></div>
+		<div v-if="!heatingwaiting && heatingoff" v-cloak class="hhh">
+			<button v-on:click="turnHeatingOn(1000)">Turn the heating on</button>
+			<button v-on:click="turnHeatingOn(60)">1h</button>
+			<button v-on:click="turnHeatingOn(120)">2h</button>
+			<button v-on:click="turnHeatingOn(180)">3h</button>
+			<button v-on:click="turnHeatingOn(240)">4h</button>
+		</div>
+		<div v-if="!heatingwaiting && heatingon" v-cloak class="hhh">
+			<button :disabled="heatingwaiting" v-on:click="turnHeatingOff">Turn the heating off</button>
+		</div>
+		<div v-if="heatingwaiting" v-cloak class="hhh">
+			<button :disabled="heatingwaiting" >Contacting boiler</button>
+		</div>
+		<div v-if="low_battery" class="heading_error" v-cloak id="low_battery_banner" v-text="low_battery_text"></div>
+		
+			</div>
+			<div id="chart_container">
+				<!-- double percents are to keep boost format happy -->
+				<div id="linechart_material" style="width:100%%; height:100%%"></div>
+			</div>
+			<!--- -------------------------- -->
+			<div class="heading" id="chart_column_toggles">
+				<button class="btn" onclick="toggleChartLine(1)">TOGGLE1</button>
+				<button class="btn" onclick="toggleChartLine(2)">TOGGLE2</button>
+				<button class="btn" onclick="toggleChartLine(3)">TOGGLE3</button>
+				<button class="btn" onclick="toggleChartLine(4)">TOGGLE4</button>
+				<button class="btn" onclick="toggleChartLine(5)">TOGGLE5</button>
+			</div>
+			<!--- -------------------------- -->
+			<div id="menu_div" style="display:none">
+				<div class = "heading">Menu</div>
+				<div class="dayscont">
+					<div class="days">
+						<div id="waa">Show</div>
+						<div class="select-style">
+							<select id="days">
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="6">6</option>
+								<option value="7">7</option>
+								<option value="14">14</option>
+								<option value="24">24</option>
+								<option value="30">30</option>
+								<option value="60">60</option>
+								<option value="90">90</option>
+								<option value="180">180</option>
+								<option value="365">265</option>
+							</select>
+						</div>
+						<input id="daysbut" type="button" value="Days" onclick="days_bnt_click();">
+						<input class="date_picker" id="fromdate" type="date">
+					</div>
+				
+				</div>
+				<div class = "heading">Links</div>
+				<div class="hhh">
+					<a href="/thermostat">Thermostat</a>
+					<button v-on:click="showTimer()">Timer</button>
+					<a href="/sonoff">Sonoff</a>
+				</div>
+			</div>
+		</div>
+		<!-- =========================================================== -->
+		
+		
+		<!-- ========================================================= -->
+		<div v-if="timer" v-cloak>
+			<div class = "enjoy-css">Welcome to the Raspberry Pi Home Hub</div>
+			<div v-if="timerswaiting" class="heading">Loading timers</div>
+			
+			<timer-item v-if="!timerswaiting"
+			  v-for="timr in timers" :key="timr.time_id"
+			  
+			  v-bind:time_id="timr.time_id"
+			  v-bind:id="timr.id"
+			  v-bind:boiler_item="timr.boiler_item"
+			  v-bind:one_time="timr.oneTime"
+			  v-bind:duration="timr.duration"
+			  v-bind:hours="timr.hours"
+			  v-bind:minutes="timr.minutes"
+			  v-bind:enabled="timr.enabled"
+			  v-bind:room="timr.room"
+			  v-bind:type="timr.type"
+			  v-bind:on_off="timr.on_off"
+			  v-bind:temp="timr.temp"
+			  
+			></timer-item>
+			
+			<div class = "hhh" id="addtimercont">
+				<!--<div id="back"> <a href="/hub">Back to Hub</a> </div>-->
+				<button v-on:click="showBoiler()">Back to Hub</button>
+				<div id="timer"> <a href="/timer/add">Add New Timer</a> </div>
+			</div>
+		</div>
+		<!-- =========================================================== -->
+		
+
+	</div>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<!-- =========================================================== -->
+		<script>
+			var menu_vis="off";
+			function toggleMenu() {
+			  var chart_container_element = document.getElementById("chart_container");
+			  var menu_div_element = document.getElementById("menu_div");
+			  var chart_column_toggles_element = document.getElementById("chart_column_toggles");
+			  var battery_warning_banner_element = document.getElementById("low_battery_banner");
+			  if (menu_vis === "off") {
+			    chart_container_element.style.display = "none";
+			    menu_div_element.style.display = "block";
+				chart_column_toggles_element.style.display = "none";
+				if (battery_warning_banner_element != null) {
+					battery_warning_banner_element.style.display = "none";
+				}
+			    $('.boiler_controls').hide();
+			    menu_vis = "on";
+				updateWindowYesOrNo = false;
+			  } else {
+			    chart_container_element.style.display = "block";
+			    menu_div_element.style.display = "none";
+				chart_column_toggles_element.style.display = "block";
+				if (battery_warning_banner_element != null) {
+					battery_warning_banner_element.style.display = "block";
+				}
+			    $('.boiler_controls').show();
+			    menu_vis = "off";
+				updateWindowYesOrNo = true;
+			    drawChart();
+			  }
+			}
+		</script>
+		<!-- =========================================================== -->
+		<script>
+		function days_bnt_click() {
+			getChart();
+			drawChart();
+			toggleMenu();
+		}
+		</script>
+		<!-- =========================================================== -->
+
+		<script>
+			var hide_line_1 = false;
+			var hide_line_2 = false;
+			var hide_line_3 = false;
+			var hide_line_4 = false;
+			var hide_line_5 = false;
+
+			function toggleChartLine(line_to_hide) {
+				if (line_to_hide == 1) {
+					hide_line_1 = !hide_line_1;	
+				}
+				if (line_to_hide == 2) {
+					hide_line_2 = !hide_line_2;	
+				}
+				if (line_to_hide == 3) {
+					hide_line_3 = !hide_line_3;	
+				}
+				if (line_to_hide == 4) {
+					hide_line_4 = !hide_line_4;	
+				}
+				if (line_to_hide == 5) {
+					hide_line_5 = !hide_line_5;	
+				}
+
+				drawChart();
+			}
+		</script>
+		<!-- =========================================================== -->
+		<script>
+
+			var paramDays = 0;
+			var from = "";
+			var to = "";
+			if (from && to) {
+				function getChart() {
+					var text="/chart?from="
+					text += from;
+					text += "&to=";
+					text += to;
+					$.loadScript(text, function(){
+						$("#spinner").show(); drawChart(); $("#spinner").hide();
+					});
+				};
+			} else if (from && days > 0) {
+			function getChart() {
+					var text="/chart?from="
+					text += from;
+					text += "&days=";
+					text += days;
+					$.loadScript(text, function(){
+						$("#spinner").show(); drawChart(); $("#spinner").hide();
+					});
+				};
+			} else if (paramDays > 0) {
+				function getChart() {
+					var text="/chart?days="
+					text += paramDays;
+					$.loadScript(text, function(){
+						$("#spinner").show(); drawChart(); $("#spinner").hide();
+					});
+				};
+			} else {
+				function getChart() {
+					var sel = document.getElementById("days");
+					days = (sel.options[sel.selectedIndex].value) 
+					var date = document.getElementById("fromdate").value;
+					text="/chart";
+					if (date && days > 0) {
+						text += "?from=";
+						text += date;
+						text+="&days=";
+						text+=days;
+					} else if (days > 0) {
+						text+="?days="; text+=days;
+					} 
+					$.loadScript(text, function(){
+						$("#spinner").show(); drawChart(); $("#spinner").hide();
+					});
+				};
+			}
+			jQuery.loadScript = function (url, callback) { jQuery.ajax({  url: url, dataType: 'script', success: callback, async: true }); }
+			google.charts.load('current', {'packages':['corechart'], "callback": getChart, 'ignoreWindowOnLoad': true});
+
+			
+		</script>
+		
+<script>
+	updateWindowYesOrNo = true
+	var redisplaywindow = function() {
+	if (updateWindowYesOrNo) {
+		$(window).resize(function() {
+				if(this.resizeTO) clearTimeout(this.resizeTO);
+				this.resizeTO = setTimeout(function() {
+					$(this).trigger('resizeEnd');
+				}, 100);
+			});
+			
+			//redraw graph when window resize is completed  
+			$(window).on('resizeEnd', function() {
+			if (updateWindowYesOrNo) {
+			var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 80) + "px";
+
+			document.getElementById('chart_container').setAttribute("style",sausage);
+				drawChart();
+				}
+			});
+			
+			if (updateWindowYesOrNo) {
+			var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 80) + "px";
+
+			document.getElementById('chart_container').setAttribute("style",sausage);
+			}
+		}
+	}
+</script>
+
+<script>
+
+Vue.component('timer-item', {
+		props: ['id', 'time_id', 'enabled', 'one_time', 'hours', 'minutes', 'boiler_item', 'duration', 'room', 'type', 'on_off', 'temp'],
+		data: function() {
+			return {
+				enabledisable: "disable",
+				timerTime: "",
+				boilerItem: "",
+				loading: false,
+				timer_text: "",
+			}
+		},
+		
+		methods: {
+			endis: function() {
+			//////////////////////////////////////////////////////////////////
+				//this.$parent.timers = []
+			//////////////////////////////////////////////////////////////////
+				this.loading = true
+				if (this.enabledisable == 'disable') {
+					this.$parent.disableTimer(this.id)
+				} else {
+				this.$parent.enableTimer(this.id)
+				}
+			},
+			delTimer: function() {
+				this.$parent.deleteTimer(this.id)
+			}
+		
+		},
+		updated() {
+			this.timerTime = ""
+			if (this.hours < 10) {
+				this.timerTime = "0"
+			}
+			this.timerTime += this.hours
+			this.timerTime += ":"
+			if (this.minutes < 10) {
+				this.timerTime += "0"
+			}
+			this.timerTime += this.minutes
+			this.boilerItem = this.boiler_item[0].toUpperCase() + this.boiler_item.substring(1)
+			
+			if (this.enabled == "true") {
+				this.enabledisable = "disable"
+			} else {
+				this.enabledisable = "enable"
+			}
+		},
+		created() {
+			this.timerTime = ""
+			if (this.hours < 10) {
+				this.timerTime = "0"
+			}
+			this.timerTime += this.hours
+			this.timerTime += ":"
+			if (this.minutes < 10) {
+				this.timerTime += "0"
+			}
+			this.timerTime += this.minutes
+
+			if (this.type == "thermostat") {
+				this.timer_text = "Thermostat "
+				if (this.on_off == "on") {
+					this.timer_text += "ON "
+				} else {
+					this.timer_text += "OFF "
+				}
+				this.timer_text += ((Math.round(this.temp * 100) / 100).toFixed(1)) + "°C" + " in " + this.room + " at "
+			} else {
+				this.boilerItem = this.boiler_item[0].toUpperCase() + this.boiler_item.substring(1)
+				this.timer_text += " ON for " + this.duration + " minutes at "
+			}
+			
+			
+			if (this.enabled == "true") {
+				this.enabledisable = "disable"
+			} else if (this.enabled == "false") {
+				this.enabledisable = "enable"
+			}
+		},
+
+	
+	template: '<div class="heading">{{ this.boilerItem }} {{ this.timer_text }} {{ this.timerTime }} <button v-on:click="endis()">{{ this.enabledisable }} </button> <button v-on:click="delTimer()"> delete </button> </div>'
+
+})
+
+var app = new Vue({
+  el: '#app',
+  data: {
+	waterstatus: 'Loading...',
+	heatingstatus: 'Loading..',
+	wateroff: false,
+	wateron: false,
+	heatingoff: false,
+	heatingon: false,
+	waterwaiting: false,
+	heatingwaiting: false,
+	waiting: false,
+	loaded: false,
+	
+	boiler: true,
+	timer: false,
+	timers: [],
+	timerswaiting: false,
+	
+	low_battery: false,
+	low_battery_text: "",
+
+  },
+  
+  methods: {
+    show: function () {
+      this.cnt++
+	  if (this.cnt == 2) {
+		this.b = true
+	  }
+	  if (this.cnt == 3) {
+		this.a = true
+	  }
+    },
+	
+	turnWaterOff() {
+		this.waterwaiting = true
+		axios.post('https://%s/ifttt/water/off?apikey=%s')
+		.then(r => {
+			if (r.data.status == 'done') {
+				this.getStatus()
+			}
+		}).catch(function (err) {
+              //output.className = 'container text-danger';
+              //output.innerHTML = err.message;
+			  console.log(err.message)
+		});
+	
+	},
+	
+	turnWaterOn(duration) {
+		this.waterwaiting = true
+		axios.post('https://%s/ifttt/water/on/' + duration + '?apikey=%s')
+		.then(r => {
+			if (r.data.status == 'done') {
+				this.getStatus()
+			}
+		}).catch(function (err) {
+              //output.className = 'container text-danger';
+              //output.innerHTML = err.message;
+			  console.log(err.message)
+		});
+	
+	},
+	
+	turnHeatingOff() {
+		this.heatingwaiting = true
+		axios.post('https://%s/ifttt/heating/off?apikey=%s')
+		.then(r => {
+			if (r.data.status == 'done') {
+				this.getStatus()
+			}
+		}).catch(function (err) {
+              //output.className = 'container text-danger';
+              //output.innerHTML = err.message;
+			  console.log(err.message)
+		});
+	
+	},
+	
+	turnHeatingOn(duration) {
+		this.heatingwaiting = true
+		axios.post('https://%s/ifttt/heating/on/' + duration + '?apikey=%s')
+		.then(r => {
+			if (r.data.status == 'done') {
+				this.getStatus()
+			}
+		}).catch(function (err) {
+              //output.className = 'container text-danger';
+              //output.innerHTML = err.message;
+			  console.log(err.message)
+		});
+	
+	},
+	
+	getStatus: function() {
+		axios.post('https://%s/ifttt/status?apikey=%s')
+		.then(r => {
+
+
+
+////////
+
+//////
+
+/////////
+		//alert(JSON.stringify(r))
+		console.log(JSON.stringify(r))
+			this.waiting = false
+
+			if (r.data.lowbattery == null) {
+				console.log("NO LOW BATT");
+				this.low_battery = false;
+			} else {
+				console.log(r.data.lowbattery);
+				this.low_battery = true;
+				this.low_battery_text = "LOW BATTERY: ";
+				for (var i in r.data.lowbattery)
+				{
+					this.low_battery_text += r.data.lowbattery[i];
+				}
+			}
+
+			if (r.data.status == 'error') {
+				console.log("BOILER ERROR");
+				this.heatingstatus = "ERROR GETTING HEATING STATUS";
+				this.waterstatus = "ERROR GETTING WATER STATUS";
+			} else {
+				if (r.data.water.status == 'off') {
+					this.waterwaiting = false
+					this.wateroff = true
+					this.wateron = false
+					this.waterstatus = "Water is OFF"
+				} else if (r.data.water.status == 'on') {
+					this.waterwaiting = false
+					this.wateroff = false
+					this.wateron = true
+					this.waterstatus = "Water is ON for " + r.data.water.duration + " minutes"
+				}
+				
+				if (r.data.heating.status) {
+					console.log("BOOO");
+				} else {
+				console.log("FOOO");
+				}
+				
+				if (r.data.heating.status == 'off') {
+					this.heatingwaiting = false
+					this.heatingoff = true
+					this.heatingon = false
+					this.heatingstatus = "Heating is OFF"
+				} else if (r.data.heating.status == 'on') {
+					this.heatingwaiting = false
+					this.heatingoff = false
+					this.heatingon = true
+					this.heatingstatus = "Heating is ON for " + r.data.heating.duration + " minutes"
+				}
+			}
+		}).catch(function (err) {
+              //output.className = 'container text-danger';
+              //output.innerHTML = err.message;
+			  console.log(err.message)
+		});
+	},
+	
+	getTimers: function() {
+		this.timerswaiting = true
+		axios.post('https://%s/ifttt/timers/status?apikey=%s')
+		.then(r => {
+			console.log(JSON.stringify(r))
+			this.timerswaiting = true
+			this.timers.splice(0, this.timers.length)
+			this.timers = r.data.timers
+			var d = new Date()
+			var i;
+			for (i = 0; i < this.timers.length; i++) { 
+			  this.timers[i].time_id = '' + this.timers[i].id + '_' + d.getTime()
+			}
+
+			this.timerswaiting = false
+		}).catch(function (err) {
+              //output.className = 'container text-danger';
+              //output.innerHTML = err.message;
+			  console.log(err.message)
+		});
+	},
+	
+	deleteTimer: function(id) {
+		this.timerswaiting = true
+		axios.post('https://%s/ifttt/timers/delete/' + id + '?apikey=%s')
+		.then(r => {
+			//alert(JSON.stringify(r))
+			this.getTimers()
+			this.timerswaiting = false
+		}).catch(function (err) {
+              //output.className = 'container text-danger';
+              //output.innerHTML = err.message;
+			  console.log(err.message)
+		});
+	},
+	
+	enableTimer: function(id, ) {
+		this.timerswaiting = true
+		axios.post('https://%s/ifttt/timers/enable/' + id + '?apikey=%s')
+		.then(r => {
+			//alert(JSON.stringify(r))
+			this.getTimers()
+			this.timerswaiting = false
+		}).catch(function (err) {
+              //output.className = 'container text-danger';
+              //output.innerHTML = err.message;
+			  console.log(err.message)
+		});
+	},
+	
+	disableTimer: function(id, ) {
+		this.timerswaiting = true
+		axios.post('https://%s/ifttt/timers/disable/' + id + '?apikey=%s')
+		.then(r => {
+			//alert(JSON.stringify(r))
+			this.getTimers()
+			this.timerswaiting = false
+		}).catch(function (err) {
+              //output.className = 'container text-danger';
+              //output.innerHTML = err.message;
+			  console.log(err.message)
+		});
+	},
+	
+	showTimer() {
+		updateWindowYesOrNo = false
+		this.getTimers()
+		this.boiler = false
+		this.timer = true
+	},
+	
+	showBoiler() {
+		menu_vis = "off"
+		updateWindowYesOrNo = true
+		this.boiler = true
+		this.timer = false
+	}
+	
+  },
+  
+  created() {
+	this.getStatus()  
+	this.getTimers()
+  },
+ 
+  
+  mounted () {
+  	  redisplaywindow()
+  },
+  
+	updated() {
+		redisplaywindow()
+		if (updateWindowYesOrNo) {
+			drawChart()
+		}
+	}
+})
+</script>
+		
+<script>
+
+    // Enable pusher logging - don't include this in production
+    //Pusher.logToConsole = true;
+
+    var pusher = new Pusher('1047fc9b934968559fd5', {
+      cluster: 'eu',
+      forceTLS: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+      //alert(JSON.stringify(data));
+	  console.log("PUSH")
+	  if (app.boiler) {
+		this.app.getStatus.call()
+	  }
+    });
+	
+	channel.bind('tempchange', function(data) {
+	if (app.boiler) {
+		getChart()
+	  }
+    });
+  </script>
+  
+  <script>
+	$(window).focus(function(){
+		//console.log("FOCUS")
+		if (app.boiler) {
+			this.app.getStatus.call()
+			getChart()
+		}
+	});
+  
+  </script>
+		
+	</body>
+</html>

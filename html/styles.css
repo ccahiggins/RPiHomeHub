@@ -1,13 +1,13 @@
 body{
 	background: #e6eff2;
-overflow:hidden;
+  overflow:hidden;
 }
 
 .enjoy-css {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
-  //padding: 10px 20px;
+  /*padding: 10px 20px;*/
   border: 1px solid #018dc4;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -16,8 +16,8 @@ overflow:hidden;
   text-overflow: clip;
   text-overflow: clip;
   background: #0199d9;
-   margin: 0 0 10px 0;
-   text-align: center;
+  margin: 0 0 10px 0;
+  text-align: center;
   -webkit-box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.2) ;
   box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.2) ;
   text-shadow: -1px -1px 0 rgba(15,73,168,0.66) ;
@@ -26,7 +26,7 @@ overflow:hidden;
 .enjoy-css a {
   display: inline-block;
   margin: 12px 10px 12px 10px;
-  //padding: 10px;
+  /*padding: 10px;*/
 }
 
 .heading {
@@ -39,7 +39,7 @@ overflow:hidden;
   overflow: hidden;
   border: 0 solid;
   border-bottom: 2px solid rgba(21,19,109,1);
-   font: normal normal bold 16px/normal "Trebuchet MS", Helvetica, sans-serif;
+  font: normal normal bold 16px/normal "Trebuchet MS", Helvetica, sans-serif;
   color: rgba(255,255,255,1);
   text-align: left;
   -o-text-overflow: ellipsis;
@@ -109,6 +109,13 @@ overflow:hidden;
   box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
 }
 
+#daysbut {
+  position: relative;
+  top: -2px;
+  margin-left: 5px;
+  margin-right: 2px;
+}
+
 #chart_container{
 	border: 2px solid rgba(21,19,109,1);
 	-webkit-box-shadow: 6px 2px 2px 0 rgba(0,0,0,0.5) ;
@@ -128,8 +135,8 @@ overflow:hidden;
   text-overflow: clip;
   text-overflow: clip;
   background: #0199d9;
-   margin: 0 0 10px 0;
-   text-align: center;
+  margin: 0 0 10px 0;
+  text-align: center;
   -webkit-box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.2) ;
   box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.2) ;
   text-shadow: -1px -1px 0 rgba(15,73,168,0.66) ;
@@ -226,4 +233,25 @@ overflow:hidden;
   background: #1c6582;
   -webkit-box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
   box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
+}
+
+.heading_error {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  
+  padding: 10px;
+
+  overflow: hidden;
+  border: 0 solid;
+  border-bottom: 2px solid rgba(21,19,109,1);
+  font: normal normal bold 16px/normal "Trebuchet MS", Helvetica, sans-serif;
+  color: rgba(255,255,255,1);
+  text-align: left;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  background: #bb3310;
+  -webkit-box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
+  box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.3) ;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.2) ;
 }

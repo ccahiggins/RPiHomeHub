@@ -2,6 +2,7 @@
 #define EMAILER_HPP
 
 #include "Observer.hpp"
+#include <string>
 
 class Emailer : public Observer {
 

@@ -29,6 +29,7 @@ RF24CMB=-lrf24-bcm
 CRYPTO=-lcrypto
 UUID=-luuid
 CIVLIBA=libcivetweb.a
+SQLLL=-I../sqlite-amalgamation-3380000/
 
 all: $(BIN)start_hub
 	
@@ -129,7 +130,7 @@ $(OUT)Sensors.o: $(SRC)Sensors.cpp $(INC)Sensors.hpp
 	$(CC) -o $@ -c $< $(CXXFLAGS)
 	
 $(OUT)DatabaseController.o: $(SRC)DatabaseController.cpp $(INC)DatabaseController.hpp
-	$(CC) -o $@ -c $< $(CXXFLAGS)
+	$(CC) -o $@ -c $< $(CXXFLAGS) $(SQLLL)
 	
 $(OUT)Sonoff.o: $(SRC)Sonoff.cpp $(INC)Sonoff.hpp
 	$(CC) -o $@ -c $< $(CXXFLAGS) $(CPR)

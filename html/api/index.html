@@ -382,7 +382,7 @@ Vue.component('timer-item', {
 				} else {
 					this.timer_text += "OFF "
 				}
-				this.timer_text += ((Math.round(this.temp * 100) / 100).toFixed(1)) + "°C" + " in " + this.room + " at "
+				this.timer_text += ((Math.round(this.temp * 100) / 100).toFixed(1)) + "\u00B0C" + " in " + this.room + " at "
 			} else {
 				this.boilerItem = this.boiler_item[0].toUpperCase() + this.boiler_item.substring(1)
 				this.timer_text += " ON for " + this.duration + " minutes at "

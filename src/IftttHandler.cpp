@@ -1,7 +1,13 @@
 #include "IftttHandler.hpp"
 
-IftttHandler::IftttHandler(Boiler& boiler_, Thermostat& thermostat_, Timer& timer_, TempSensorController& tempSens_)
-	: boiler(boiler_), thermostat(thermostat_), timer(timer_), tempSens(tempSens_) {}
+IftttHandler::IftttHandler(Boiler& boiler_, Thermostat& thermostat_, Timer& timer_, TempSensorController& tempSens_, std::vector<Sonoff> _sonoff_list)
+	: boiler(boiler_), thermostat(thermostat_), timer(timer_), tempSens(tempSens_) {
+		
+		for (auto &s : _sonoff_list)
+		{  			
+			sonoff_list.push_back(s);
+		}
+	}
 
 std::string IftttHandler::getTemp(std::string id) {
 	
@@ -38,7 +44,52 @@ std::string IftttHandler::getTimers() {
 			} else {
 				onetime = "false";
 			}
-			timerjson.append("{\"id\":\"" + std::to_string(x) + "\", \"boiler_item\":\"" + whichone + "\", \"hours\":\"" + std::to_string(boiler_event->get_hour()) + "\", \"minutes\":\"" +  std::to_string(boiler_event->get_minute()) + "\",\"duration\":\"" + std::to_string(boiler_event->get_duration()) + "\", \"onetime\":\"" + onetime + "\", \"enabled\":\"" + endis + "\"");
+			timerjson.append("{\"id\":\"" + std::to_string(x) + "\", \"type\":\"" + "boiler" + "\", \"boiler_item\":\"" + whichone + "\", \"hours\":\"" + std::to_string(boiler_event->get_hour()) + "\", \"minutes\":\"" +  std::to_string(boiler_event->get_minute()) + "\",\"duration\":\"" + std::to_string(boiler_event->get_duration()) + "\", \"onetime\":\"" + onetime + "\", \"enabled\":\"" + endis + "\"");
+			
+			//string s = str( format(line) % whichone % timers[x].startHour % timers[x].startMinute% timers[x].duration % enDis % timers[x].id % endis % timers[x].id );
+			//content.append(s);
+			timerjson.append("}");
+			if (!(x == timers.size() - 1)) {
+				timerjson.append(",");
+			}
+		} else if (thermostat_event = std::dynamic_pointer_cast<ThermostatTimerEvent> (timers[x])) {
+			std::string endis;
+			std::string onetime;
+			std::string room;
+			std::string temp;
+			std::string on_off;
+
+			if (thermostat_event->is_enabled()) {
+				endis = "true";
+			} else {
+				endis = "false";
+			}
+
+			if (thermostat_event->get_on_off()) {
+				on_off = "on";
+			} else {
+				on_off = "off";
+			}
+
+			if (thermostat_event->get_room() == 1) {
+				room = "Bedroom";
+			} else if (thermostat_event->get_room() == 2) {
+				room = "Office";
+			} else if (thermostat_event->get_room() == 3) {
+				room = "Kitchen";
+			} else if (thermostat_event->get_room() == 4) {
+				room = "Living Room";
+			}
+
+			temp = std::to_string(thermostat_event->get_temp());
+
+			if (thermostat_event->is_one_time()) {
+				onetime = "true";
+			} else {
+				onetime = "false";
+			}
+
+			timerjson.append("{\"id\":\"" + std::to_string(x) + "\", \"type\":\"" + "thermostat" + "\", \"room\":\"" + room + "\", \"temp\":\"" + temp + "\", \"on_off\":\"" + on_off + "\", \"hours\":\"" + std::to_string(thermostat_event->get_hour()) + "\", \"minutes\":\"" +  std::to_string(thermostat_event->get_minute()) + "\", \"onetime\":\"" + onetime + "\", \"enabled\":\"" + endis + "\"");
 			
 			//string s = str( format(line) % whichone % timers[x].startHour % timers[x].startMinute% timers[x].duration % enDis % timers[x].id % endis % timers[x].id );
 			//content.append(s);
@@ -57,11 +108,13 @@ std::string IftttHandler::getTimers() {
 bool IftttHandler::apiKeyMatch(std::string requestKey) {
 
 	std::string key;
+	std::string key2;
 	std::ifstream file;
 	file.open("apikey");
 	std::getline(file, key);
+	std::getline(file, key2);
 	
-	if (key.compare(requestKey) == 0) {
+	if (key.compare(requestKey) == 0 || key2.compare(requestKey) == 0) {
 		return true; 
 	} else {
 		return false;
@@ -78,6 +131,7 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 	CivetServer::getParam(conn, "apikey", requestKey);
 	if (!apiKeyMatch(requestKey)) {
 		mg_printf(conn, "{\"status\":\"invalidkey\"}");
+		return true;
 	}
 	
 	bool change = false;
@@ -123,8 +177,30 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 			int waterStatus = boilerStatus.waterStatus;
 			int heatingStatus = boilerStatus.heatingStatus;
 			
-			if (waterStatus == -2 || heatingStatus == -2) {
-				mg_printf(conn, "{\"status\":\"error\"}");
+			if (waterStatus == ERROR || heatingStatus == ERROR) {
+				//mg_printf(conn, "{\"status\":\"error\"}");
+
+				std::string batteryJson;
+				if (lowBatts.size() > 0) {
+					batteryJson = ",\"lowbattery\":[";
+					bool first = true;
+					for(std::vector<int>::iterator it = lowBatts.begin(); it != lowBatts.end(); ++it) {
+						if (first) {
+							first = false;
+						} else {
+							batteryJson.append(",");
+						}
+						batteryJson.append(std::to_string(*it));
+						//content.append(to_string(*it));
+					}
+					batteryJson.append("]");
+				} else {
+					batteryJson = "";
+				}
+
+				std::string result = "{\"status\":\"error\"" + batteryJson + "}";
+				mg_printf(conn, result.c_str());
+
 			} else {
 				std::string waterJson;
 				std::string heatingJson;
@@ -265,6 +341,20 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 		}
 	} else if (rv.getType() == RequestType::TimersDisable) {
 		if (timer.disable_event(stoi(rv.getTimerId()))) {
+			mg_printf(conn, "{\"status\":\"done\"}");
+			change = true;
+		} else {
+			mg_printf(conn, "{\"status\":\"error\"}");
+		}
+	} else if (rv.getType() == RequestType::SonoffOn) {
+		if (sonoff_list[stoi(rv.get_sonoff_switch_num())].turn_on() == 1) {
+			mg_printf(conn, "{\"status\":\"done\"}");
+			change = true;
+		} else {
+			mg_printf(conn, "{\"status\":\"error\"}");
+		}
+	} else if (rv.getType() == RequestType::SonoffOff) {
+		if (sonoff_list[stoi(rv.get_sonoff_switch_num())].turn_off() == 0) {
 			mg_printf(conn, "{\"status\":\"done\"}");
 			change = true;
 		} else {

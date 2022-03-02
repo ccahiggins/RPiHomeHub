@@ -6,6 +6,7 @@ bool LoginHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	
 	std::string uri = "";
 	CivetServer::getParam(conn, "uri", uri);
+	// Remove characters that may be dangerous
 	boost::replace_all(uri, "&", "&amp;");
 	boost::replace_all(uri, "<", "&lt;");
 	boost::replace_all(uri, ">", "&gt;");
@@ -25,7 +26,13 @@ bool LoginHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	boost::erase_all(uri, "%X");
 	boost::erase_all(uri, "%P");
 
-	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
+	mg_printf(conn,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n");
+	mg_printf(conn,"X-XSS-Protection: 0\r\n");
+	mg_printf(conn,"X-Frame-Options: DENY\r\n");
+	mg_printf(conn,"X-Content-Type-Options: nosniff\r\n");
+	mg_printf(conn,"Content-Security-Policy: default-src 'self'; frame-ancestors 'self'; form-action 'self';\r\n");
+	mg_printf(conn,"\r\n");
+
 	std::string html = ReadHtml::readHtml("html/auth/login.html");
 	std::string s = boost::str(boost::format(html) % uri  );
 	const char* cccc = s.c_str();
@@ -67,7 +74,12 @@ bool LoginHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
 		//mg_printf(conn, s.c_str());
     } else {
         // Show HTML form.
-		mg_printf(conn,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
+		mg_printf(conn,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n");
+		mg_printf(conn,"X-XSS-Protection: 0\r\n");
+		mg_printf(conn,"X-Frame-Options: DENY\r\n");
+		mg_printf(conn,"X-Content-Type-Options: nosniff\r\n");
+		mg_printf(conn,"Content-Security-Policy: default-src 'self'; frame-ancestors 'self'; form-action 'self';\r\n");
+		mg_printf(conn,"\r\n");
 		std::string html = ReadHtml::readHtml("html/auth/unauthorised.html");
 		mg_printf(conn, html.c_str());
     }

@@ -34,6 +34,9 @@ std::string RequestValidator::getOnOff() {
 std::string RequestValidator::getTemp() {
 	return this->temp;
 }
+std::string RequestValidator::get_sonoff_switch_num() {
+	return this->sonoff_switch_num;
+}
 
 
 bool RequestValidator::isValid() {
@@ -260,6 +263,26 @@ bool RequestValidator::validateRequest(std::string request) {
 		} else if (third.empty()) {
 			requestType = RequestType::TemperatureAll;
 			return true;
+		}
+		
+	//Sonoff sockets
+	} else if (second.compare("sonoff") == 0) {
+		if (validNum(third, 0, 2)) {
+			if (fourth.compare("on") == 0) {
+				requestType = RequestType::SonoffOn;
+				this->sonoff_switch_num = third;
+				return true;
+			}
+			if (fourth.compare("off") == 0) {
+				requestType = RequestType::SonoffOff;
+				this->sonoff_switch_num = third;
+				return true;
+			}
+			if (fourth.compare("toggle") == 0) {
+				requestType = RequestType::SonoffToggle;
+				this->sonoff_switch_num = third;
+				return true;
+			}
 		}
 	}
 	

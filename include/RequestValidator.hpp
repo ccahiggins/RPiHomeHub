@@ -20,6 +20,7 @@ public:
 	std::string getOneTime();
 	std::string getOnOff();
 	std::string getTemp();
+	std::string get_sonoff_switch_num();
 
 private:
 	RequestType requestType;
@@ -33,6 +34,7 @@ private:
 	std::string onoff;
 	std::string room;
 	std::string temp;
+	std::string sonoff_switch_num;
 	bool validNum(std::string numTxt, int minnum, int maxnum);
 	bool validNum(std::string numTxt);
 	bool valid_float(std::string num_text, int min_num, int max_num);

@@ -14,7 +14,6 @@ server.pem
 certs/
 ifttt/
 apikey
-html/api/index.html
 testingthings/
 makehub
 switch
@@ -23,3 +22,4 @@ rub
 timer.txt
 hub.cfg
 hub.conf
+.vscode

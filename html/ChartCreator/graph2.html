@@ -1,19 +1,35 @@
 var options = {
-          title: 'Temperature',
-	      hAxis: {
-	         format: 'HH:mm',
-			 gridlines: {
-                            color: 'transparent'
-                            },
-	      },
+	title: 'Temperature',
+	hAxis: {
+		format: 'HH:mm',
+		gridlines: {
+			color: 'transparent'
+		},
+	},
 
+	interpolateNulls: true,
 
-	    interpolateNulls: true,
+	legend: { position: 'bottom' },
+	theme: 'maximized'
+};
+	
+	view = new google.visualization.DataView(data);
 
-	   legend: { position: 'bottom' },
-	   theme: 'maximized'
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('linechart_material'));
-        chart.draw(data, options);
-      }
+if (hide_line_1) {
+    view.hideColumns([1]);
+}
+if (hide_line_2) {
+    view.hideColumns([2]);
+}
+if (hide_line_3) {
+    view.hideColumns([3]);
+}
+if (hide_line_4) {
+    view.hideColumns([4]);
+}
+if (hide_line_5) {
+    view.hideColumns([5]);
+}
+	var chart = new google.visualization.LineChart(document.getElementById('linechart_material'));
+	chart.draw(view, options);
+}

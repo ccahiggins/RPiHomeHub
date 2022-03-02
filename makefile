@@ -96,7 +96,7 @@ $(OUT)RequestValidator.o: $(SRC)RequestValidator.cpp $(INC)RequestValidator.hpp
 	$(CC) -o $@ -c $< $(CXXFLAGS)
 	
 $(OUT)IftttHandler.o: $(SRC)IftttHandler.cpp $(INC)IftttHandler.hpp
-	$(CC) -o $@ -c $<  $(CXXFLAGS) $(CIVET) $(JSON) $(SQLITE)
+	$(CC) -o $@ -c $<  $(CXXFLAGS) $(CIVET) $(JSON) $(SQLITE) $(CPR)
 	
 $(OUT)AuthHandler.o: $(SRC)AuthHandler.cpp $(INC)AuthHandler.hpp
 	$(CC) -o $@ -c $<  $(CXXFLAGS) $(CIVET) $(BOOST)

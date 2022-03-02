@@ -4,8 +4,10 @@
 
 void Emailer::update (int room, float temp) {
 
+	std::string cmd = "/home/pi/m 'Temperature alert " + std::to_string(room) + " " + std::to_string(temp) + "'";
+
 	if (room != 4 && temp >= trigger_temp) {
-		system("/home/pi/m 'Temperature alert'");
+		system(cmd.c_str());
 	}
 }
 

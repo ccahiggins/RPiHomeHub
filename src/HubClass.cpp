@@ -21,13 +21,17 @@ int HubClass::startHub(int argc, char** argv)  {
 
     std::string hubcfg_line;
 
+	std::string api_key;
+	std::string api_url;
+	std::string ga_key;
+
     while (hub_cfg >> hubcfg_line) {
         std::string delimiter = ":";
         std::string cfg1 = hubcfg_line.substr(0, hubcfg_line.find(delimiter));
         std::string cfg2 = hubcfg_line.substr(hubcfg_line.find(delimiter) + 1, hubcfg_line.length());
 
         if (cfg1.compare("volt_alert") == 0) {
-            int volt_alert = std::stoi(cfg2);
+            float volt_alert = std::stof(cfg2);
             tempSensControl.set_low_voltage_trigger(volt_alert);
             std::cout << "Setting voltage alert to " << volt_alert << "V" << std::endl;
         }
@@ -63,6 +67,21 @@ int HubClass::startHub(int argc, char** argv)  {
             std::cout << "Setting sensors database to " << cfg2 << std::endl;
         }
 
+		if (cfg1.compare("api_key") == 0) {
+			api_key = cfg2;
+            std::cout << "Setting API Key..." << std::endl;
+        }
+
+		if (cfg1.compare("api_url") == 0) {
+			api_url = cfg2;
+            std::cout << "Setting API URL..." << std::endl;
+        }
+
+		if (cfg1.compare("ga_key") == 0) {
+			ga_key = cfg2;
+            std::cout << "Setting GA Key..." << std::endl;
+        }
+
     }
     hub_cfg.close();
 	
@@ -84,6 +103,9 @@ int HubClass::startHub(int argc, char** argv)  {
 	std::vector<std::string> config;
 	std::copy(std::istream_iterator<std::string>(cfg_file), std::istream_iterator<std::string>(), std::back_inserter(config));
 
+    config.push_back("additional_header");
+    config.push_back("X-XSS-Protection: 0\r\nContent-Security-Policy: default-src 'self'; frame-ancestors 'self'; form-action 'self';\r\nX-Frame-Options: DENY");
+
 	CivetServer server(config);
 
 	std::string ip1="192.168.1.101";
@@ -98,7 +120,7 @@ int HubClass::startHub(int argc, char** argv)  {
 	sonoff_list.push_back(s3);
 
 	server.addHandler(HUB_URI, new HubHandler(boiler, tempSensControl));
-	server.addHandler(HOME_URI, new HomeHandler());
+	server.addHandler(HOME_URI, new HomeHandler(api_key, api_url, ga_key));
 	server.addHandler(TIMER_URI, new TimerHandler(timer));
 	server.addHandler(BOILER_URI, new BoilerHandler(boiler));
 	server.addHandler(EMAILER_URI, new EmailerHandler(emailer));
@@ -111,7 +133,7 @@ int HubClass::startHub(int argc, char** argv)  {
 	server.addHandler(SONOFF_URI, new SonoffHandler(sonoff_list));
 	server.addHandler(CHART_URI, new ChartHandler());
 	server.addHandler(LOGIN_URI, new LoginHandler());
-	server.addHandler(IFTTT_URI, new IftttHandler(boiler, thermostat, timer, tempSensControl));
+	server.addHandler(IFTTT_URI, new IftttHandler(boiler, thermostat, timer, tempSensControl, sonoff_list));
 
 	while(keepRunning) {
 		tempSensControl.checkSensors();

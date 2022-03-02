@@ -120,7 +120,7 @@ std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string>> 
 		tempData << sensor5Name;
 		tempData << "', ";
 	}
-	tempData << "],\n";
+	tempData << "'Zero'],\n";
 	
 	
 	for (unsigned int i = 0; i < data.size(); i++) {
@@ -151,7 +151,11 @@ std::string ChartCreator::formatGraphData(std::vector<std::vector<std::string>> 
 				tempData << "null, ";
 			}
 		}
-		tempData << "],\n";
+		if (i == 0 || i == data.size() - 1) {
+				tempData << "0],\n";
+		} else {
+		tempData << "null],\n";
+		}
 	}
 	tempData << "]);\n";
 	

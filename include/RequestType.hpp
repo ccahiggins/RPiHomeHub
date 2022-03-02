@@ -18,4 +18,7 @@ enum class RequestType {
 	TimersDisable,
 	TemperatureAll,
 	TemperatureOne,
+	SonoffOn,
+	SonoffOff,
+	SonoffToggle,
 };

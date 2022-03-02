@@ -14,6 +14,7 @@
 #include "RequestValidator.hpp"
 #include "TimerEvent.hpp"
 #include "BoilerTimerEvent.hpp"
+#include "Sonoff.hpp"
 
 #define ERROR -2
 #define OFF 0
@@ -22,7 +23,7 @@
 class IftttHandler : public CivetHandler {
 	
 public:
-	IftttHandler(Boiler& boiler_, Thermostat& thermostat_, Timer& timer_, TempSensorController& tempSens_);
+	IftttHandler(Boiler& boiler_, Thermostat& thermostat_, Timer& timer_, TempSensorController& tempSens_, std::vector<Sonoff> _sonoff_list);
 
 	bool handlePost(CivetServer *server, struct mg_connection *conn);
 	
@@ -34,6 +35,7 @@ private:
 	Thermostat& thermostat;
 	Timer& timer;
 	TempSensorController& tempSens;
+	std::vector<Sonoff> sonoff_list;
 };
 
 #endif

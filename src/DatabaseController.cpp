@@ -353,7 +353,7 @@ void DatabaseController::insertTempData(uint16_t deviceNum, float temp, uint16_t
 	// If rc is not 0, there was an error
 	std::cout << "D1:" << rc << std::flush;
 	if(rc) {
-		std::cout << "S:ERRDB: " << dbPath << "," << rc << "," << sqlite3_errmsg(db) << "  ==  " << std::flush;
+		std::cout << "I:ERRDB: " << temps_database << "," << rc << "," << sqlite3_errmsg(db) << "  ==  " << std::flush;
 		sqlite3_close(db);
 		system("/home/pi/RestartHub.sh");
 		locked = false;
@@ -439,7 +439,8 @@ std::string DatabaseController::string_query(std::string &database, std::string 
 
 	rc = sqlite3_open(db_char, &db);
 	if( rc ){
-		fprintf(stderr, "s:SQL Open Error: %s\n", sqlite3_errmsg(db));
+		//fprintf(stderr, "s:SQL Open Error: %s\n", sqlite3_errmsg(db));
+		std::cout << "S:ERRDB: " << database << "," << rc << "," << sqlite3_errmsg(db) << "  ==  " << std::flush;
 		sqlite3_close(db);
 		system("/home/pi/RestartHub.sh");
 		locked = false;
@@ -480,7 +481,8 @@ std::vector<std::vector<std::string>> DatabaseController::vector_string_query(st
 	rc = sqlite3_open(db_char, &db);
 	if( rc ) {
 		//fprintf(stderr, "V:ERRDB: %s\n", sqlite3_errmsg(db));
-		fprintf(stderr, "v:SQL Open Error: %s\n", sqlite3_errmsg(db));
+		//fprintf(stderr, "v:SQL Open Error: %s\n", sqlite3_errmsg(db));
+		std::cout << "V:ERRDB: " << database << "," << rc << "," << sqlite3_errmsg(db) << "  ==  " << std::flush;
 		sqlite3_close(db);
 		system("/home/pi/RestartHub.sh");
 		locked = false;

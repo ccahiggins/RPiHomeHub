@@ -11,21 +11,21 @@
 		<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 		<script src="https://js.pusher.com/4.3/pusher.min.js"></script>
-	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-		var pageStart = new Date();
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+			var pageStart = new Date();
 
-		ga('create', '%s', {
-			'cookieDomain': '.%s',
-			'allowLinker': true
-		});
+			ga('create', '%s', {
+				'cookieDomain': '.%s',
+				'allowLinker': true
+			});
 
-		ga('set','anonymizeIp', true);
-		ga('send', 'pageview');
-	</script>
+			ga('set','anonymizeIp', true);
+			ga('send', 'pageview');
+		</script>
 	</head>
 	<body>
 	<div id="app">
@@ -74,11 +74,47 @@
 			</div>
 			<!--- -------------------------- -->
 			<div class="heading" id="chart_column_toggles">
-				<button class="btn" onclick="toggleChartLine(1)">TOGGLE1</button>
-				<button class="btn" onclick="toggleChartLine(2)">TOGGLE2</button>
-				<button class="btn" onclick="toggleChartLine(3)">TOGGLE3</button>
-				<button class="btn" onclick="toggleChartLine(4)">TOGGLE4</button>
-				<button class="btn" onclick="toggleChartLine(5)">TOGGLE5</button>
+				<button id="graph_menu_toggle" class="btn" onclick="toggle_graph_menu()"><i class="fa fa-bars"></i></button>
+				<button class="btn" onclick="toggleChartLine(1)">TGL1</button>
+				<button class="btn" onclick="toggleChartLine(2)">TGL2</button>
+				<button class="btn" onclick="toggleChartLine(3)">TGL3</button>
+				<button class="btn" onclick="toggleChartLine(4)">TGL4</button>
+				<button class="btn" onclick="toggleChartLine(5)">TGL5</button>
+			</div>
+			<!--- -------------------------- -->
+			<div class="sub_menu" id="graph_menu" style="display:none">
+				<div class = "sub_menu_item">
+					Chart Options
+				</div>
+				<div class = "sub_menu_item">
+					Days
+					<select id="days">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="14">14</option>
+						<option value="24">24</option>
+						<option value="30">30</option>
+						<option value="60">60</option>
+						<option value="90">90</option>
+						<option value="180">180</option>
+						<option value="365">265</option>
+					</select>
+				</div>
+				<div class="sub_menu_item">
+					Date
+					<input class="date_picker" id="fromdate" type="date">
+				</div>
+				<div class="sub_menu_item" id="">
+					<button id="graph_menu_button" class="btn" onclick="days_bnt_click(false)"><i class="fa fa-play"></i></button>
+					<button id="graph_menu_button" class="btn" onclick="hide_graph_menu()"><i class="fa fa-stop"></i></button>
+					<button id="graph_menu_button" class="btn" onclick="reset_graph_menu()"><i class="fa fa-rotate-left"></i></button>
+				</div>
+
 			</div>
 			<!--- -------------------------- -->
 			<div id="menu_div" style="display:none">
@@ -170,6 +206,7 @@
 				if (battery_warning_banner_element != null) {
 					battery_warning_banner_element.style.display = "none";
 				}
+				hide_graph_menu();
 			    $('.boiler_controls').hide();
 			    menu_vis = "on";
 				updateWindowYesOrNo = false;
@@ -189,14 +226,18 @@
 		</script>
 		<!-- =========================================================== -->
 		<script>
-		function days_bnt_click() {
-			getChart();
-			drawChart();
-			toggleMenu();
+			// Gets the selected options for days/date options and redraws the chart
+			function days_bnt_click(hidey_woo) {
+				getChart();
+				drawChart();
+				if (hidey_woo != false) {
+					toggleMenu();
+				} else {
+					toggle_graph_menu();
+				}
 		}
 		</script>
 		<!-- =========================================================== -->
-
 		<script>
 			var hide_line_1 = false;
 			var hide_line_2 = false;
@@ -204,6 +245,7 @@
 			var hide_line_4 = false;
 			var hide_line_5 = false;
 
+			// Toggle chart column lines
 			function toggleChartLine(line_to_hide) {
 				if (line_to_hide == 1) {
 					hide_line_1 = !hide_line_1;	
@@ -222,6 +264,38 @@
 				}
 
 				drawChart();
+			}
+		</script>
+		<!-- =========================================================== -->
+		
+		<script>
+			var graph_menu_vis = false;
+
+			// Show menu for chart options
+			function toggle_graph_menu() {
+				var graph_menu_element = document.getElementById("graph_menu");
+				if (graph_menu_vis) {
+			    	graph_menu_element.style.display = "none";
+					graph_menu_vis = false;
+				} else {
+					graph_menu_element.style.display = "block";
+					graph_menu_vis = true;
+				}
+			}
+			// Hide menu for chart options
+			function hide_graph_menu() {
+				var graph_menu_element = document.getElementById("graph_menu");
+				graph_menu_element.style.display = "none";
+				graph_menu_vis = false;
+			}
+			// Reset the selected chart options and redraw default chart
+			function reset_graph_menu() {
+				var graph_menu_element = document.getElementById("graph_menu");
+				var select_element = document.getElementById("days");
+				var fromdate_element = document.getElementById("fromdate");
+				fromdate_element.value="";
+				select_element.value = 1;
+				days_bnt_click(false);
 			}
 		</script>
 		<!-- =========================================================== -->
@@ -279,10 +353,8 @@
 			}
 			jQuery.loadScript = function (url, callback) { jQuery.ajax({  url: url, dataType: 'script', success: callback, async: true }); }
 			google.charts.load('current', {'packages':['corechart'], "callback": getChart, 'ignoreWindowOnLoad': true});
-
-			
 		</script>
-		
+
 <script>
 	updateWindowYesOrNo = true
 	var redisplaywindow = function() {

@@ -24,6 +24,9 @@ public:
 	static std::vector<std::vector<std::string>> getSensorVoltage();
 	static std::vector<std::vector<std::string>> getSensorVoltage(int days);
 	
+	static int get_sensor_id_from_name(std::string name);
+	static int get_sensor_id_from_short_name(std::string short_name);
+
 	static std::string getSensorName(int sensor);
 	static std::string getSensorShortName(int sensor);
 	static std::string getSensorIdByName(std::string name);
@@ -55,6 +58,7 @@ private:
 	static std::string getSqlStatementForSensorName(int sensor);
 	static std::string getSqlStatementForSensorShortName(int sensor);
 	static std::string getSqlStatementForIdByName(std::string &name);
+	static std::string getSqlStatementForIdByShortName(std::string &short_name);
 	static std::string getSqlStatementForSensors();
 	
 	static std::string getSqlStatementForChartDays(std::string &days);

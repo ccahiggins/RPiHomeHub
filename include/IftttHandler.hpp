@@ -15,6 +15,7 @@
 #include "TimerEvent.hpp"
 #include "BoilerTimerEvent.hpp"
 #include "Sonoff.hpp"
+#include "json.hpp"
 
 #define ERROR -2
 #define OFF 0
@@ -30,7 +31,7 @@ public:
 private:
 	bool apiKeyMatch(std::string requestKey);
 	std::string getTemp(std::string id);
-	std::string getTimers();
+	std::vector<nlohmann::json> getTimers();
 	Boiler& boiler;
 	Thermostat& thermostat;
 	Timer& timer;

@@ -136,6 +136,14 @@ std::string DatabaseController::getSqlStatementForIdByName(std::string &name) {
 	return oss.str();
 }
 
+std::string DatabaseController::getSqlStatementForIdByShortName(std::string &short_name) {
+	
+	std::ostringstream oss;
+	oss << "select id from sensor where short_name = '" << short_name << "'";
+	
+	return oss.str();
+}
+
 std::string DatabaseController::getSensorName(int sensor) {
 	
 	std::string database = sensors_database;
@@ -152,6 +160,36 @@ std::string DatabaseController::getSensorShortName(int sensor) {
 	std::string data = string_query(database, sql);
 	
 	return data;
+}
+
+int DatabaseController::get_sensor_id_from_name(std::string name) {
+
+	std::string database = sensors_database;
+	std::string sql = getSqlStatementForIdByName(name);
+	std::string data = string_query(database, sql);
+	
+	try {
+		int id = stoi(data);
+		return id;
+	}
+	catch(...) {
+		return -1;
+	}
+}
+
+int DatabaseController::get_sensor_id_from_short_name(std::string short_name) {
+
+	std::string database = sensors_database;
+	std::string sql = getSqlStatementForIdByShortName(short_name);
+	std::string data = string_query(database, sql);
+	
+	try {
+		int id = stoi(data);
+		return id;
+	}
+	catch(...) {
+		return -1;
+	}
 }
 
 std::string DatabaseController::getSensorIdByName(std::string name) {

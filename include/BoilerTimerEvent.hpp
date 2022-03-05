@@ -1,27 +1,25 @@
 #ifndef BOILERTIMEREVENT_HPP
 #define BOILERTIMEREVENT_HPP
 
-#include "TimerEvent.hpp"
 #include "Boiler.hpp"
+#include "TimerEvent.hpp"
 
 class BoilerTimerEvent : public TimerEvent {
 
 public:
-	BoilerTimerEvent(int hour_, int minute_, bool one_time_, int item_, int duration_, Boiler& boiler_);
-	int get_item();
-	int get_duration();
-	
+    BoilerTimerEvent(int hour_, int minute_, bool one_time_, int item_, int duration_, Boiler &boiler_);
+    int get_item();
+    int get_duration();
+
 private:
-	Boiler& boiler;
+    Boiler &boiler;
 
-	int item;
-	int duration;
+    int item;
+    int duration;
 
-	void trigger_event();
+    void trigger_event();
 
-	void to_stringstream(std::ostringstream& oss);
-
+    void to_stringstream(std::ostringstream &oss);
 };
-
 
 #endif

@@ -29,11 +29,11 @@
 	</head>
 	<body>
 	<div id="app">
-	<!-- ============================================================================== -->
+	<!-- ========================= START MAIN ================================== -->
 		<div v-if="boiler" class="full" v-cloak>
 			<div id="foo" class="header">
 			<button id="menu_btn" class="btn" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
-				<div class="enjoy-css"><a>Welcome to the Raspberry Pi Home Hub</a></div>
+			<div class="enjoy-css"><a>Welcome to the Raspberry Pi Home Hub</a></div>
 				
 				
 		<div class="heading boiler_controls" v-text="waterstatus" v-cloak></div>
@@ -117,48 +117,53 @@
 
 			</div>
 			<!--- -------------------------- -->
-			<div id="menu_div" style="display:none">
-				<div class = "heading">Menu</div>
-				<div class="dayscont">
-					<div class="days">
-						<div id="waa">Show</div>
-						<div class="select-style">
-							<select id="days">
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5</option>
-								<option value="6">6</option>
-								<option value="7">7</option>
-								<option value="14">14</option>
-								<option value="24">24</option>
-								<option value="30">30</option>
-								<option value="60">60</option>
-								<option value="90">90</option>
-								<option value="180">180</option>
-								<option value="365">265</option>
-							</select>
-						</div>
-						<input id="daysbut" type="button" value="Days" onclick="days_bnt_click();">
-						<input class="date_picker" id="fromdate" type="date">
+			
+		<!-- =========================  END  MAIN ================================== -->
+		
+		<!-- ========================= START MENU ================================== -->
+		<div id="menu_div" style="display:none">
+			<div class = "heading">Menu</div>
+			<div class="dayscont">
+				<div class="days">
+					<div id="waa">Show</div>
+					<div class="select-style">
+						<select id="days">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="14">14</option>
+							<option value="24">24</option>
+							<option value="30">30</option>
+							<option value="60">60</option>
+							<option value="90">90</option>
+							<option value="180">180</option>
+							<option value="365">265</option>
+						</select>
 					</div>
-				
+					<input id="daysbut" type="button" value="Days" onclick="days_bnt_click();">
+					<input class="date_picker" id="fromdate" type="date">
 				</div>
-				<div class = "heading">Links</div>
-				<div class="hhh">
-					<a href="/thermostat">Thermostat</a>
-					<button v-on:click="showTimer()">Timer</button>
-					<a href="/sonoff">Sonoff</a>
-				</div>
+			
+			</div>
+			<div class = "heading">Links</div>
+			<div class="hhh">
+				<a href="/thermostat">Thermostat</a>
+				<button v-on:click="showTimer()">Timer</button>
+				<a href="/sonoff">Sonoff</a>
 			</div>
 		</div>
-		<!-- =========================================================== -->
+	</div>
+		<!-- =========================  END  MENU ================================== -->
+
 		
-		
-		<!-- ========================================================= -->
+		<!-- ======================== START TIMERS ================================= -->
 		<div v-if="timer" v-cloak>
-			<div class = "enjoy-css">Welcome to the Raspberry Pi Home Hub</div>
+			<button id="menu_btn" class="btn" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
+			<div class = "enjoy-css"><a>Welcome to the Raspberry Pi Home Hub</a></div>
 			<div v-if="timerswaiting" class="heading">Loading timers</div>
 			
 			<timer-item v-if="!timerswaiting"
@@ -185,12 +190,26 @@
 				<div id="timer"> <a href="/timer/add">Add New Timer</a> </div>
 			</div>
 		</div>
-		<!-- =========================================================== -->
+		<!-- ========================  END  TIMERS ================================= -->
 		
 
 	</div>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<!-- =========================================================== -->
+		<script>
+			window.onload = function(){
+				document.onclick = function(e){
+					if (graph_menu_vis) {
+						var graph_menooo = document.getElementById("graph_menu");
+						var graphy_menu_toggly_button = document.getElementById("graph_menu_toggle");
+						if (!(e.target == graphy_menu_toggly_button || graphy_menu_toggly_button.contains(e.target)) && !(e.target == graph_menooo || graph_menooo.contains(e.target))) {
+							hide_graph_menu();
+						}
+					}
+				};
+			};
+		</script>
 		<!-- =========================================================== -->
 		<script>
 			var menu_vis="off";
@@ -429,7 +448,7 @@ Vue.component('timer-item', {
 			this.timerTime += this.minutes
 			this.boilerItem = this.boiler_item[0].toUpperCase() + this.boiler_item.substring(1)
 			
-			if (this.enabled == "true") {
+			if (this.enabled == true) {
 				this.enabledisable = "disable"
 			} else {
 				this.enabledisable = "enable"
@@ -461,9 +480,9 @@ Vue.component('timer-item', {
 			}
 			
 			
-			if (this.enabled == "true") {
+			if (this.enabled == true) {
 				this.enabledisable = "disable"
-			} else if (this.enabled == "false") {
+			} else if (this.enabled == false) {
 				this.enabledisable = "enable"
 			}
 		},
@@ -580,14 +599,14 @@ var app = new Vue({
 
 /////////
 		//alert(JSON.stringify(r))
-		console.log(JSON.stringify(r))
+			//console.log(JSON.stringify(r))
 			this.waiting = false
 
-			if (r.data.lowbattery == null) {
-				console.log("NO LOW BATT");
+			if (!(r.data.lowbattery == null && Array.isArray(r.data.lowbattery) && r.data.lowbattery.length > 0)) {
+				//console.log("NO LOW BATT");
 				this.low_battery = false;
 			} else {
-				console.log(r.data.lowbattery);
+				//console.log(r.data.lowbattery);
 				this.low_battery = true;
 				this.low_battery_text = "LOW BATTERY: ";
 				for (var i in r.data.lowbattery)
@@ -597,7 +616,7 @@ var app = new Vue({
 			}
 
 			if (r.data.status == 'error') {
-				console.log("BOILER ERROR");
+				//console.log("BOILER ERROR");
 				this.heatingstatus = "ERROR GETTING HEATING STATUS";
 				this.waterstatus = "ERROR GETTING WATER STATUS";
 			} else {
@@ -642,7 +661,7 @@ var app = new Vue({
 		this.timerswaiting = true
 		axios.post('https://%s/ifttt/timers/status?apikey=%s')
 		.then(r => {
-			console.log(JSON.stringify(r))
+			//console.log(JSON.stringify(r))
 			this.timerswaiting = true
 			this.timers.splice(0, this.timers.length)
 			this.timers = r.data.timers

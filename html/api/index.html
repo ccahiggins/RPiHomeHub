@@ -32,42 +32,42 @@
 	<!-- ========================= START MAIN ================================== -->
 		<div v-if="boiler" class="full" v-cloak>
 			<div id="foo" class="header">
-			<button id="menu_btn" class="btn" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
-			<div class="enjoy-css"><a>Welcome to the Raspberry Pi Home Hub</a></div>
+				<button id="menu_btn" class="btn" v-on:click="toggle_menoooooooo()"><i class="fa fa-bars"></i></button>
+				<div class="enjoy-css"><a>Welcome to the Raspberry Pi Home Hub</a></div>
 				
 				
-		<div class="heading boiler_controls" v-text="waterstatus" v-cloak></div>
-		<div v-if="!waterwaiting && wateroff" v-cloak class="hhh">
-			<button v-on:click="turnWaterOn(1000)">Turn the water on</button>
-			<button v-on:click="turnWaterOn(30)">30</button>
-			<button v-on:click="turnWaterOn(45)">45</button>
-			<button v-on:click="turnWaterOn(60)">60</button>
-			<button v-on:click="turnWaterOn(90)">90</button>
-		</div>
-		<div v-if="!waterwaiting && wateron" v-cloak class="hhh">
-			<button :disabled="waterwaiting" v-on:click="turnWaterOff">Turn the water off</button>
-		</div>
-		<div v-if="waterwaiting" v-cloak class="hhh">
-			<button :disabled="waterwaiting" >Contacting boiler</button>
-		</div>
+				<div class="heading boiler_controls" v-text="waterstatus" v-cloak></div>
+				<div v-if="!waterwaiting && wateroff" v-cloak class="hhh">
+					<button v-on:click="turnWaterOn(1000)">Turn the water on</button>
+					<button v-on:click="turnWaterOn(30)">30</button>
+					<button v-on:click="turnWaterOn(45)">45</button>
+					<button v-on:click="turnWaterOn(60)">60</button>
+					<button v-on:click="turnWaterOn(90)">90</button>
+				</div>
+				<div v-if="!waterwaiting && wateron" v-cloak class="hhh">
+					<button :disabled="waterwaiting" v-on:click="turnWaterOff">Turn the water off</button>
+				</div>
+				<div v-if="waterwaiting" v-cloak class="hhh">
+					<button :disabled="waterwaiting" >Contacting boiler</button>
+				</div>
 		
-		<div class = "heading boiler_controls" v-text="heatingstatus" v-cloak></div>
-		<div v-if="!heatingwaiting && heatingoff" v-cloak class="hhh">
-			<button v-on:click="turnHeatingOn(1000)">Turn the heating on</button>
-			<button v-on:click="turnHeatingOn(60)">1h</button>
-			<button v-on:click="turnHeatingOn(120)">2h</button>
-			<button v-on:click="turnHeatingOn(180)">3h</button>
-			<button v-on:click="turnHeatingOn(240)">4h</button>
-		</div>
-		<div v-if="!heatingwaiting && heatingon" v-cloak class="hhh">
-			<button :disabled="heatingwaiting" v-on:click="turnHeatingOff">Turn the heating off</button>
-		</div>
-		<div v-if="heatingwaiting" v-cloak class="hhh">
-			<button :disabled="heatingwaiting" >Contacting boiler</button>
-		</div>
-		<div v-if="low_battery" class="heading_error" v-cloak id="low_battery_banner" v-text="low_battery_text"></div>
-		
+				<div class = "heading boiler_controls" v-text="heatingstatus" v-cloak></div>
+				<div v-if="!heatingwaiting && heatingoff" v-cloak class="hhh">
+					<button v-on:click="turnHeatingOn(1000)">Turn the heating on</button>
+					<button v-on:click="turnHeatingOn(60)">1h</button>
+					<button v-on:click="turnHeatingOn(120)">2h</button>
+					<button v-on:click="turnHeatingOn(180)">3h</button>
+					<button v-on:click="turnHeatingOn(240)">4h</button>
+				</div>
+				<div v-if="!heatingwaiting && heatingon" v-cloak class="hhh">
+					<button :disabled="heatingwaiting" v-on:click="turnHeatingOff">Turn the heating off</button>
+				</div>
+				<div v-if="heatingwaiting" v-cloak class="hhh">
+					<button :disabled="heatingwaiting" >Contacting boiler</button>
+				</div>
+				<div v-if="low_battery" class="heading_error" v-cloak id="low_battery_banner" v-text="low_battery_text"></div>
 			</div>
+				
 			<div id="chart_container">
 				<!-- double percents are to keep boost format happy -->
 				<div id="linechart_material" style="width:100%%; height:100%%"></div>
@@ -115,54 +115,59 @@
 					<button id="graph_menu_button" class="btn" onclick="reset_graph_menu()"><i class="fa fa-rotate-left"></i></button>
 				</div>
 
+				
 			</div>
+		</div>
 			<!--- -------------------------- -->
 			
 		<!-- =========================  END  MAIN ================================== -->
 		
 		<!-- ========================= START MENU ================================== -->
-		<div id="menu_div" style="display:none">
-			<div class = "heading">Menu</div>
-			<div class="dayscont">
-				<div class="days">
-					<div id="waa">Show</div>
-					<div class="select-style">
-						<select id="days">
-							<option value="1">1</option>
-							<option value="2">2</option>
-							<option value="3">3</option>
-							<option value="4">4</option>
-							<option value="5">5</option>
-							<option value="6">6</option>
-							<option value="7">7</option>
-							<option value="14">14</option>
-							<option value="24">24</option>
-							<option value="30">30</option>
-							<option value="60">60</option>
-							<option value="90">90</option>
-							<option value="180">180</option>
-							<option value="365">265</option>
-						</select>
+		<div v-if="show_menu" v-cloak>
+			<button id="menu_btn" class="btn" v-on:click="toggle_menoooooooo()"><i class="fa fa-bars"></i></button>
+			<div class = "enjoy-css"><a>Welcome to the Raspberry Pi Home Hub</a></div>
+			<div id="menu_div">
+				<div class = "heading">Menu</div>
+				<div class="dayscont">
+					<div class="days">
+						<div id="waa">Show</div>
+						<div class="select-style">
+							<select id="days">
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="6">6</option>
+								<option value="7">7</option>
+								<option value="14">14</option>
+								<option value="24">24</option>
+								<option value="30">30</option>
+								<option value="60">60</option>
+								<option value="90">90</option>
+								<option value="180">180</option>
+								<option value="365">265</option>
+							</select>
+						</div>
+						<input id="daysbut" type="button" value="Days" onclick="days_bnt_click();">
+						<input class="date_picker" id="fromdate" type="date">
 					</div>
-					<input id="daysbut" type="button" value="Days" onclick="days_bnt_click();">
-					<input class="date_picker" id="fromdate" type="date">
+				
 				</div>
-			
-			</div>
-			<div class = "heading">Links</div>
-			<div class="hhh">
-				<a href="/thermostat">Thermostat</a>
-				<button v-on:click="showTimer()">Timer</button>
-				<a href="/sonoff">Sonoff</a>
+				<div class = "heading">Links</div>
+				<div class="hhh">
+					<a href="/thermostat">Thermostat</a>
+					<button v-on:click="showTimer()">Timer</button>
+					<a href="/sonoff">Sonoff</a>
+				</div>
 			</div>
 		</div>
-	</div>
 		<!-- =========================  END  MENU ================================== -->
 
 		
 		<!-- ======================== START TIMERS ================================= -->
 		<div v-if="timer" v-cloak>
-			<button id="menu_btn" class="btn" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
+			<button id="menu_btn" class="btn" v-on:click="toggle_menoooooooo()"><i class="fa fa-bars"></i></button>
 			<div class = "enjoy-css"><a>Welcome to the Raspberry Pi Home Hub</a></div>
 			<div v-if="timerswaiting" class="heading">Loading timers</div>
 			
@@ -196,7 +201,7 @@
 	</div>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-		<!-- =========================================================== -->
+		<!-- ======================== START MENU HIDE SCRIPT ================================= -->
 		<script>
 			window.onload = function(){
 				document.onclick = function(e){
@@ -210,38 +215,38 @@
 				};
 			};
 		</script>
-		<!-- =========================================================== -->
+		<!-- ========================  END MENU HIDE SCRIPT ================================= -->
 		<script>
-			var menu_vis="off";
-			function toggleMenu() {
-			  var chart_container_element = document.getElementById("chart_container");
-			  var menu_div_element = document.getElementById("menu_div");
-			  var chart_column_toggles_element = document.getElementById("chart_column_toggles");
-			  var battery_warning_banner_element = document.getElementById("low_battery_banner");
-			  if (menu_vis === "off") {
-			    chart_container_element.style.display = "none";
-			    menu_div_element.style.display = "block";
-				chart_column_toggles_element.style.display = "none";
-				if (battery_warning_banner_element != null) {
-					battery_warning_banner_element.style.display = "none";
-				}
-				hide_graph_menu();
-			    $('.boiler_controls').hide();
-			    menu_vis = "on";
-				updateWindowYesOrNo = false;
-			  } else {
-			    chart_container_element.style.display = "block";
-			    menu_div_element.style.display = "none";
-				chart_column_toggles_element.style.display = "block";
-				if (battery_warning_banner_element != null) {
-					battery_warning_banner_element.style.display = "block";
-				}
-			    $('.boiler_controls').show();
-			    menu_vis = "off";
-				updateWindowYesOrNo = true;
-			    drawChart();
-			  }
-			}
+			// var menu_vis="off";
+			// function toggleMenu() {
+			//   var chart_container_element = document.getElementById("chart_container");
+			//   var menu_div_element = document.getElementById("menu_div");
+			//   var chart_column_toggles_element = document.getElementById("chart_column_toggles");
+			//   var battery_warning_banner_element = document.getElementById("low_battery_banner");
+			//   if (menu_vis === "off") {
+			//     chart_container_element.style.display = "none";
+			//     menu_div_element.style.display = "block";
+			// 	chart_column_toggles_element.style.display = "none";
+			// 	if (battery_warning_banner_element != null) {
+			// 		battery_warning_banner_element.style.display = "none";
+			// 	}
+			// 	hide_graph_menu();
+			//     $('.boiler_controls').hide();
+			//     menu_vis = "on";
+			// 	updateWindowYesOrNo = false;
+			//   } else {
+			//     chart_container_element.style.display = "block";
+			//     menu_div_element.style.display = "none";
+			// 	chart_column_toggles_element.style.display = "block";
+			// 	if (battery_warning_banner_element != null) {
+			// 		battery_warning_banner_element.style.display = "block";
+			// 	}
+			//     $('.boiler_controls').show();
+			//     menu_vis = "off";
+			// 	updateWindowYesOrNo = true;
+			//     drawChart();
+			//   }
+			// }
 		</script>
 		<!-- =========================================================== -->
 		<script>
@@ -385,7 +390,8 @@
 				}, 100);
 			});
 			
-			//redraw graph when window resize is completed  
+			// redraw graph when window resize is completed
+			// sets height to view inner height - foo height (header) - 80 to allow room for toggles, etc.
 			$(window).on('resizeEnd', function() {
 			if (updateWindowYesOrNo) {
 			var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 80) + "px";
@@ -396,9 +402,8 @@
 			});
 			
 			if (updateWindowYesOrNo) {
-			var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 80) + "px";
-
-			document.getElementById('chart_container').setAttribute("style",sausage);
+				var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 80) + "px";
+				document.getElementById('chart_container').setAttribute("style",sausage);
 			}
 		}
 	}
@@ -510,6 +515,7 @@ var app = new Vue({
 	timer: false,
 	timers: [],
 	timerswaiting: false,
+	show_menu: false,
 	
 	low_battery: false,
 	low_battery_text: "",
@@ -517,15 +523,7 @@ var app = new Vue({
   },
   
   methods: {
-    show: function () {
-      this.cnt++
-	  if (this.cnt == 2) {
-		this.b = true
-	  }
-	  if (this.cnt == 3) {
-		this.a = true
-	  }
-    },
+
 	
 	turnWaterOff() {
 		this.waterwaiting = true
@@ -726,6 +724,7 @@ var app = new Vue({
 		this.getTimers()
 		this.boiler = false
 		this.timer = true
+		this.show_menu = false
 	},
 	
 	showBoiler() {
@@ -733,6 +732,24 @@ var app = new Vue({
 		updateWindowYesOrNo = true
 		this.boiler = true
 		this.timer = false
+		this.show_menu = false
+	},
+
+	toggle_menoooooooo() {
+		//menu_vis = "off"
+		if (this.show_menu) {
+			this.boiler = true
+			this.timer = false
+			this.show_menu = false
+			updateWindowYesOrNo = true
+		} else {
+			this.boiler = false
+			this.timer = false
+			this.show_menu = true
+			updateWindowYesOrNo = false
+		}
+		
+
 	}
 	
   },

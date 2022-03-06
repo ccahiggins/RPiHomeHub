@@ -1,252 +1,101 @@
 #include "ChartCreatorJson.hpp"
 
 
-std::string ChartCreatorJson::getChartDays(std::string &days) {
+std::string ChartCreatorJson::get_chart_days(std::string &days) {
 	
 	std::vector<std::vector<std::string>> data = DatabaseController::getChartDataDays(days);
-	std::string tempData = getTempGraph(data);
+	std::string tempData = get_chart_json(data);
 	
 	return tempData;
 }
 
-std::string ChartCreatorJson::getChartFromDays(std::string &from, std::string &days) {
+std::string ChartCreatorJson::get_chart_from_days(std::string &from, std::string &days) {
 
 	std::vector<std::vector<std::string>> data = DatabaseController::getChartDataFromDays(from, days);
-	std::string tempData = getTempGraph(data);
+	std::string tempData = get_chart_json(data);
 	
 	return tempData;
 }
 
-std::string ChartCreatorJson::getChartFromTo(std::string &from, std::string &to) {
+std::string ChartCreatorJson::get_chart_from_to(std::string &from, std::string &to) {
 
 	std::vector<std::vector<std::string>> data = DatabaseController::getChartDataFromTo(from, to);
-	std::string tempData = getTempGraph(data);
+	std::string tempData = get_chart_json(data);
 	
 	return tempData;
 }
 
-
-std::string ChartCreatorJson::getTempGraph(std::vector<std::vector<std::string>> &data)
+std::string ChartCreatorJson::get_chart_json(std::vector<std::vector<std::string>> &data)
 {
-	using namespace std;
-	int numGraphs = 1;
-	string somestuff = "";
-
-	somestuff.append(ReadHtml::readHtml("html/ChartCreatorJson/graph1.html"));
-	//somestuff.append("=========");
-
-	string tempData = formatGraphData(data);
-	somestuff.append(tempData);
-
-	somestuff.append(ReadHtml::readHtml("html/ChartCreatorJson/graph2.html"));
+    // String stream to hold the chart data    
+    std::ostringstream tempData;
 
 
-	//Do this to make an example graph
-	//If there is no data returned form database
-	if (numGraphs < 1) {
-		string emptyGraph = "";
-		emptyGraph.append(ReadHtml::readHtml("html/ChartCreatorJson/emptyGraph.html"));
-		return emptyGraph;
+    // Get names of sensors and map to sensor number
+    std::map<unsigned int, std::string> m;
+    for (int i=1; i <= 5; i++) {
+        m[i] = Sensors::getShortName(i);
+    }
+
+    // Get list of sensors that are in the dataset
+    std::vector<int> sensors;
+	for (unsigned int i=0; i < data.size(); i++) {
+		if (sensors.empty()) {
+			sensors.push_back(std::stoi(data[i][2]));
+		} else if (!(find(sensors.begin(), sensors.end(), std::stoi(data[i][2])) != sensors.end())) {
+			sensors.push_back(std::stoi(data[i][2]));
+		}
 	}
-	return somestuff;
+	std::sort(sensors.begin(), sensors.end());
 
+    // Generate the column data with sensor names
+    tempData << "{\"cols\":[{\"id\":0,\"label\":\"Date\",\"type\":\"date\"},";
+	for (unsigned int i = 0; i < sensors.size(); i++) {
+        tempData << "{\"id\":" << (i + 1) << ",\"label\":\"" << m[sensors[i]] << "\",\"type\":\"number\"}";
+        if (i < sensors.size() -1 ) {
+            tempData << ",";
+        }
+	}
+
+    // Generate the row data with date/temp for each sensor
+    tempData << "],\"rows\":[";    
+    for (unsigned int i=0; i < data.size(); i++) {
+        tempData << "{\"c\":[";
+        for (unsigned int j = 0; j < sensors.size(); j++) {
+            if (j == 0) {
+                tempData << "{\"v\":\"Date(";
+                tempData << data[i][0].substr (0, 4);
+                tempData << ",";
+                tempData << std::stoi(data[i][0].substr (5, 2)) - 1;
+                tempData << ",";
+                tempData << data[i][0].substr (8, 2);	  // day
+                tempData << ",";
+                tempData << data[i][0].substr (11, 2);	  // hour
+                tempData << ",";
+                tempData << data[i][0].substr (14, 2);	  // minute
+                tempData << ")";
+
+                tempData << "\",\"f\":null},";
+            }
+            
+            // Populate the row if the date is for this sensor, otherwise set it null
+            if (sensors[j] == std::stoi(data[i][2])) {
+                tempData << "{\"v\":" << data[i][1] << ",\"f\":null}";
+            } else {
+                tempData << "{\"v\":null,\"f\":null}";
+            }
+
+            if (j < sensors.size() -1 ) {
+                tempData << ",";
+            }
+
+        }
+        tempData << "]}";
+        if (i < data.size() -1 ) {
+            tempData << ",";
+        }
+    }
+    tempData << "]}";
+
+    return tempData.str();
 }
-
-std::string ChartCreatorJson::formatGraphData(std::vector<std::vector<std::string>> &data)
-{
-	using namespace std;
-	
-	vector<vector<string>> d;
-	
-	vector<string> q;
-	vector<string> w;
-	vector<string> e;
-	vector<string> r;
-	
-	d.push_back(q);
-	d.push_back(w);
-	d.push_back(e);
-	d.push_back(r);
-	
-	for (unsigned int i = 0; i < data.size(); i++) {
-		//Add date
-		
-		/* tempData << data[i][0].substr (0, 4); 	  // year
-		tempData << ",";
-		
-		string month = data[i][0].substr (5, 2);  // Month
-		int value = atoi(month.c_str()) - 1;	  // Get month and subtract 1 for graph (Google months are 0-11)
-		
-		tempData << value; 						  // month - 1
-		tempData << ",";
-		tempData << data[i][0].substr (8, 2);	  // day
-		tempData << ",";
-		tempData << data[i][0].substr (11, 2);	  // hour
-		tempData << ",";
-		tempData << data[i][0].substr (14, 2);	  // minute
-		tempData << "),";
-		
-		//Add voltage data and nulls depending on how many sensors there are
-		for (unsigned int j = 0; j < sensors.size(); j++) {
-			if (!sensors[j].compare(data[i][2])) {
-				tempData << data[i][1];
-				tempData << ",";
-			}
-			else {
-				tempData << "null, ";
-			}
-		}
-		tempData << "],\n"; */
-		
-		if (data[i][2].compare("1") == 0)  {
-			string line = "{\'t\':\'";
-			line.append(data[i][0]);
-			line.append("\',\'y\':");
-			line.append(data[i][1]);
-			line.append("},");
-			
-			d[0].push_back(line);
-		} else if (data[i][2].compare("2") == 0)  {
-			string line = "{\'t\':\'";
-			line.append(data[i][0]);
-			line.append("\',\'y\':");
-			line.append(data[i][1]);
-			line.append("},");
-			
-			d[1].push_back(line);
-		} else if (data[i][2].compare("3") == 0)  {
-			string line = "{\'t\':\'";
-			line.append(data[i][0]);
-			line.append("\',\'y\':");
-			line.append(data[i][1]);
-			line.append("},");
-			
-			d[2].push_back(line);
-		} else if (data[i][2].compare("4") == 0)  {
-			string line = "{\'t\':\'";
-			line.append(data[i][0]);
-			line.append("\',\'y\':");
-			line.append(data[i][1]);
-			line.append("},");
-			
-			d[3].push_back(line);
-		}
-	}
-	
-	string datasets = "[";
-	for (unsigned int i = 0; i < d.size(); i++) {
-		string a = "{data:[";
-		for (unsigned int j = 0; j < d[i].size(); j++) {
-			a.append(d[i][j]);
-		}
-		a.append("]},");
-		datasets.append(a);
-	}
-	datasets.append("];");
-	
-	return datasets;
-}	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* std::string ChartCreatorJson::formatGraphData(std::vector<std::vector<std::string> > &data)
-{
-	using namespace std;
-	
-	string sensor1Name = "Bed";
-	string sensor2Name = "Living";
-	string sensor3Name = "Kids";
-	string sensor4Name = "Outside";
-	
-	vector<string> sensors;
-	
-	ostringstream tempData;
-	if (data.size() < 1) {
-		return tempData.str();
-	}
-
-	tempData << "var data";
-	tempData << " = google.visualization.arrayToDataTable([\n";
-
-	for (unsigned int i=0; i < data.size(); i++)
-	{
-		if (sensors.empty())
-			sensors.push_back(data[i][2]);
-		else if (!(find(sensors.begin(), sensors.end(), data[i][2]) != sensors.end()))
-			sensors.push_back(data[i][2]);
-	}
-
-	sort(sensors.begin(), sensors.end());
-
-	//Make titles for graph data
-	tempData << "['Date', ";
-	if (find(sensors.begin(), sensors.end(), "1") != sensors.end()) {
-		tempData << "'";
-		tempData << sensor1Name;
-		tempData << "', ";
-	}
-	if (find(sensors.begin(), sensors.end(), "2") != sensors.end()) {
-		tempData << "'";
-		tempData << sensor2Name;
-		tempData << "', ";
-	}
-	if (find(sensors.begin(), sensors.end(), "3") != sensors.end()) {
-		tempData << "'";
-		tempData << sensor3Name;
-		tempData << "', ";
-	}
-	if (find(sensors.begin(), sensors.end(), "4") != sensors.end()) {
-		tempData << "'";
-		tempData << sensor4Name;
-		tempData << "', ";
-	}
-	tempData << "],\n";
-	
-	
-	for (unsigned int i = 0; i < data.size(); i++) {
-		//Add date
-		tempData << "[new Date(";
-		tempData << data[i][0].substr (0, 4); 	  // year
-		tempData << ",";
-		
-		string month = data[i][0].substr (5, 2);  // Month
-		int value = atoi(month.c_str()) - 1;	  // Get month and subtract 1 for graph (Google months are 0-11)
-		
-		tempData << value; 						  // month - 1
-		tempData << ",";
-		tempData << data[i][0].substr (8, 2);	  // day
-		tempData << ",";
-		tempData << data[i][0].substr (11, 2);	  // hour
-		tempData << ",";
-		tempData << data[i][0].substr (14, 2);	  // minute
-		tempData << "),";
-		
-		//Add voltage data and nulls depending on how many sensors there are
-		for (unsigned int j = 0; j < sensors.size(); j++) {
-			if (!sensors[j].compare(data[i][2])) {
-				tempData << data[i][1];
-				tempData << ",";
-			}
-			else {
-				tempData << "null, ";
-			}
-		}
-		tempData << "],\n";
-	}
-	tempData << "]);\n";
-	
-	return tempData.str();
-}	 */

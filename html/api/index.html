@@ -252,8 +252,8 @@
 		<script>
 			// Gets the selected options for days/date options and redraws the chart
 			function days_bnt_click(hidey_woo) {
-				getChart();
-				drawChart();
+				//getChart();
+				drawChart(true);
 				if (hidey_woo != false) {
 					toggleMenu();
 				} else {
@@ -325,87 +325,172 @@
 		<!-- =========================================================== -->
 		<script>
 
-			var paramDays = 0;
-			var from = "";
-			var to = "";
-			if (from && to) {
-				function getChart() {
-					var text="/chart?from="
-					text += from;
-					text += "&to=";
-					text += to;
-					$.loadScript(text, function(){
-						$("#spinner").show(); drawChart(); $("#spinner").hide();
-					});
-				};
-			} else if (from && days > 0) {
-			function getChart() {
-					var text="/chart?from="
-					text += from;
-					text += "&days=";
-					text += days;
-					$.loadScript(text, function(){
-						$("#spinner").show(); drawChart(); $("#spinner").hide();
-					});
-				};
-			} else if (paramDays > 0) {
-				function getChart() {
-					var text="/chart?days="
-					text += paramDays;
-					$.loadScript(text, function(){
-						$("#spinner").show(); drawChart(); $("#spinner").hide();
-					});
-				};
-			} else {
-				function getChart() {
+		google.charts.load('current', {'packages':['corechart']});
+			
+		// Set a callback to run when the Google Visualization API is loaded.
+		google.charts.setOnLoadCallback(drawChart);
+		var got_data_once = false;
+		var jsonData = "";
+		var chart_data = "";
+		var temp_chart = "";
+		function drawChart(refresh_data) {
+			if (!got_data_once || refresh_data) {
+				console.log("REFRESHING DATA");
+				got_data_once = true;
+				var paramDays = 0;
+				var from = "";
+				var to = "";
+				var param_text = "";
+
+				if (from && to) {
+					param_text +="?from="
+					param_text += from;
+					param_text += "&to=";
+					param_text += to;
+				} else if (from && days > 0) {
+					param_text += "?from="
+					param_text += from;
+					param_text += "&days=";
+					param_text += days;
+				} else if (paramDays > 0) {
+					param_text += "?days="
+					param_text += paramDays;
+				} else {
 					var sel = document.getElementById("days");
 					days = (sel.options[sel.selectedIndex].value) 
 					var date = document.getElementById("fromdate").value;
-					text="/chart";
 					if (date && days > 0) {
-						text += "?from=";
-						text += date;
-						text+="&days=";
-						text+=days;
+						param_text += "?from=";
+						param_text += date;
+						param_text += "&days=";
+						param_text += days;
 					} else if (days > 0) {
-						text+="?days="; text+=days;
+						param_text += "?days=";
+						param_text += days;
 					} 
-					$.loadScript(text, function(){
-						$("#spinner").show(); drawChart(); $("#spinner").hide();
-					});
-				};
+				}
+				var chart_uri = ("https://pi.chrishigs.co.uk/json_chart" + param_text);
+				jsonData = $.ajax({
+					url: chart_uri,
+					dataType: "json",
+					async: false
+					}).responseText;
+				
+				chart_data = new google.visualization.DataTable(jsonData);
+				
 			}
-			jQuery.loadScript = function (url, callback) { jQuery.ajax({  url: url, dataType: 'script', success: callback, async: true }); }
-			google.charts.load('current', {'packages':['corechart'], "callback": getChart, 'ignoreWindowOnLoad': true});
+			var options = {
+				title: 'Temperature',
+				hAxis: {
+					format: 'HH:mm',
+					gridlines: {
+						color: 'transparent'
+					},
+				},
+				chartArea: {
+
+					bottom: 48
+				},
+
+				interpolateNulls: true,
+
+				legend: { position: 'bottom' },
+				theme: 'maximized'
+			};
+			var temp_chart = new google.visualization.LineChart(document.getElementById('chart_container'));
+			temp_chart.draw(chart_data, options);
+		}
+
+
+
+
+			// var paramDays = 0;
+			// var from = "";
+			// var to = "";
+			// if (from && to) {
+			// 	function getChart() {
+			// 		var text="/chart?from="
+			// 		text += from;
+			// 		text += "&to=";
+			// 		text += to;
+			// 		$.loadScript(text, function(){
+			// 			$("#spinner").show(); drawChart(); $("#spinner").hide();
+			// 		});
+			// 	};
+			// } else if (from && days > 0) {
+			// function getChart() {
+			// 		var text="/chart?from="
+			// 		text += from;
+			// 		text += "&days=";
+			// 		text += days;
+			// 		$.loadScript(text, function(){
+			// 			$("#spinner").show(); drawChart(); $("#spinner").hide();
+			// 		});
+			// 	};
+			// } else if (paramDays > 0) {
+			// 	function getChart() {
+			// 		var text="/chart?days="
+			// 		text += paramDays;
+			// 		$.loadScript(text, function(){
+			// 			$("#spinner").show(); drawChart(); $("#spinner").hide();
+			// 		});
+			// 	};
+			// } else {
+			// 	function getChart() {
+			// 		var sel = document.getElementById("days");
+			// 		days = (sel.options[sel.selectedIndex].value) 
+			// 		var date = document.getElementById("fromdate").value;
+			// 		text="/chart";
+			// 		if (date && days > 0) {
+			// 			text += "?from=";
+			// 			text += date;
+			// 			text+="&days=";
+			// 			text+=days;
+			// 		} else if (days > 0) {
+			// 			text+="?days="; text+=days;
+			// 		} 
+			// 		$.loadScript(text, function(){
+			// 			$("#spinner").show(); drawChart(); $("#spinner").hide();
+			// 		});
+			// 	};
+			// }
+			// jQuery.loadScript = function (url, callback) { jQuery.ajax({  url: url, dataType: 'script', success: callback, async: true }); }
+			// google.charts.load('current', {'packages':['corechart'], "callback": getChart, 'ignoreWindowOnLoad': true});
 		</script>
 
 <script>
 	updateWindowYesOrNo = true
-	var redisplaywindow = function() {
-	if (updateWindowYesOrNo) {
-		$(window).resize(function() {
-				if(this.resizeTO) clearTimeout(this.resizeTO);
-				this.resizeTO = setTimeout(function() {
-					$(this).trigger('resizeEnd');
-				}, 100);
-			});
-			
+	function redisplaywindow() {
+		if (updateWindowYesOrNo) {
+			$(window).resize(function() {
+					if(this.resizeTO) clearTimeout(this.resizeTO);
+					this.resizeTO = setTimeout(function() {
+						$(this).trigger('resizeEnd');
+					}, 100);
+				});
+				
 			// redraw graph when window resize is completed
 			// sets height to view inner height - foo height (header) - 80 to allow room for toggles, etc.
 			$(window).on('resizeEnd', function() {
-			if (updateWindowYesOrNo) {
-			var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 80) + "px";
+				if (updateWindowYesOrNo) {
+					var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 80) + "px";
 
-			document.getElementById('chart_container').setAttribute("style",sausage);
-				drawChart();
+					document.getElementById('chart_container').setAttribute("style",sausage);
+					drawChart();
 				}
 			});
-			
 			if (updateWindowYesOrNo) {
 				var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 80) + "px";
 				document.getElementById('chart_container').setAttribute("style",sausage);
 			}
 		}
+	}
+
+	function set_chart_window_height () {
+		if (updateWindowYesOrNo) {
+			var sausage = "height:" + (window.innerHeight - document.getElementById('foo').offsetHeight - 80) + "px";
+				document.getElementById('chart_container').setAttribute("style",sausage);
+			}
 	}
 </script>
 
@@ -523,7 +608,15 @@ var app = new Vue({
   },
   
   methods: {
-
+    show: function () {
+      this.cnt++
+	  if (this.cnt == 2) {
+		this.b = true
+	  }
+	  if (this.cnt == 3) {
+		this.a = true
+	  }
+    },
 	
 	turnWaterOff() {
 		this.waterwaiting = true
@@ -733,6 +826,7 @@ var app = new Vue({
 		this.boiler = true
 		this.timer = false
 		this.show_menu = false
+		set_chart_window_height();
 	},
 
 	toggle_menoooooooo() {
@@ -742,6 +836,8 @@ var app = new Vue({
 			this.timer = false
 			this.show_menu = false
 			updateWindowYesOrNo = true
+
+
 		} else {
 			this.boiler = false
 			this.timer = false
@@ -761,13 +857,15 @@ var app = new Vue({
  
   
   mounted () {
-  	  redisplaywindow()
+	redisplaywindow()
+	set_chart_window_height()
   },
   
 	updated() {
-		redisplaywindow()
+		set_chart_window_height();
 		if (updateWindowYesOrNo) {
 			drawChart()
+			
 		}
 	}
 })
@@ -794,7 +892,7 @@ var app = new Vue({
 	
 	channel.bind('tempchange', function(data) {
 	if (app.boiler) {
-		getChart()
+		drawChart(true)
 	  }
     });
   </script>
@@ -804,7 +902,7 @@ var app = new Vue({
 		//console.log("FOCUS")
 		if (app.boiler) {
 			this.app.getStatus.call()
-			getChart()
+			drawChart()
 		}
 	});
   

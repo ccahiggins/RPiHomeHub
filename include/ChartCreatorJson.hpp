@@ -7,17 +7,18 @@
 #include <sstream>
 #include <algorithm>
 #include <ctime>
+#include <map>
 
-#include "ReadHtml.hpp"
-//#include "boost/format.hpp"
+#include "Sensors.hpp"
+#include "DatabaseController.hpp"
 
 class ChartCreatorJson
 {
 public:
 
-	std::string getChartDays(std::string &days);
-	std::string getChartFromDays(std::string &from, std::string &days);
-	std::string getChartFromTo(std::string &from, std::string &to);
+	std::string get_chart_days(std::string &days);
+	std::string get_chart_from_days(std::string &from, std::string &days);
+	std::string get_chart_from_to(std::string &from, std::string &to);
 	void writeChartToFile();
 	
 private:
@@ -27,9 +28,7 @@ private:
 		float temp;
 		int id;
 	};
-	std::string getTempGraph(std::vector<std::vector<std::string>> &data);
-	
-	std::string formatGraphData(std::vector<std::vector<std::string> > &data);
+	std::string get_chart_json(std::vector<std::vector<std::string>> &data);
 };
 
 #endif

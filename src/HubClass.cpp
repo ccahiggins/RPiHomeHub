@@ -119,21 +119,25 @@ int HubClass::startHub(int argc, char** argv)  {
 	sonoff_list.push_back(s2);
 	sonoff_list.push_back(s3);
 
-	server.addHandler(HUB_URI, new HubHandler(boiler, tempSensControl));
-	server.addHandler(HOME_URI, new HomeHandler(api_key, api_url, ga_key));
+	
+	server.addHandler(LOGIN_URI, new LoginHandler());
 	server.addHandler(TIMER_URI, new TimerHandler(timer));
 	server.addHandler(BOILER_URI, new BoilerHandler(boiler));
 	server.addHandler(EMAILER_URI, new EmailerHandler(emailer));
-	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(timer, boiler, thermostat));
 	server.addHandler(TIMER_ENABLE_URI, new TimerEnableHandler(timer));
+	server.addHandler(HUB_URI, new HubHandler(boiler, tempSensControl));
+	server.addHandler(THERMOSTAT_URI, new ThermostatHandler(thermostat));
+	server.addHandler(HOME_URI, new HomeHandler(api_key, api_url, ga_key));
+	server.addHandler(IFTTT_URI, new IftttHandler(boiler, thermostat, timer, tempSensControl, sonoff_list));
+	server.addHandler(TIMER_ADD_URI, new TimerAddHandler(timer, boiler, thermostat));
 	server.addHandler(TIMER_DISABLE_URI, new TimerDisableHandler(timer));
 	server.addHandler(TIMER_DELETE_URI, new TimerDeleteHandler(timer));
-	server.addHandler(THERMOSTAT_URI, new ThermostatHandler(thermostat));
-	server.addHandler(VOLTAGE_URI, new VoltageHandler());
 	server.addHandler(SONOFF_URI, new SonoffHandler(sonoff_list));
+	server.addHandler(JSON_CHART_URI, new ChartJsonHandler());
+	server.addHandler(VOLTAGE_URI, new VoltageHandler());
 	server.addHandler(CHART_URI, new ChartHandler());
-	server.addHandler(LOGIN_URI, new LoginHandler());
-	server.addHandler(IFTTT_URI, new IftttHandler(boiler, thermostat, timer, tempSensControl, sonoff_list));
+	
+
 
 	while(keepRunning) {
 		tempSensControl.checkSensors();

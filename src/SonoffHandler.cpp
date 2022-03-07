@@ -24,11 +24,19 @@ bool SonoffHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 				if (param1.compare("on") == 0) {
 					int id = atoi(param2.c_str());
 					int res = sonoff_list[id].turn_on();
-					content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "ON" % "off" % id % "Turn OFF"));
+					if (res == 0) {
+						content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "ON" % "off" % id % "Turn OFF"));
+					} else {
+						content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "ERROR" % "off" % id % "ERROR"));
+					}
 				} else if (param1.compare("off") == 0) {
 					int id = atoi(param2.c_str());
 					int res = sonoff_list[id].turn_off();
-					content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "OFF" % "on" % id % "Turn ON"));
+					if (res == 0) {
+						content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "OFF" % "on" % id % "Turn ON"));
+					} else {
+						content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "ERROR" % "on" % id % "ERROR"));
+					}
 				}
 			}
 			html = boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/html.html")) % content  % "sonoff" % "Sonoff");

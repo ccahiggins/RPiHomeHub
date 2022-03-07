@@ -1,43 +1,38 @@
 #ifndef HUBCLASS_HPP
 #define HUBCLASS_HPP
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <iterator>
 
-#include "DatabaseController.hpp"
-
-#include "RadioController.hpp"
-#include "TempSensorController.hpp"
 #include "Boiler.hpp"
-#include "Timer.hpp"
-#include "Observer.hpp"
-#include "Thermostat.hpp"
-#include "Emailer.hpp"
-
-#include "IftttHandler.hpp"
-#include "TimerHandler.hpp"
-#include "TimerDeleteHandler.hpp"
-#include "TimerAddHandler.hpp"
-#include "TimerEnableHandler.hpp"
-#include "TimerDisableHandler.hpp"
-#include "HubHandler.hpp"
 #include "BoilerHandler.hpp"
 #include "ChartHandler.hpp"
-#include "ChartJsonHandler.hpp"
-#include "VoltageHandler.hpp"
-#include "LoginHandler.hpp"
-#include "HomeHandler.hpp"
-#include "ThermostatHandler.hpp"
+#include "DatabaseController.hpp"
+#include "Emailer.hpp"
 #include "EmailerHandler.hpp"
+#include "HomeHandler.hpp"
+#include "HubHandler.hpp"
+#include "IftttHandler.hpp"
+#include "LoginHandler.hpp"
+#include "Observer.hpp"
+#include "RadioController.hpp"
 #include "SonoffHandler.hpp"
+#include "TempSensorController.hpp"
+#include "Thermostat.hpp"
+#include "ThermostatHandler.hpp"
+#include "Timer.hpp"
+#include "TimerAddHandler.hpp"
+#include "TimerDeleteHandler.hpp"
+#include "TimerDisableHandler.hpp"
+#include "TimerEnableHandler.hpp"
+#include "TimerHandler.hpp"
+#include "VoltageHandler.hpp"
 
 #define DOCUMENT_ROOT "./html"
 #define PORT "8081,443s"
 #define CERT "html/server.pem"
 #define CHART_URI "/chart"
-#define CHART2_URI "/chart2"
-#define JSON_CHART_URI "/json_chart"
 #define HOME_URI "/new"
 #define HUB_URI "/hub"
 #define BOILER_URI "/boiler"
@@ -60,14 +55,13 @@
 
 class HubClass {
 
-int8_t volatile keepRunning = 1;
-int timerCounterThingy=0;
+    int8_t volatile keepRunning = 1;
+    int timerCounterThingy = 0;
 
-void intHandler();
-void load_timer_events();
+    void intHandler();
+    void load_timer_events();
 
 public:
-	int startHub(int argc, char** argv);
-
+    int startHub(int argc, char **argv);
 };
 #endif

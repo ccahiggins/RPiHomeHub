@@ -33,7 +33,7 @@ SQLLL=-I../sqlite-amalgamation-3380000/
 
 all: $(BIN)start_hub
 	
-$(BIN)start_hub: $(OUT)HubMain.o $(OUT)HubClass.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)IftttHandler.o $(OUT)RequestValidator.o $(OUT)AuthHandler.o $(OUT)LoginHandler.o $(OUT)HomeHandler.o $(OUT)Thermostat.o $(OUT)ThermostatHandler.o $(OUT)Subject.o $(OUT)Emailer.o $(OUT)EmailerHandler.o $(OUT)TimerEvent.o $(OUT)BoilerTimerEvent.o $(OUT)ThermostatTimerEvent.o $(OUT)Sensors.o $(OUT)DatabaseController.o $(OUT)Sonoff.o $(OUT)SonoffHandler.o $(OUT)CprResponse.o $(OUT)CprCurlholder.o $(OUT)CprAuth.o $(OUT)CprSession.o $(OUT)CprBearer.o $(OUT)CprCookies.o $(OUT)CprCprtypes.o $(OUT)CprError.o $(OUT)CprMultipart.o $(OUT)CprParameters.o $(OUT)CprPayload.o $(OUT)CprProxies.o $(OUT)CprTimeout.o $(OUT)CprUnixSocket.o $(OUT)CprUtil.o $(OUT)CprCurlContainer.o $(OUT)ChartJsonHandler.o $(OUT)ChartCreatorJson.o
+$(BIN)start_hub: $(OUT)HubMain.o $(OUT)HubClass.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)IftttHandler.o $(OUT)RequestValidator.o $(OUT)AuthHandler.o $(OUT)LoginHandler.o $(OUT)HomeHandler.o $(OUT)Thermostat.o $(OUT)ThermostatHandler.o $(OUT)Subject.o $(OUT)Emailer.o $(OUT)EmailerHandler.o $(OUT)TimerEvent.o $(OUT)BoilerTimerEvent.o $(OUT)ThermostatTimerEvent.o $(OUT)Sensors.o $(OUT)DatabaseController.o $(OUT)Sonoff.o $(OUT)SonoffHandler.o $(OUT)CprResponse.o $(OUT)CprCurlholder.o $(OUT)CprAuth.o $(OUT)CprSession.o $(OUT)CprBearer.o $(OUT)CprCookies.o $(OUT)CprCprtypes.o $(OUT)CprError.o $(OUT)CprMultipart.o $(OUT)CprParameters.o $(OUT)CprPayload.o $(OUT)CprProxies.o $(OUT)CprTimeout.o $(OUT)CprUnixSocket.o $(OUT)CprUtil.o $(OUT)CprCurlContainer.o $(OUT)ChartCreatorJson.o $(OUT)ChartCreatorNvd3.o $(OUT)ChartCreatorDygraphs.o
 	$(CC) -o $@ $^ $(CXXFLAGS) $(CIVET) $(SQLITE) $(RF24CMB) $(RF24) $(LIB)$(CIVLIBA) $(CRYPTO) $(UUID) $(CPR)
 	
 $(OUT)HubMain.o: $(SRC)HubMain.cpp
@@ -186,10 +186,13 @@ $(OUT)CprUtil.o: $(CPR_CPP)util.cpp $(CPR_H)util.h
 $(OUT)CprCurlContainer.o: $(CPR_CPP)curl_container.cpp $(CPR_H)curl_container.h
 	$(CC) -o $@ -c $< $(CXXFLAGS) $(CPR)
 
-$(OUT)ChartJsonHandler.o: $(SRC)ChartJsonHandler.cpp $(INC)ChartJsonHandler.hpp
-	$(CC) -o $@ -c $< $(CXXFLAGS) $(CIVET) $(BOOST)
-
 $(OUT)ChartCreatorJson.o: $(SRC)ChartCreatorJson.cpp $(INC)ChartCreatorJson.hpp
+	$(CC) -o $@ -c $< $(CXXFLAGS) $(CIVET)
+
+$(OUT)ChartCreatorNvd3.o: $(SRC)ChartCreatorNvd3.cpp $(INC)ChartCreatorNvd3.hpp
+	$(CC) -o $@ -c $< $(CXXFLAGS) $(CIVET)
+
+$(OUT)ChartCreatorDygraphs.o: $(SRC)ChartCreatorDygraphs.cpp $(INC)ChartCreatorDygraphs.hpp
 	$(CC) -o $@ -c $< $(CXXFLAGS) $(CIVET)
 
 clean:

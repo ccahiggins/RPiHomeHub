@@ -340,36 +340,36 @@
 				var paramDays = 0;
 				var from = "";
 				var to = "";
-				var param_text = "";
+				var param_text = "?type=google_json";
 
 				if (from && to) {
-					param_text +="?from="
+					param_text +="&from="
 					param_text += from;
 					param_text += "&to=";
 					param_text += to;
 				} else if (from && days > 0) {
-					param_text += "?from="
+					param_text += "&from="
 					param_text += from;
 					param_text += "&days=";
 					param_text += days;
 				} else if (paramDays > 0) {
-					param_text += "?days="
+					param_text += "&days="
 					param_text += paramDays;
 				} else {
 					var sel = document.getElementById("days");
 					days = (sel.options[sel.selectedIndex].value) 
 					var date = document.getElementById("fromdate").value;
 					if (date && days > 0) {
-						param_text += "?from=";
+						param_text += "&from=";
 						param_text += date;
 						param_text += "&days=";
 						param_text += days;
 					} else if (days > 0) {
-						param_text += "?days=";
+						param_text += "&days=";
 						param_text += days;
 					} 
 				}
-				var chart_uri = ("https://pi.chrishigs.co.uk/json_chart" + param_text);
+				var chart_uri = ("https://pi.chrishigs.co.uk/chart" + param_text);
 				jsonData = $.ajax({
 					url: chart_uri,
 					dataType: "json",

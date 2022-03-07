@@ -225,10 +225,31 @@ std::string DatabaseController::getSqlStatementForChartFromDays(std::string &fro
 	return ss.str();
 }
 
+std::string DatabaseController::get_sql_statement_for_chart_from_days_epochtime(std::string &from, std::string &days) {
+
+	std::ostringstream ss;
+	ss << "SELECT strftime('%s', timestamp), temp, id ";
+	ss << "FROM temps ";
+	ss << "WHERE id IN (1,2,3,4,5) ";
+	ss << "AND timestamp BETWEEN date('" << from << "') AND date('" << from << "','+" << days << " days');";
+	
+	return ss.str();
+}
+
 std::string DatabaseController::getSqlStatementForChartDays(std::string &days) {
 
 	std::ostringstream ss;
 	ss << "SELECT timestamp, temp, id ";
+	ss << "FROM temps ";
+	ss << "WHERE id IN (1,2,3,4,5) ";
+	ss << "AND timestamp > datetime('now', 'localtime', '-" << days << " days');";
+	
+	return ss.str();
+}
+
+std::string DatabaseController::get_sql_statement_for_chart_days_epochtime(std::string &days) {
+	std::ostringstream ss;
+	ss << "SELECT strftime('%s', timestamp), temp, id ";
 	ss << "FROM temps ";
 	ss << "WHERE id IN (1,2,3,4,5) ";
 	ss << "AND timestamp > datetime('now', 'localtime', '-" << days << " days');";
@@ -248,10 +269,31 @@ std::string DatabaseController::getSqlStatementForChartFromTo(std::string &from,
 	return ss.str();
 }
 
+std::string DatabaseController::get_sql_statement_for_chart_from_to_epochtime(std::string &from, std::string &to) {
+
+	std::ostringstream ss;
+	ss << "SELECT strftime('%s', timestamp), temp, id ";
+	ss << "FROM temps ";
+	ss << "WHERE id IN (1,2,3,4,5) ";
+	ss << "AND timestamp BETWEEN date('" << from << "') ";
+	ss << "AND date('" << to << "');";
+	
+	return ss.str();
+}
+
 std::vector<std::vector<std::string>> DatabaseController::getChartDataDays(std::string &days) {
 	
 	std::string database = temps_database;
 	std::string sql = getSqlStatementForChartDays(days);
+	std::vector<std::vector<std::string>> data = vector_string_query(database, sql);
+	
+	return data;
+}
+
+std::vector<std::vector<std::string>> DatabaseController::get_chart_data_days_epochtime(std::string &days) {
+
+	std::string database = temps_database;
+	std::string sql = get_sql_statement_for_chart_days_epochtime(days);
 	std::vector<std::vector<std::string>> data = vector_string_query(database, sql);
 	
 	return data;
@@ -266,10 +308,28 @@ std::vector<std::vector<std::string>> DatabaseController::getChartDataFromTo(std
 	return data;
 }
 
+std::vector<std::vector<std::string>> DatabaseController::get_chart_data_from_to_epochtime(std::string &from, std::string &to) {
+	
+	std::string database = temps_database;
+	std::string sql = get_sql_statement_for_chart_from_to_epochtime(from, to);
+	std::vector<std::vector<std::string>> data = vector_string_query(database, sql);
+	
+	return data;
+}
+
 std::vector<std::vector<std::string>> DatabaseController::getChartDataFromDays(std::string &from, std::string &days) {
 	
 	std::string database = temps_database;
 	std::string sql = getSqlStatementForChartFromDays(from, days);
+	std::vector<std::vector<std::string>> data = vector_string_query(database, sql);
+	
+	return data;
+}
+
+std::vector<std::vector<std::string>> DatabaseController::get_chart_data_from_days_epochtime(std::string &from, std::string &days) {
+	
+	std::string database = temps_database;
+	std::string sql = get_sql_statement_for_chart_from_days_epochtime(from, days);
 	std::vector<std::vector<std::string>> data = vector_string_query(database, sql);
 	
 	return data;

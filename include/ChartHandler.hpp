@@ -9,6 +9,9 @@
 
 #include "AuthHandler.hpp"
 #include "ChartCreator.hpp"
+#include "ChartCreatorDygraphs.hpp"
+#include "ChartCreatorJson.hpp"
+#include "ChartCreatorNvd3.hpp"
 #include "CivetServer.h"
 #include "ReadHtml.hpp"
 #include "boost/format.hpp"

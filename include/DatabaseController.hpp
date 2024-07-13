@@ -34,12 +34,15 @@ public:
 	
 	static std::vector<std::vector<std::string>> getChartDataDays(std::string &days);
 	static std::vector<std::vector<std::string>> get_chart_data_days_epochtime(std::string &days);
+	static std::vector<std::vector<std::string>> get_chart_data_days_jsontime(std::string &days);
 	static std::vector<std::vector<std::string>> getChartDataFromTo(std::string &from, std::string &to);
 	static std::vector<std::vector<std::string>> get_chart_data_from_to_epochtime(std::string &from, std::string &to);
 	static std::vector<std::vector<std::string>> getChartDataFromDays(std::string &from, std::string &days);
 	static std::vector<std::vector<std::string>> get_chart_data_from_days_epochtime(std::string &from, std::string &days);
 	
 	static std::string getUserFromUsernamePassword(std::string &username, std::string &password);
+	static std::vector<std::string> getRolesFromUsername(std::string &username);
+	static std::vector<std::string> getRolesFromSessionId(std::string &session);
 	static std::string getUserSalt(std::string &username);
 	static std::string getUsernameFromSession(std::string &session);
 	static std::string getSessionFromUsername(std::string &username);
@@ -66,6 +69,7 @@ private:
 	
 	static std::string getSqlStatementForChartDays(std::string &days);
 	static std::string get_sql_statement_for_chart_days_epochtime(std::string &days);
+	static std::string get_sql_statement_for_chart_days_jsontime(std::string &days);
 	static std::string getSqlStatementForChartFromTo(std::string &from, std::string &to);
 	static std::string get_sql_statement_for_chart_from_to_epochtime(std::string &from, std::string &to);
 	static std::string getSqlStatementForChartFromDays(std::string &from, std::string &days);
@@ -74,6 +78,8 @@ private:
 	static std::string getSqlStatementForUserFromUsernamePassword(std::string &username, std::string &password);
 	static std::string getSqlStatementForUserSalt(std::string &username);
 	static std::string getSqlStatementForUsernameFromSession(std::string &session);
+	static std::string getSqlStatementForRolesFromUsername(std::string &username);
+	static std::string getSqlStatementForRolesFromSessionId(std::string &session);
 	static std::string getSqlStatementForSessionFromUsername(std::string &username);
 	static std::string getSqlStatementForSetUserSession(std::string &username, std::string &session);
 	

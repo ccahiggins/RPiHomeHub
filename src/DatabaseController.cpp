@@ -257,6 +257,16 @@ std::string DatabaseController::get_sql_statement_for_chart_days_epochtime(std::
 	return ss.str();
 }
 
+std::string DatabaseController::get_sql_statement_for_chart_days_jsontime(std::string &days) {
+	std::ostringstream ss;
+	ss << "SELECT (STRFTIME('%Y', timestamp)) || ',' || (STRFTIME('%m', timestamp) - 1) || ',' || (STRFTIME('%d', timestamp)) || ',' || (STRFTIME('%H', timestamp)) || ',' || (STRFTIME('%M', timestamp)), temp, id ";
+	ss << "FROM temps ";
+	ss << "WHERE id IN (1,2,3,4,5) ";
+	ss << "AND timestamp > datetime('now', 'localtime', '-" << days << " days');";
+	
+	return ss.str();
+}
+
 std::string DatabaseController::getSqlStatementForChartFromTo(std::string &from, std::string &to) {
 
 	std::ostringstream ss;
@@ -294,6 +304,15 @@ std::vector<std::vector<std::string>> DatabaseController::get_chart_data_days_ep
 
 	std::string database = temps_database;
 	std::string sql = get_sql_statement_for_chart_days_epochtime(days);
+	std::vector<std::vector<std::string>> data = vector_string_query(database, sql);
+	
+	return data;
+}
+
+std::vector<std::vector<std::string>> DatabaseController::get_chart_data_days_jsontime(std::string &days) {
+
+	std::string database = temps_database;
+	std::string sql = get_sql_statement_for_chart_days_jsontime(days);
 	std::vector<std::vector<std::string>> data = vector_string_query(database, sql);
 	
 	return data;
@@ -368,6 +387,20 @@ std::string DatabaseController::getSqlStatementForSessionFromUsername(std::strin
 	return sql;
 }
 
+std::string DatabaseController::getSqlStatementForRolesFromUsername(std::string &username) {
+	
+	std::string sql = "select role from roles where username = '" + username + "'";
+	
+	return sql;
+}
+
+std::string DatabaseController::getSqlStatementForRolesFromSessionId(std::string &session) {
+	
+	std::string sql = "select role from roles join users where roles.username = (select username from users where session = '" + session + "')";
+	
+	return sql;
+}
+
 std::string DatabaseController::getSqlStatementForSetUserSession(std::string &username, std::string &session) {
 	
 	std::string sql = "update users set session='" + session + "' where username = '" + username + "'";
@@ -412,6 +445,36 @@ std::string DatabaseController::getSessionFromUsername(std::string &username) {
 	return data;
 }
 
+std::vector<std::string> DatabaseController::getRolesFromUsername(std::string &username) {
+	
+	std::string database = auth_database;
+	std::string sql = getSqlStatementForRolesFromUsername(username);
+	std::vector<std::vector<std::string>> data = vector_string_query(database, sql);
+	
+	std::vector<std::string> roles;
+	
+	for (auto & element : data) {
+		roles.push_back(element.at(0));
+	}
+	
+	return roles;
+}
+
+std::vector<std::string> DatabaseController::getRolesFromSessionId(std::string &session) {
+	
+	std::string database = auth_database;
+	std::string sql = getSqlStatementForRolesFromSessionId(session);
+	std::vector<std::vector<std::string>> data = vector_string_query(database, sql);
+	
+	std::vector<std::string> roles;
+	
+	for (auto & element : data) {
+		roles.push_back(element.at(0));
+	}
+	
+	return roles;
+}
+
 std::string DatabaseController::setUserSession(std::string &username, std::string &session) {
 	
 	std::string database = auth_database;
@@ -453,7 +516,7 @@ void DatabaseController::insertTempData(uint16_t deviceNum, float temp, uint16_t
 	if(rc) {
 		std::cout << "I:ERRDB: " << temps_database << "," << rc << "," << sqlite3_errmsg(db) << "  ==  " << std::flush;
 		sqlite3_close(db);
-		system("/home/pi/RestartHub.sh");
+		exit(42);
 		locked = false;
 		return;
 	}
@@ -466,7 +529,7 @@ void DatabaseController::insertTempData(uint16_t deviceNum, float temp, uint16_t
 	if(!sql_result == SQLITE_OK) {
 		fprintf(stderr, "S:XXX: %s\n", sqlite3_errmsg(db));
 		sqlite3_close(db);
-		system("/home/pi/RestartHub.sh");
+		exit(42);
 		locked = false;
 		return;
 	}
@@ -488,7 +551,7 @@ void DatabaseController::insertTempData(uint16_t deviceNum, float temp, uint16_t
 		}
 		sleep(1);
 		rc = sqlite3_close(db);
-		system("/home/pi/RestartHub.sh");
+		exit(42);
 	}
 
 	locked = false;
@@ -540,7 +603,7 @@ std::string DatabaseController::string_query(std::string &database, std::string 
 		//fprintf(stderr, "s:SQL Open Error: %s\n", sqlite3_errmsg(db));
 		std::cout << "S:ERRDB: " << database << "," << rc << "," << sqlite3_errmsg(db) << "  ==  " << std::flush;
 		sqlite3_close(db);
-		system("/home/pi/RestartHub.sh");
+		exit(42);
 		locked = false;
 		return "";
 	}
@@ -552,7 +615,7 @@ std::string DatabaseController::string_query(std::string &database, std::string 
 		fprintf(stderr, "SQL Exec error: %s\n", zErrMsg);
 		sqlite3_free(zErrMsg);
 		sqlite3_close(db);
-		system("/home/pi/RestartHub.sh");
+		exit(42);
 	}
 	
 	sqlite3_close(db);
@@ -582,7 +645,7 @@ std::vector<std::vector<std::string>> DatabaseController::vector_string_query(st
 		//fprintf(stderr, "v:SQL Open Error: %s\n", sqlite3_errmsg(db));
 		std::cout << "V:ERRDB: " << database << "," << rc << "," << sqlite3_errmsg(db) << "  ==  " << std::flush;
 		sqlite3_close(db);
-		system("/home/pi/RestartHub.sh");
+		exit(42);
 		locked = false;
 		return table;
 	}
@@ -594,7 +657,7 @@ std::vector<std::vector<std::string>> DatabaseController::vector_string_query(st
 		fprintf(stderr, "SQL Exec error: %s\n", zErrMsg);
 		sqlite3_free(zErrMsg);
 		sqlite3_close(db);
-		system("/home/pi/RestartHub.sh");
+		exit(42);
 	}
    
 	sqlite3_close(db);

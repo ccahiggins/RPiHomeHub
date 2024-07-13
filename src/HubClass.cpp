@@ -133,6 +133,7 @@ int HubClass::startHub(int argc, char **argv) {
     server.addHandler(SONOFF_URI, new SonoffHandler(sonoff_list));
     server.addHandler(VOLTAGE_URI, new VoltageHandler());
     server.addHandler(CHART_URI, new ChartHandler());
+    
 
     while (keepRunning) {
         tempSensControl.checkSensors();

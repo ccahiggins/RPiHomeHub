@@ -5,7 +5,8 @@ bool VoltageHandler::handleGet(CivetServer *server, struct mg_connection *conn) 
 
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	AuthHandler auth = AuthHandler();
-	if (auth.authorised(conn)) {
+	std::string role = "admin";
+    if (auth.authorised(conn, role)) {
 		std::string param;
 		std::string voltageData = "";
 		if (CivetServer::getParam(conn, "days", param)) {

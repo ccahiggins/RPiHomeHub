@@ -24,3 +24,4 @@ hub.cfg
 hub.conf
 .vscode
 include/json.hpp
+*.db

@@ -21,4 +21,6 @@ enum class RequestType {
 	SonoffOn,
 	SonoffOff,
 	SonoffToggle,
+	SonoffAllStatus,
+	SonoffSingleStatus
 };

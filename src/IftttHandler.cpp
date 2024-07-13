@@ -154,7 +154,18 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
                 j["status"] = "done";
             }
         } else if (rv.getType() == RequestType::TemperatureAll) {
-            j["error"] = "notyetimplemented";
+            std::vector<nlohmann::json> temps;
+            for (int i = 1; i <= 5; i++) {
+                nlohmann::json temp;
+                std::string name = DatabaseController::getSensorName(i);
+
+                temp["name"] = name;
+                temp["id"] = i;
+                temp["temp"] = getTemp(std::to_string(i));
+                temps.push_back(temp);
+            }
+
+            j["temperatures"] = temps;
         } else if (rv.getType() == RequestType::TemperatureOne) {
             std::string id;
             if (rv.getRoom().compare("livingroom") == 0) {
@@ -266,6 +277,33 @@ bool IftttHandler::handlePost(CivetServer *server, struct mg_connection *conn) {
             if (sonoff_list[stoi(rv.get_sonoff_switch_num())].turn_off() == 0) {
                 j["status"] = "done";
                 change = true;
+            } else {
+                j["status"] = "error";
+            }
+        } else if (rv.getType() == RequestType::SonoffAllStatus) {
+            std::vector<nlohmann::json> sonoff_statuses;
+            for (int i = 0; i < 3; i++) {
+                nlohmann::json sonofffff;
+                int sonoff_status = sonoff_list[i].status();
+                sonofffff["id"] = std::to_string(i);
+                if (sonoff_status == 0) {
+                    sonofffff["status"] = "off";
+                } else if (sonoff_status == 1) {
+                    sonofffff["status"] = "on";
+                } else {
+                    sonofffff["status"] = "error";
+                }
+                sonoff_statuses.push_back(sonofffff);
+            }
+            j["sonoffs"] = sonoff_statuses;
+
+        } else if (rv.getType() == RequestType::SonoffSingleStatus) {
+            int sonoff_status = sonoff_list[stoi(rv.get_sonoff_switch_num())].status();
+            j["id"] = rv.get_sonoff_switch_num();
+            if (sonoff_status == 0) {
+                j["status"] = "off";
+            } else if (sonoff_status == 1) {
+                j["status"] = "on";
             } else {
                 j["status"] = "error";
             }

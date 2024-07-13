@@ -388,7 +388,6 @@
 					},
 				},
 				chartArea: {
-
 					bottom: 48
 				},
 
@@ -398,6 +397,10 @@
 				theme: 'maximized'
 			};
 			var temp_chart = new google.visualization.LineChart(document.getElementById('chart_container'));
+			var date_formatter = new google.visualization.DateFormat({ 
+				pattern: "MMM dd yyyy, HH:mm"
+			}); 
+			date_formatter.format(chart_data, 0);
 			temp_chart.draw(chart_data, options);
 		}
 

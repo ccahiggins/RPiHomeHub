@@ -10,7 +10,8 @@ bool HubHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nStrict-Transport-Security: max-age=31536000\r\n");
 
 	AuthHandler auth = AuthHandler();
-	if (auth.authorised(conn)) {
+	std::string role = "admin";
+    if (auth.authorised(conn, role)) {
     mg_printf(conn,"\r\n");
 		std::vector<int> lowBatts = tempSens.lowBattery();
 		if (lowBatts.size() > 0) {

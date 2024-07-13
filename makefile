@@ -9,7 +9,7 @@ else
 	BOOST=-I ../boost_1_65_1
 	CIVET=-I../civetweb/include
 	JSON=-I../json-2.1.1/src/
-	RF24=-lrf24network -lrf24-bcm -I../rf24libs/RF24 -I../rf24libs/RF24Network -L/usr/local/lib
+	RF24=-lrf24network -lrf24-bcm -I../rf24libs/RF24 -I../rf24libs/RF24Network #-L/usr/local/lib
 	CPR=-I../cpr/include -lcurl
 	#CPR_CPP=../cpr/cpr/auth.cpp ../cpr/cpr/bearer.cpp ../cpr/cpr/cookies.cpp ../cpr/cpr/cprtypes.cpp ../cpr/cpr/curl_container.cpp ../cpr/cpr/error.cpp ../cpr/cpr/multipart.cpp ../cpr/cpr/parameters.cpp ../cpr/cpr/payload.cpp ../cpr/cpr/proxies.cpp ../cpr/cpr/session.cpp ../cpr/cpr/timeout.cpp ../cpr/cpr/unix_socket.cpp ../cpr/cpr/util.cpp
 	#CPR_CPP= ../cpr/cpr/ ../cpr/cpr/ ../cpr/cpr/ ../cpr/cpr/ 
@@ -33,7 +33,7 @@ SQLLL=-I../sqlite-amalgamation-3380000/
 
 all: $(BIN)start_hub
 	
-$(BIN)start_hub: $(OUT)HubMain.o $(OUT)HubClass.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)IftttHandler.o $(OUT)RequestValidator.o $(OUT)AuthHandler.o $(OUT)LoginHandler.o $(OUT)HomeHandler.o $(OUT)Thermostat.o $(OUT)ThermostatHandler.o $(OUT)Subject.o $(OUT)Emailer.o $(OUT)EmailerHandler.o $(OUT)TimerEvent.o $(OUT)BoilerTimerEvent.o $(OUT)ThermostatTimerEvent.o $(OUT)Sensors.o $(OUT)DatabaseController.o $(OUT)Sonoff.o $(OUT)SonoffHandler.o $(OUT)CprResponse.o $(OUT)CprCurlholder.o $(OUT)CprAuth.o $(OUT)CprSession.o $(OUT)CprBearer.o $(OUT)CprCookies.o $(OUT)CprCprtypes.o $(OUT)CprError.o $(OUT)CprMultipart.o $(OUT)CprParameters.o $(OUT)CprPayload.o $(OUT)CprProxies.o $(OUT)CprTimeout.o $(OUT)CprUnixSocket.o $(OUT)CprUtil.o $(OUT)CprCurlContainer.o $(OUT)ChartCreatorJson.o $(OUT)ChartCreatorNvd3.o $(OUT)ChartCreatorDygraphs.o
+$(BIN)start_hub: $(OUT)HubMain.o $(OUT)HubClass.o $(OUT)TempSensorController.o $(OUT)HubHandler.o $(OUT)BoilerHandler.o $(OUT)ReadHtml.o $(OUT)Boiler.o $(OUT)RadioController.o $(OUT)Timer.o $(OUT)TimerHandler.o $(OUT)TimerAddHandler.o $(OUT)TimerDisableHandler.o $(OUT)TimerEnableHandler.o $(OUT)ChartHandler.o $(OUT)TimerDeleteHandler.o $(OUT)VoltageHandler.o $(OUT)ChartCreator.o $(OUT)IftttHandler.o $(OUT)RequestValidator.o $(OUT)AuthHandler.o $(OUT)LoginHandler.o $(OUT)HomeHandler.o $(OUT)Thermostat.o $(OUT)ThermostatHandler.o $(OUT)Subject.o $(OUT)Emailer.o $(OUT)EmailerHandler.o $(OUT)TimerEvent.o $(OUT)BoilerTimerEvent.o $(OUT)ThermostatTimerEvent.o $(OUT)Sensors.o $(OUT)DatabaseController.o $(OUT)Sonoff.o $(OUT)SonoffHandler.o $(OUT)CprResponse.o $(OUT)CprCurlholder.o $(OUT)CprAuth.o $(OUT)CprSession.o $(OUT)CprBearer.o $(OUT)CprCookies.o $(OUT)CprCprtypes.o $(OUT)CprError.o $(OUT)CprMultipart.o $(OUT)CprParameters.o $(OUT)CprPayload.o $(OUT)CprProxies.o $(OUT)CprTimeout.o $(OUT)CprUnixSocket.o $(OUT)CprUtil.o $(OUT)CprCurlContainer.o $(OUT)ChartCreatorJson.o $(OUT)ChartCreatorNvd3.o $(OUT)ChartCreatorDygraphs.o $(OUT)ChartCreatorGoogleArray.o
 	$(CC) -o $@ $^ $(CXXFLAGS) $(CIVET) $(SQLITE) $(RF24CMB) $(RF24) $(LIB)$(CIVLIBA) $(CRYPTO) $(UUID) $(CPR)
 	
 $(OUT)HubMain.o: $(SRC)HubMain.cpp
@@ -193,6 +193,9 @@ $(OUT)ChartCreatorNvd3.o: $(SRC)ChartCreatorNvd3.cpp $(INC)ChartCreatorNvd3.hpp
 	$(CC) -o $@ -c $< $(CXXFLAGS) $(CIVET)
 
 $(OUT)ChartCreatorDygraphs.o: $(SRC)ChartCreatorDygraphs.cpp $(INC)ChartCreatorDygraphs.hpp
+	$(CC) -o $@ -c $< $(CXXFLAGS) $(CIVET)
+
+$(OUT)ChartCreatorGoogleArray.o: $(SRC)ChartCreatorGoogleArray.cpp $(INC)ChartCreatorGoogleArray.hpp
 	$(CC) -o $@ -c $< $(CXXFLAGS) $(CIVET)
 
 clean:

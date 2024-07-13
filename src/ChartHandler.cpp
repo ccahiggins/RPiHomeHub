@@ -3,8 +3,9 @@
 bool ChartHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 
     mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
-    AuthHandler auth = AuthHandler();
-    if (auth.authorised(conn)) {
+	AuthHandler auth = AuthHandler();
+	std::string role = "admin";
+    if (auth.authorised(conn, role)) {
         std::string days;
         std::string to;
         std::string from;
@@ -26,6 +27,9 @@ bool ChartHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
             } else if (chart_type.compare("nvd3") == 0) {
                 ChartCreatorNvd3 chartCreator;
                 chart = chartCreator.get_chart_from_to(from, to);
+            } else if (chart_type.compare("google_array") == 0) {
+                ChartCreatorGoogleArray chartCreator;
+                chart = chartCreator.get_chart_from_to(from, to);
             }
         } else if (foundFrom && foundDays) {
             if (!chart_type_found || chart_type.compare("google") == 0) {
@@ -39,6 +43,9 @@ bool ChartHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
                 chart = chartCreator.get_chart_from_days(from, days);
             } else if (chart_type.compare("dygraphs") == 0) {
                 ChartCreatorDygraphs chartCreator;
+                chart = chartCreator.get_chart_from_days(from, days);
+            } else if (chart_type.compare("google_array") == 0) {
+                ChartCreatorGoogleArray chartCreator;
                 chart = chartCreator.get_chart_from_days(from, days);
             }
         } else if (foundDays) {
@@ -58,6 +65,9 @@ bool ChartHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
             } else if (chart_type.compare("dygraphs") == 0) {
                 ChartCreatorDygraphs chartCreator;
                 chart = chartCreator.get_chart_days(days);
+            } else if (chart_type.compare("google_array") == 0) {
+                ChartCreatorGoogleArray chartCreator;
+                chart = chartCreator.get_chart_days(days);
             }
         } else {
             if (!chart_type_found || chart_type.compare("google") == 0) {
@@ -73,6 +83,10 @@ bool ChartHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
             } else if (chart_type.compare("dygraphs") == 0) {
                 days = "1";
                 ChartCreatorDygraphs chartCreator;
+                chart = chartCreator.get_chart_days(days);
+            } else if (chart_type.compare("google_array") == 0) {
+                days = "1";
+                ChartCreatorGoogleArray chartCreator;
                 chart = chartCreator.get_chart_days(days);
             }
         }

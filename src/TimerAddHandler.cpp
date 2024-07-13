@@ -7,7 +7,8 @@ bool TimerAddHandler::handleGet(CivetServer *server, struct mg_connection *conn)
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	
 	AuthHandler auth = AuthHandler();
-		if (auth.authorised(conn)) {
+	std::string role = "admin";
+    if (auth.authorised(conn, role)) {
 		std::string html = ReadHtml::readHtml("html/TimerAddHandler/get.html");
 		std::vector<std::vector<std::string>> sensors = Sensors::getSensors();
 		bool first = true;
@@ -38,7 +39,8 @@ bool TimerAddHandler::handlePost(CivetServer *server, struct mg_connection *conn
 	std::string s = "";
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	AuthHandler auth = AuthHandler();
-	if (auth.authorised(conn)) {
+	std::string role = "admin";
+    if (auth.authorised(conn, role)) {
 		if (CivetServer::getParam(conn, "timer_type", s) && s.compare("boiler") == 0) {
 			int startHour = 0;
 			int startMinute = 0;

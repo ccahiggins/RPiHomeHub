@@ -2,7 +2,7 @@
 #include <iostream>
 
 ThermostatTimerEvent::ThermostatTimerEvent(int hour_, int minute_, bool one_time_, bool on_off_, int room_, float temp_, Thermostat& thermostat_) :
-	TimerEvent(hour_, minute_, one_time_), on_off(on_off_), room(room_), temp(temp_), thermostat(thermostat_) {
+	TimerEvent(hour_, minute_, one_time_), thermostat(thermostat_), on_off(on_off_), room(room_), temp(temp_) {
 }
 
 void ThermostatTimerEvent::trigger_event() {
@@ -26,6 +26,7 @@ int ThermostatTimerEvent::get_room() {
 float ThermostatTimerEvent::get_temp() {
 	return temp;
 }
+
 
 void ThermostatTimerEvent::to_stringstream(std::ostringstream& oss) {
 	oss << "THERMOSTAT" << std::endl;

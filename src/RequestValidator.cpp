@@ -58,11 +58,13 @@ bool RequestValidator::validNum(std::string numTxt, int minnum, int maxnum) {
 	
 bool RequestValidator::validNum(std::string numTxt) {
 
-  try {
-    std::stoi(numTxt);
-  } catch(const std::invalid_argument &ex) {
-    return false;
-  }
+	try {
+		std::stoi(numTxt);
+	} catch (const std::invalid_argument &ex) {
+		return false;
+	} catch (const std::out_of_range &ex) {
+		return false;
+	}
 
   return true;
 }
@@ -265,8 +267,18 @@ bool RequestValidator::validateRequest(std::string request) {
 			return true;
 		}
 		
-	//Sonoff sockets
+	//Sonoff sockets - all/single status - switch on/off/toggle
 	} else if (second.compare("sonoff") == 0) {
+		if (third.empty()) {
+			requestType = RequestType::SonoffAllStatus;
+			return true;
+		} else if (fourth.empty()) {
+			if (validNum(third, 0, 2)) {
+				requestType = RequestType::SonoffSingleStatus;
+				this->sonoff_switch_num = third;
+				return true;
+			}
+		}
 		if (validNum(third, 0, 2)) {
 			if (fourth.compare("on") == 0) {
 				requestType = RequestType::SonoffOn;

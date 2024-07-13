@@ -4,11 +4,12 @@ HomeHandler::HomeHandler(std::string& api_key_, std::string& api_url_, std::stri
 
 bool HomeHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	
-    mg_printf(conn,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nStrict-Transport-Security: max-age=31536000\r\n");
-
 	AuthHandler auth = AuthHandler();
+	std::string role = "admin";
 	
-	if (auth.authorised(conn)) {
+    mg_printf(conn,"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nStrict-Transport-Security: max-age=31536000\r\n");
+	
+	if (auth.authorised(conn, role)) {
     	mg_printf(conn,"\r\n");
 		//content.append(boost::str(boost::format(ReadHtml::readHtml("html/HubHandler/waterOnFor.html")) % waterStatus));
 		//std::string html = ReadHtml::readHtml("html/api/index.html");

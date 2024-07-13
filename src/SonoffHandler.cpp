@@ -14,7 +14,8 @@ bool SonoffHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 	mg_printf(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
 	
 	AuthHandler auth = AuthHandler();
-	if (auth.authorised(conn)) {
+	std::string role = "admin";
+    if (auth.authorised(conn, role)) {
 		std::string content = "";
 		std::string param1 = "";
 		std::string param2 = "";
@@ -24,11 +25,19 @@ bool SonoffHandler::handleGet(CivetServer *server, struct mg_connection *conn) {
 				if (param1.compare("on") == 0) {
 					int id = atoi(param2.c_str());
 					int res = sonoff_list[id].turn_on();
-					content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "ON" % "off" % id % "Turn OFF"));
+					if (res == 0) {
+						content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "ON" % "off" % id % "Turn OFF"));
+					} else {
+						content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "ERROR" % "off" % id % "ERROR"));
+					}
 				} else if (param1.compare("off") == 0) {
 					int id = atoi(param2.c_str());
 					int res = sonoff_list[id].turn_off();
-					content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "OFF" % "on" % id % "Turn ON"));
+					if (res == 0) {
+						content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "OFF" % "on" % id % "Turn ON"));
+					} else {
+						content.append(boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/switch.html")) % "ERROR" % "on" % id % "ERROR"));
+					}
 				}
 			}
 			html = boost::str(boost::format(ReadHtml::readHtml("html/SonoffHandler/html.html")) % content  % "sonoff" % "Sonoff");

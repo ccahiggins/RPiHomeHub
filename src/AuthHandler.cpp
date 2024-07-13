@@ -1,10 +1,11 @@
 #include "AuthHandler.hpp"
 
 
+
 bool AuthHandler::login(struct mg_connection *conn, std::string &session, std::string &uri) {
 	std::string username;
 	std::string password;
-	
+
 	getUserPass(conn, username, password, uri);
 	boost::erase_all(username, "'");
 	boost::erase_all(username, ";");
@@ -34,22 +35,43 @@ bool AuthHandler::login(struct mg_connection *conn, std::string &session, std::s
 }
 
 bool AuthHandler::authorised(struct mg_connection *conn) {
-	
+
 	std::string session;
 	//const struct mg_request_info *req_info = mg_get_request_info(conn);
 	//cout << "Loc: " << req_info->local_uri << endl;
 	//getUserPass(conn, username, password);
-	
+
 	getSession(conn, session);
 	//cout << "Auth: Get session" << session << endl;
 	return hasDBSession(session);
 }
 
+bool AuthHandler::authorised(struct mg_connection *conn, std::string role) {
+
+	std::string session;
+	//const struct mg_request_info *req_info = mg_get_request_info(conn);
+	//cout << "Loc: " << req_info->local_uri << endl;
+	//getUserPass(conn, username, password);
+
+	getSession(conn, session);
+	//cout << "Auth: Get session" << session << endl;
+
+	bool sessionExists = hasDBSession(session);
+
+	if (!sessionExists) {
+		return false;
+	}
+
+	std::vector<std::string> roles = getRolesForSessionId(session);
+
+	return std::find(roles.begin(), roles.end(), role) != roles.end();
+}
+
 std::string AuthHandler::getUserSession(struct mg_connection *conn, std::string username) {
-	
+
 	std::string session;
 	getSession(conn, session);
-	
+
 	return session;
 }
 
@@ -61,13 +83,13 @@ std::string AuthHandler::getUserPass(struct mg_connection *conn, std::string &us
 	mg_get_var(post_data, post_data_len, "username", user, sizeof(user));
 	mg_get_var(post_data, post_data_len, "password", pass, sizeof(pass));
 	mg_get_var(post_data, post_data_len, "uri", uri_post, sizeof(uri_post));
-	
+
 	username = std::string(user);
 	password = std::string(pass);
 	uri = std::string(uri_post);
-	
+
 	//string session = hasDBUserPass(username, password);
-	return "kjlkJ";
+	return "whatwasthisfor";
 }
 
 
@@ -86,7 +108,7 @@ void AuthHandler::getSession(struct mg_connection *conn, std::string &session) {
    //        break;
    //    }
    //}
-   
+
    session = std::string(session_id);
 	
 }
@@ -94,7 +116,7 @@ void AuthHandler::getSession(struct mg_connection *conn, std::string &session) {
 std::string AuthHandler::getSalt(std::string username) {
 
 	std::string salt = DatabaseController::getUserSalt(username);
-	
+
 	return salt;
 }
 
@@ -123,31 +145,45 @@ bool AuthHandler::hasDBSession(std::string session)
 }
 
 std::string AuthHandler::createSessionForUser(std::string user) {
-	
+
 	std::string session = uuid();
-	
+
 	std::string sess = DatabaseController::setUserSession(user, session);
-	
+
 	if (!sess.empty()) {
 		return session;
 	} else {
 		return "";
 	}
-	
+
 }
 
 std::string AuthHandler::getDBSessionForUser(std::string user)
 {
-	
+
 	std::string session = DatabaseController::getSessionFromUsername(user);
-	
+
 	return session;
 }
 
 
+std::vector<std::string> AuthHandler::getRolesForUser(std::string user) {
+
+	std::vector<std::string> roles = DatabaseController::getRolesFromUsername(user);
+
+	return roles;
+}
+
+std::vector<std::string> AuthHandler::getRolesForSessionId(std::string session) {
+
+	std::vector<std::string> roles = DatabaseController::getRolesFromSessionId(session);
+
+	return roles;
+}
+
 std::string AuthHandler::sha256(const std::string str)
 {
-	
+
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
@@ -162,7 +198,7 @@ std::string AuthHandler::sha256(const std::string str)
 }
 
 std::string AuthHandler::uuid() {
-	
+
 	uuid_t id;
 	uuid_generate(id);
 	char *rrr = new char[100];
